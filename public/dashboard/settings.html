@@ -74,252 +74,269 @@
     .toast-enter{animation:slideUp 0.35s ease-out forwards}
     @keyframes slideUp{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
   </style>
-</head>
-<body>
+  </head>
+  <body>
 
-  <div class="grid-dots"></div>
-  <div class="blob w-[500px] h-[500px] bg-sky-300 top-[-15%] left-[-10%]"></div>
-  <div class="blob w-[400px] h-[400px] bg-teal-300 bottom-[-10%] right-[-5%]" style="animation-delay:2s"></div>
+    <div class="grid-dots"></div>
+    <div class="blob w-[500px] h-[500px] bg-sky-300 top-[-15%] left-[-10%]"></div>
+    <div class="blob w-[400px] h-[400px] bg-teal-300 bottom-[-10%] right-[-5%]" style="animation-delay:2s"></div>
 
-  <nav class="sidenav" id="sidenav"></nav>
-  <main class="main-content" id="main"></main>
+    <div class="flex min-h-screen relative z-10">
+      <aside id="sidebar" class="w-64 shrink-0 min-h-screen sticky top-0 flex flex-col border-l" style="background:var(--card);border-color:var(--card-border)"></aside>
+      <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+        <div id="topbar"></div>
+        <div id="main"></div>
+      </main>
+    </div>
 
-  <script src="js/supabase.js"></script>
-  <script src="js/auth-guard.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/lang.js"></script>
-  <script src="js/sidebar.js"></script>
-  <script>
-  (async function () {
-    var ctx = await window.RahSahl.authGuard.guard();
-    if (!ctx) return;
-    window.RahSahl.sidebar.boot();
-    document.getElementById('sidenav').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
-
-    function esc(s) {
-      return String(s == null ? '' : s)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    }
-
-    function showToast(message, type) {
-      var toast = document.createElement('div');
-      toast.className = 'toast-enter fixed top-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl shadow-lg text-white text-[14px] font-semibold flex items-center gap-2 ' + (type === 'error' ? 'bg-red-500' : 'btn-primary');
-      toast.innerHTML = '<span class="material-symbols-outlined text-[18px]">' + (type === 'error' ? 'error' : 'check_circle') + '</span>' + esc(message);
-      document.body.appendChild(toast);
-      setTimeout(function () { toast.remove(); }, 3000);
-    }
-
-    // Load current settings + shop
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('الإعدادات', '...', ctx)
-      + '<div class="card p-12"><div class="skeleton h-64"></div></div>';
-
-    var results = await Promise.allSettled([
-      window.RahSahl.api.getBotSettings(),
-      window.RahSahl.api.getShop()
-    ]);
-
-    var settings = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value.data : null;
-    var shop = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value.data : null;
-
-    if (results[0].value && results[0].value.error) {
-      showToast('فشل تحميل الإعدادات: ' + results[0].value.error.message, 'error');
-    }
-
-    var s = settings || {
-      bot_name: 'مساعدك الذكي',
-      tone: 'friendly',
-      language: 'ar',
-      products: [],
-      delivery_zones: [],
-      payment_methods: []
-    };
-
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-      'الإعدادات', 'خصّص وكيلك الذكي', ctx
-    ) + ''
-      + '<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">'
-
-      + '  <section class="card p-6 aos">'
-      + '    <div class="flex items-center gap-3 mb-5">'
-      + '      <div class="bg-sky-50 p-2.5 rounded-xl">'
-      + '        <span class="material-symbols-outlined text-sky-600">storefront</span>'
-      + '      </div>'
-      + '      <h2 class="font-ar text-[18px] font-bold text-heading">بيانات المتجر</h2>'
-      + '    </div>'
-      + '    <form id="shopForm" class="space-y-4">'
-      + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">اسم المتجر</label>'
-      + '        <input id="shopName" type="text" value="' + esc(shop ? shop.shop_name : '') + '" required/></div>'
-      + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">اسم المالك</label>'
-      + '        <input id="ownerName" type="text" value="' + esc(shop ? shop.owner_name : '') + '" required/></div>'
-      + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">هاتف المالك</label>'
-      + '        <input id="phoneNumber" type="tel" dir="ltr" value="' + esc(shop ? shop.phone_number : '') + '" required/></div>'
-      + '      <button type="submit" class="btn-primary w-full">حفظ بيانات المتجر</button>'
-      + '    </form>'
-      + '  </section>'
-
-      + '  <section class="card p-6 aos aos-delay-1">'
-      + '    <div class="flex items-center gap-3 mb-5">'
-      + '      <div class="bg-teal-50 p-2.5 rounded-xl">'
-      + '        <span class="material-symbols-outlined text-teal-600">smart_toy</span>'
-      + '      </div>'
-      + '      <h2 class="font-ar text-[18px] font-bold text-heading">شخصية الوكيل</h2>'
-      + '    </div>'
-      + '    <form id="botForm" class="space-y-4">'
-      + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">أسلوب الرد</label>'
-      + '        <select id="responseStyle">'
-      + '          <option value="friendly"' + (s.response_style === 'friendly' ? ' selected' : '') + '>ودود</option>'
-      + '          <option value="professional"' + (s.response_style === 'professional' ? ' selected' : '') + '>احترافي</option>'
-      + '          <option value="casual"' + (s.response_style === 'casual' ? ' selected' : '') + '>عفوي (دارجة)</option>'
-      + '        </select></div>'
-      + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">اللهجة/اللغة</label>'
-      + '        <select id="targetDialect">'
-      + '          <option value="Arabic"' + (s.target_dialect === 'Arabic' ? ' selected' : '') + '>العربية الفصحى</option>'
-      + '          <option value="Algerian Darija"' + (s.target_dialect === 'Algerian Darija' ? ' selected' : '') + '>الدارجة الجزائرية</option>'
-      + '          <option value="French"' + (s.target_dialect === 'French' ? ' selected' : '') + '>الفرنسية</option>'
-      + '          <option value="English"' + (s.target_dialect === 'English' ? ' selected' : '') + '>الإنجليزية</option>'
-      + '        </select></div>'
-      + '      <button type="submit" class="btn-primary w-full">حفظ شخصية الوكيل</button>'
-      + '    </form>'
-      + '  </section>'
-
-      + '  <section class="card p-6 lg:col-span-2 aos aos-delay-2">'
-      + '    <div class="flex items-center gap-3 mb-5">'
-      + '      <div class="bg-purple-50 p-2.5 rounded-xl">'
-      + '        <span class="material-symbols-outlined text-purple-600">vpn_key</span>'
-      + '      </div>'
-      + '      <h2 class="font-ar text-[18px] font-bold text-heading">مفتاح الـ API</h2>'
-      + '    </div>'
-      + '    <p class="text-[13px] text-muted mb-4">يستخدم هذا المفتاح للربط مع n8n والأنظمة الخارجية. حافظ على سريته.</p>'
-      + '    <div class="flex items-center gap-2 mb-2">'
-      + '      <input id="apiKey" type="text" readonly value="' + esc(shop ? (shop.api_secret_prefix || 'لم يُولّد بعد') : '') + '" dir="ltr" class="flex-1" style="font-family:monospace"/>'
-      + '      <button type="button" id="copyKey" class="btn-outline px-3 py-2 flex items-center rounded-xl">'
-      + '        <span class="material-symbols-outlined text-[18px]">content_copy</span>'
-      + '      </button>'
-      + '    </div>'
-      + '    <p class="text-[11px] mb-4" style="color:var(--muted-400)">هذا بادئة المفتاح للعرض فقط. المفتاح الكامل يظهر مرة واحدة عند التوليد.</p>'
-      + '    <button type="button" id="regenerateKey" class="btn-secondary">'
-      + '      <span class="material-symbols-outlined text-[18px]">refresh</span>'
-      + '      إعادة توليد المفتاح'
-      + '    </button>'
-      + '    <div id="newKeyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" style="background:rgba(0,0,0,0.5);backdrop-filter:blur(4px)">'
-      + '      <div class="card p-6 max-w-lg w-full modal-content">'
-      + '        <div class="flex items-center gap-2 mb-3" style="color:#f59e0b">'
-      + '          <span class="material-symbols-outlined">warning</span>'
-      + '          <h3 class="font-bold text-[16px] text-heading">احفظ المفتاح الآن!</h3>'
-      + '        </div>'
-      + '        <p class="text-[13px] text-muted mb-3">سيظهر هذا المفتاح مرة واحدة فقط. احفظه في مكان آمن قبل المتابعة.</p>'
-      + '        <input id="newKeyValue" type="text" readonly dir="ltr" class="w-full mb-3" style="font-family:monospace"/>'
-      + '        <div class="flex gap-2">'
-      + '          <button type="button" id="copyNewKey" class="btn-primary flex-1">نسخ</button>'
-      + '          <button type="button" id="closeNewKey" class="btn-outline">تم</button>'
-      + '        </div>'
-      + '      </div>'
-      + '    </div>'
-      + '  </section>'
-
-      + '  <section class="card p-6 aos aos-delay-3">'
-      + '    <div class="flex items-center gap-3 mb-5">'
-      + '      <div class="bg-blue-50 p-2.5 rounded-xl">'
-      + '        <span class="material-symbols-outlined text-blue-600">link</span>'
-      + '      </div>'
-      + '      <h2 class="font-ar text-[18px] font-bold text-heading">ربط الحسابات</h2>'
-      + '    </div>'
-      + '    <p class="text-[13px] text-muted mb-4">اربط حسابات التواصل الاجتماعي لتفعيل الرد التلقائي. كل حساب يُربط مرة واحدة فقط.</p>'
-      + '    <div class="space-y-4" id="linkedAccounts">'
-      + '      <div class="text-center py-4 text-[13px] text-muted">جاري التحميل...</div>'
-      + '    </div>'
-      + '  </section>'
-
-      + '</div>';
-
-    // AOS trigger
-    setTimeout(function () {
-      document.querySelectorAll('.aos').forEach(function (el) { el.classList.add('show'); });
-    }, 50);
-
-    // Load linked accounts
+    <script src="js/supabase.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/lang.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script>
     (async function () {
-      var { data: accounts } = await window.RahSahl.api.listLinkedAccounts();
-      var container = document.getElementById('linkedAccounts');
-      var platformNames = { instagram: 'إنستغرام', whatsapp: 'واتساب', messenger: 'ماسنجر', telegram: 'تيليغرام' };
-      var platformIcons = { instagram: 'auto_awesome', whatsapp: 'chat', messenger: 'messenger', telegram: 'send' };
+      var L = window.RahSahl && window.RahSahl.lang;
+      function __(k) { return L ? L.t(k) : k; }
 
-      if (accounts && accounts.length > 0) {
-        container.innerHTML = accounts.map(function (a) {
-          return '<div class="flex items-center justify-between py-2" style="border-bottom:1px solid var(--border-light)">'
-            + '<div class="flex items-center gap-2">'
-            + '  <span class="material-symbols-outlined text-sky-600 text-[20px]">' + (platformIcons[a.platform] || 'public') + '</span>'
-            + '  <span class="text-[14px] font-semibold text-heading">' + (platformNames[a.platform] || a.platform) + '</span>'
-            + '  <span class="text-[12px] text-muted">@' + (a.external_handle || a.external_id || '—') + '</span>'
-            + '</div>'
-            + '<span class="badge text-[11px] ' + (a.is_active ? 'bg-teal-100 text-teal-700' : 'bg-red-50 text-red-600') + '">' + (a.is_active ? 'نشط' : 'غير نشط') + '</span>'
-            + '</div>';
-        }).join('');
-      } else {
-        container.innerHTML = '<div class="text-center py-8"><span class="material-symbols-outlined text-[40px] text-muted">link_off</span><p class="text-[13px] text-muted mt-2">لا توجد حسابات مرتبطة. ارجع لصفحة "حساباتي" لمزيد من التفاصيل.</p></div>';
+      var ctx = await window.RahSahl.authGuard.guard();
+      if (!ctx) return;
+      var sid = window.RahSahl.sidebar;
+      sid.boot();
+
+      var settingsData, shopData;
+
+      function esc(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
       }
+
+      function showToast(message, type) {
+        var toast = document.createElement('div');
+        toast.className = 'toast-enter fixed top-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl shadow-lg text-white text-[14px] font-semibold flex items-center gap-2 ' + (type === 'error' ? 'bg-red-500' : 'btn-primary');
+        toast.innerHTML = '<span class="material-symbols-outlined text-[18px]">' + (type === 'error' ? 'error' : 'check_circle') + '</span>' + esc(message);
+        document.body.appendChild(toast);
+        setTimeout(function () { toast.remove(); }, 3000);
+      }
+
+      var styleOptions = [
+        { value: 'friendly', key: 'set.friendly' },
+        { value: 'professional', key: 'set.professional' },
+        { value: 'casual', key: 'set.casual' },
+      ];
+      var dialectOptions = [
+        { value: 'Arabic', key: 'set.fusha' },
+        { value: 'Algerian Darija', key: 'set.darija' },
+        { value: 'French', key: 'set.french' },
+        { value: 'English', key: 'set.english' },
+      ];
+
+      function render() {
+        document.getElementById('sidebar').innerHTML = sid.renderSidebar(ctx);
+        document.getElementById('topbar').innerHTML = sid.renderTopbar(__('set.title'), __('set.subtitle'), ctx);
+
+        var s = settingsData || { response_style: null, target_dialect: null };
+
+        document.getElementById('main').innerHTML = ''
+          + '<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">'
+
+          + '  <section class="card p-6 aos">'
+          + '    <div class="flex items-center gap-3 mb-5">'
+          + '      <div class="bg-sky-50 p-2.5 rounded-xl">'
+          + '        <span class="material-symbols-outlined text-sky-600">storefront</span>'
+          + '      </div>'
+          + '      <h2 class="font-ar text-[18px] font-bold text-heading">' + __('set.shop-data') + '</h2>'
+          + '    </div>'
+          + '    <form id="shopForm" class="space-y-4">'
+          + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">' + __('set.shop-name') + '</label>'
+          + '        <input id="shopName" type="text" value="' + esc(shopData ? shopData.shop_name : '') + '" required/></div>'
+          + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">' + __('set.owner-name') + '</label>'
+          + '        <input id="ownerName" type="text" value="' + esc(shopData ? shopData.owner_name : '') + '" required/></div>'
+          + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">' + __('set.phone') + '</label>'
+          + '        <input id="phoneNumber" type="tel" dir="ltr" value="' + esc(shopData ? shopData.phone_number : '') + '" required/></div>'
+          + '      <button type="submit" class="btn-primary w-full">' + __('set.save-shop') + '</button>'
+          + '    </form>'
+          + '  </section>'
+
+          + '  <section class="card p-6 aos aos-delay-1">'
+          + '    <div class="flex items-center gap-3 mb-5">'
+          + '      <div class="bg-teal-50 p-2.5 rounded-xl">'
+          + '        <span class="material-symbols-outlined text-teal-600">smart_toy</span>'
+          + '      </div>'
+          + '      <h2 class="font-ar text-[18px] font-bold text-heading">' + __('set.bot-personality') + '</h2>'
+          + '    </div>'
+          + '    <form id="botForm" class="space-y-4">'
+          + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">' + __('set.reply-style') + '</label>'
+          + '        <select id="responseStyle">'
+          + styleOptions.map(function (o) { return '<option value="' + o.value + '"' + (s.response_style === o.value ? ' selected' : '') + '>' + __(o.key) + '</option>'; }).join('')
+          + '        </select></div>'
+          + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">' + __('set.language') + '</label>'
+          + '        <select id="targetDialect">'
+          + dialectOptions.map(function (o) { return '<option value="' + o.value + '"' + (s.target_dialect === o.value ? ' selected' : '') + '>' + __(o.key) + '</option>'; }).join('')
+          + '        </select></div>'
+          + '      <button type="submit" class="btn-primary w-full">' + __('set.save-bot') + '</button>'
+          + '    </form>'
+          + '  </section>'
+
+          + '  <section class="card p-6 lg:col-span-2 aos aos-delay-2">'
+          + '    <div class="flex items-center gap-3 mb-5">'
+          + '      <div class="bg-purple-50 p-2.5 rounded-xl">'
+          + '        <span class="material-symbols-outlined text-purple-600">vpn_key</span>'
+          + '      </div>'
+          + '      <h2 class="font-ar text-[18px] font-bold text-heading">' + __('set.api-key') + '</h2>'
+          + '    </div>'
+          + '    <p class="text-[13px] text-muted mb-4">' + __('set.api-desc') + '</p>'
+          + '    <div class="flex items-center gap-2 mb-2">'
+          + '      <input id="apiKey" type="text" readonly value="' + esc(shopData ? (shopData.api_secret_prefix || __('set.api-key')) : '') + '" dir="ltr" class="flex-1" style="font-family:monospace"/>'
+          + '      <button type="button" id="copyKey" class="btn-outline px-3 py-2 flex items-center rounded-xl">'
+          + '        <span class="material-symbols-outlined text-[18px]">content_copy</span>'
+          + '      </button>'
+          + '    </div>'
+          + '    <p class="text-[11px] mb-4" style="color:var(--muted-400)">' + __('set.api-prefix') + '</p>'
+          + '    <button type="button" id="regenerateKey" class="btn-secondary">'
+          + '      <span class="material-symbols-outlined text-[18px]">refresh</span>'
+          + '      ' + __('set.regenerate') + ''
+          + '    </button>'
+          + '    <div id="newKeyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" style="background:rgba(0,0,0,0.5);backdrop-filter:blur(4px)">'
+          + '      <div class="card p-6 max-w-lg w-full modal-content">'
+          + '        <div class="flex items-center gap-2 mb-3" style="color:#f59e0b">'
+          + '          <span class="material-symbols-outlined">warning</span>'
+          + '          <h3 class="font-bold text-[16px] text-heading">' + __('set.save-key-now') + '</h3>'
+          + '        </div>'
+          + '        <p class="text-[13px] text-muted mb-3">' + __('set.key-once') + '</p>'
+          + '        <input id="newKeyValue" type="text" readonly dir="ltr" class="w-full mb-3" style="font-family:monospace"/>'
+          + '        <div class="flex gap-2">'
+          + '          <button type="button" id="copyNewKey" class="btn-primary flex-1">' + __('set.copy') + '</button>'
+          + '          <button type="button" id="closeNewKey" class="btn-outline">' + __('set.done') + '</button>'
+          + '        </div>'
+          + '      </div>'
+          + '    </div>'
+          + '  </section>'
+
+          + '  <section class="card p-6 aos aos-delay-3">'
+          + '    <div class="flex items-center gap-3 mb-5">'
+          + '      <div class="bg-blue-50 p-2.5 rounded-xl">'
+          + '        <span class="material-symbols-outlined text-blue-600">link</span>'
+          + '      </div>'
+          + '      <h2 class="font-ar text-[18px] font-bold text-heading">' + __('set.link-accounts') + '</h2>'
+          + '    </div>'
+          + '    <p class="text-[13px] text-muted mb-4">' + __('set.link-desc') + '</p>'
+          + '    <div class="space-y-4" id="linkedAccounts">'
+          + '      <div class="text-center py-4 text-[13px] text-muted">' + __('set.loading') + '</div>'
+          + '    </div>'
+          + '  </section>'
+
+          + '</div>';
+
+        // AOS trigger
+        setTimeout(function () {
+          document.querySelectorAll('.aos').forEach(function (el) { el.classList.add('show'); });
+        }, 50);
+
+        renderLinkedAccounts();
+      }
+
+      async function renderLinkedAccounts() {
+        var { data: accounts } = await window.RahSahl.api.listLinkedAccounts();
+        var container = document.getElementById('linkedAccounts');
+        if (!container) return;
+        var platformIcons = { instagram: 'auto_awesome', whatsapp: 'chat', messenger: 'messenger', telegram: 'send' };
+
+        if (accounts && accounts.length > 0) {
+          container.innerHTML = accounts.map(function (a) {
+            return '<div class="flex items-center justify-between py-2" style="border-bottom:1px solid var(--border-light)">'
+              + '<div class="flex items-center gap-2">'
+              + '  <span class="material-symbols-outlined text-sky-600 text-[20px]">' + (platformIcons[a.platform] || 'public') + '</span>'
+              + '  <span class="text-[14px] font-semibold text-heading">' + (a.platform.charAt(0).toUpperCase() + a.platform.slice(1)) + '</span>'
+              + '  <span class="text-[12px] text-muted">@' + (a.external_handle || a.external_id || '—') + '</span>'
+              + '</div>'
+              + '<span class="badge text-[11px] ' + (a.is_active ? 'bg-teal-100 text-teal-700' : 'bg-red-50 text-red-600') + '">' + (a.is_active ? __('acc.active') : __('acc.suspended')) + '</span>'
+              + '</div>';
+          }).join('');
+        } else {
+          container.innerHTML = '<div class="text-center py-8"><span class="material-symbols-outlined text-[40px] text-muted">link_off</span><p class="text-[13px] text-muted mt-2">' + __('set.no-linked') + '</p></div>';
+        }
+      }
+
+      // Load data
+      var results = await Promise.allSettled([
+        window.RahSahl.api.getBotSettings(),
+        window.RahSahl.api.getShop()
+      ]);
+
+      settingsData = results[0].status === 'fulfilled' && results[0].value && !results[0].value.error ? results[0].value.data : null;
+      shopData = results[1].status === 'fulfilled' && results[1].value && !results[1].value.error ? results[1].value.data : null;
+
+      if (results[0].value && results[0].value.error) {
+        showToast(__('general.error') + ': ' + results[0].value.error.message, 'error');
+      }
+
+      render();
+
+      // Shop form
+      document.getElementById('shopForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> ' + __('general.saving') + '</span>';
+        var updates = {
+          shop_name: document.getElementById('shopName').value.trim(),
+          owner_name: document.getElementById('ownerName').value.trim(),
+          phone_number: document.getElementById('phoneNumber').value.trim()
+        };
+        var res = await window.RahSahl.api.updateShop(updates);
+        btn.disabled = false; btn.innerHTML = __('set.save-shop');
+        if (res.error) showToast(__('general.error') + ': ' + res.error.message, 'error');
+        else { showToast(__('general.success'), 'success'); shopData = Object.assign(shopData || {}, updates); }
+      });
+
+      // Bot form
+      document.getElementById('botForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> ' + __('general.saving') + '</span>';
+        var updates = {
+          response_style: document.getElementById('responseStyle').value,
+          target_dialect: document.getElementById('targetDialect').value
+        };
+        var res = await window.RahSahl.api.updateBotSettings(updates);
+        btn.disabled = false; btn.innerHTML = __('set.save-bot');
+        if (res.error) showToast(__('general.error') + ': ' + res.error.message, 'error');
+        else showToast(__('general.success'), 'success');
+      });
+
+      // API key controls
+      document.getElementById('copyKey').addEventListener('click', function () {
+        var input = document.getElementById('apiKey');
+        input.select();
+        navigator.clipboard.writeText(input.value);
+        showToast(__('general.copied'), 'success');
+      });
+      document.getElementById('regenerateKey').addEventListener('click', async function () {
+        if (!confirm(__('general.confirm'))) return;
+        var res = await window.RahSahl.api.regenerateApiKey();
+        if (res.error) { showToast(__('general.error') + ': ' + res.error.message, 'error'); return; }
+        var newKey = (res.data && (res.data.api_secret || res.data.secret)) || '';
+        document.getElementById('newKeyValue').value = newKey;
+        document.getElementById('newKeyModal').classList.remove('hidden');
+      });
+      document.getElementById('copyNewKey').addEventListener('click', function () {
+        var input = document.getElementById('newKeyValue');
+        input.select();
+        navigator.clipboard.writeText(input.value);
+        showToast(__('general.copied'), 'success');
+      });
+      document.getElementById('closeNewKey').addEventListener('click', function () {
+        document.getElementById('newKeyModal').classList.add('hidden');
+        showToast(__('general.success'), 'success');
+      });
+
+      // Re-render on language change
+      window.addEventListener('langchange', function () {
+        render();
+      });
     })();
+    </script>
 
-    // Shop form
-    document.getElementById('shopForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      var btn = e.target.querySelector('button[type="submit"]');
-      btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> جاري الحفظ...</span>';
-      var updates = {
-        shop_name: document.getElementById('shopName').value.trim(),
-        owner_name: document.getElementById('ownerName').value.trim(),
-        phone_number: document.getElementById('phoneNumber').value.trim()
-      };
-      var res = await window.RahSahl.api.updateShop(updates);
-      btn.disabled = false; btn.innerHTML = 'حفظ بيانات المتجر';
-      if (res.error) showToast('فشل: ' + res.error.message, 'error');
-      else { showToast('تم حفظ بيانات المتجر', 'success'); ctx.shop = Object.assign(ctx.shop || {}, updates); }
-    });
-
-    // Bot form
-    document.getElementById('botForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      var btn = e.target.querySelector('button[type="submit"]');
-      btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> جاري الحفظ...</span>';
-      var updates = {
-        response_style: document.getElementById('responseStyle').value,
-        target_dialect: document.getElementById('targetDialect').value
-      };
-      var res = await window.RahSahl.api.updateBotSettings(updates);
-      btn.disabled = false; btn.innerHTML = 'حفظ شخصية الوكيل';
-      if (res.error) showToast('فشل: ' + res.error.message, 'error');
-      else showToast('تم حفظ شخصية الوكيل', 'success');
-    });
-
-    // API key controls
-    document.getElementById('copyKey').addEventListener('click', function () {
-      var input = document.getElementById('apiKey');
-      input.select();
-      navigator.clipboard.writeText(input.value);
-      showToast('تم نسخ البادئة', 'success');
-    });
-    document.getElementById('regenerateKey').addEventListener('click', async function () {
-      if (!confirm('هل أنت متأكد؟ المفتاح القديم سيتوقف عن العمل فوراً.')) return;
-      var res = await window.RahSahl.api.regenerateApiKey();
-      if (res.error) { showToast('فشل: ' + res.error.message, 'error'); return; }
-      var newKey = (res.data && (res.data.api_secret || res.data.secret)) || '';
-      var modal = document.getElementById('newKeyModal');
-      document.getElementById('newKeyValue').value = newKey;
-      modal.classList.remove('hidden');
-    });
-    document.getElementById('copyNewKey').addEventListener('click', function () {
-      var input = document.getElementById('newKeyValue');
-      input.select();
-      navigator.clipboard.writeText(input.value);
-      showToast('تم نسخ المفتاح الجديد', 'success');
-    });
-    document.getElementById('closeNewKey').addEventListener('click', function () {
-      document.getElementById('newKeyModal').classList.add('hidden');
-      showToast('تم توليد مفتاح جديد', 'success');
-    });
-  })();
-  </script>
-
-</body>
-</html>
+  </body>
+  </html>
