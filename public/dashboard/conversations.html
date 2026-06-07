@@ -8,6 +8,22 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>tailwind.config={darkMode:'class',theme:{extend:{colors:{navy:'#0b1420',sky:'#0ea5e9',amber:'#f59e0b',teal:'#14b8a6'},fontFamily:{ar:['IBM Plex Sans Arabic','sans-serif'],en:['Inter','sans-serif']}}}}</script>
+<style>
+:root{--bg:#f5f0eb;--text:#334155;--heading:#0b1420;--muted:#64748b;--muted-400:#94a3b8;--card:#fff;--card-border:#e2e8f0;--card-hover-border:#cbd5e1;--input-bg:#fff;--input-border:#e2e8f0;--soft-sky:#e0f2fe;--soft-teal:#ccfbf1;--soft-amber:#fef3c7;--soft-slate:#f8fafc;--border-light:#e2e8f0;--hover-bg:rgba(14,165,233,0.04)}
+html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--muted-400:#6b7a8a;--card:#18202d;--card-border:#2d3543;--card-hover-border:#3e4850;--input-bg:#141c29;--input-border:#3e4850;--soft-sky:rgba(14,165,233,0.12);--soft-teal:rgba(20,184,166,0.12);--soft-amber:rgba(245,158,11,0.12);--soft-slate:#141c29;--border-light:#2d3543;--hover-bg:rgba(14,165,233,0.08)}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);transition:background 0.3s,color 0.3s}
+h1,h2,h3,h4{font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--heading)}
+.text-muted{color:var(--muted)}.text-heading{color:var(--heading)}
+html.dark .text-navy{color:var(--heading)!important}
+html.dark .text-slate-600{color:var(--text)!important}
+html.dark .text-slate-400{color:var(--muted-400)!important}
+html.dark .bg-white{background:var(--card)!important}
+html.dark .bg-sky-100{background:var(--soft-sky)!important}
+html.dark .bg-teal-100{background:var(--soft-teal)!important}
+html.dark .bg-amber-100{background:var(--soft-amber)!important}
+</style>
 <link href="css/styles.css" rel="stylesheet"/>
 </head>
 <body>

@@ -178,6 +178,25 @@
     },
 
     // -------- linked social accounts --------
+    // -------- platform accounts (shared logins) --------
+    listAccounts: function () {
+      return client().from('platform_credentials')
+        .select('id, channel, external_id, access_token, token_expires_at, is_active, metadata, created_at')
+        .order('created_at', { ascending: false });
+    },
+    createAccount: function (payload) {
+      var id = activeShopId();
+      if (!id) return Promise.resolve({ error: { message: 'no shop_id' }, data: null });
+      return client().from('platform_credentials').insert({
+        shop_id: id,
+        channel: payload.platform,
+        external_id: payload.username,
+        access_token: payload.password,
+        token_expires_at: payload.expiry_date || null,
+        metadata: payload.notes ? { notes: payload.notes } : null
+      }).select().maybeSingle();
+    },
+
     listLinkedAccounts: function () {
       return client().from('linked_social_accounts')
         .select('id, platform, external_handle, is_active, verified_at, metadata')
