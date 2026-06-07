@@ -108,7 +108,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
         }).join('');
 
     document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-      'Ø§Ù„Ø·Ù„Ø¨Ø§Øª', 'Ø¥Ø¯Ø§Ø±Ø© Ø·Ù„Ø¨Ø§ØªÙƒ ÙˆØªØªØ¨Ø¹ Ø­Ø§Ù„ØªÙ‡Ø§.', ctx
+      'الطلبات', 'إدارة طلباتك وتتبع حالتها.', ctx
     ) + ''
       + '<div class="flex flex-col md:flex-row gap-3 mb-6">'
       + '  <div class="flex gap-2 flex-wrap">'
@@ -169,12 +169,12 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   // Initial load
-  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ø·Ù„Ø¨Ø§Øª', '...', ctx)
+  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('الطلبات', '...', ctx)
     + '<div class="card p-12"><div class="skeleton h-32"></div></div>';
 
   var res = await window.RahSahl.api.listOrders({ limit: 200 });
   if (res.error) {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ø·Ù„Ø¨Ø§Øª', '', ctx)
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('الطلبات', '', ctx)
       + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">ÙØ´Ù„ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø·Ù„Ø¨Ø§Øª: ' + esc(res.error.message) + '</p></div>';
     return;
   }

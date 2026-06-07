@@ -72,7 +72,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     var prefix = shop ? (shop.api_secret_prefix || 'Ù„Ù… ÙŠÙÙˆÙ„Ù‘Ø¯ Ø¨Ø¹Ø¯') : 'â€”';
     var lastUsed = shop && shop.api_secret_last_used ? timeAgo(shop.api_secret_last_used) : 'Ù„Ù… ÙŠÙØ³ØªØ®Ø¯Ù… Ø¨Ø¹Ø¯';
 
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ù…ÙØ§ØªÙŠØ­ API', 'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ÙˆØµÙˆÙ„ Ø§Ù„Ø¨Ø±Ù…Ø¬ÙŠ', ctx)
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('مفاتيح API', 'إدارة الوصول البرمجي', ctx)
       + ''
       + '<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">'
       + '  <section class="card p-6 lg:col-span-2">'
@@ -201,7 +201,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   async function load() {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ù…ÙØ§ØªÙŠØ­ API', '...', ctx)
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('مفاتيح API', '...', ctx)
       + '<div class="card p-12"><div class="skeleton h-32"></div></div>';
 
     var results = await Promise.allSettled([

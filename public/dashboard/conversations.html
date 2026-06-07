@@ -74,12 +74,12 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   // Load all conversations grouped by sender
-  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª', '...', ctx)
+  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '...', ctx)
     + '<div class="card p-12"><div class="skeleton h-32"></div></div>';
 
   var res = await window.RahSahl.api.listConversations({ limit: 200 });
   if (res.error) {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª', '', ctx)
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '', ctx)
       + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">ÙØ´Ù„ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª: ' + esc(res.error.message) + '</p></div>';
     return;
   }
@@ -107,13 +107,13 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   });
 
   if (senders.length === 0) {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª', '', ctx)
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '', ctx)
       + '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[14px]">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ø­Ø§Ø¯Ø«Ø§Øª Ø¨Ø¹Ø¯. Ø§Ø¨Ø¯Ø£ Ø¨Ø¥Ø±Ø³Ø§Ù„ Ø±Ø³Ø§Ù„Ø©!</p></div>';
     return;
   }
 
   document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-    'Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª', senders.length + ' Ø¹Ù…ÙŠÙ„ Ù†Ø´Ø·', ctx
+    'المحادثات', senders.length + ' عميل نشط', ctx
   ) + ''
     + '<div class="card p-3">'
     + '  <div class="flex flex-col gap-2">' + senders.map(function (s) {

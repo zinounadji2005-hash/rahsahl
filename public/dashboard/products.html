@@ -129,12 +129,12 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   async function load() {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª', '...', ctx)
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المنتجات', '...', ctx)
       + '<div class="card p-12"><div class="skeleton h-32"></div></div>';
 
     var res = await window.RahSahl.api.listProducts();
     if (res.error) {
-      document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª', '', ctx)
+      document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المنتجات', '', ctx)
         + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">ÙØ´Ù„ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª: ' + esc(res.error.message) + '</p></div>';
       return;
     }
@@ -146,7 +146,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     var activeCount = products.filter(function (p) { return p.is_active; }).length;
     var totalStock = products.reduce(function (sum, p) { return sum + (p.stock || 0); }, 0);
     document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-      'Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª', products.length + ' Ù…Ù†ØªØ¬ Â· ' + activeCount + ' Ù†Ø´Ø· Â· ' + totalStock + ' ÙˆØ­Ø¯Ø© ÙÙŠ Ø§Ù„Ù…Ø®Ø²ÙˆÙ†', ctx
+      'المنتجات', products.length + ' منتج · ' + activeCount + ' نشط · ' + totalStock + ' وحدة في المخزون', ctx
     ) + ''
       + '<div class="flex gap-2 mb-6">'
       + '  <button id="btnNew" class="btn-primary">'

@@ -47,10 +47,10 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
   window.RahSahl.sidebarCtx = ctx;
 
   // Render chrome
-  document.getElementById('sidenav').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
+  document.getElementById('sidebar').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
   document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-    'Ù…Ø±Ø­Ø¨Ø§Ù‹ØŒ ' + (ctx.shop ? ctx.shop.owner_name : 'ØªØ§Ø¬Ø±') + ' ðŸ‘‹',
-    'Ø¥Ù„ÙŠÙƒ Ù…Ù„Ø®Øµ Ø£Ø¯Ø§Ø¡ Ù…ØªØ¬Ø±Ùƒ Ø§Ù„ÙŠÙˆÙ….',
+    'مرحباً، ' + (ctx.shop ? ctx.shop.owner_name : 'تاجر') + ' 👋',
+    'إليك ملخص أداء متجرك اليوم.',
     ctx
   ) + renderSkeleton();
 
