@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>المنتجات — RahSahl</title>
+<title>Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª â€” RahSahl</title>
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -27,7 +27,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
 <link href="css/styles.css" rel="stylesheet"/>
 </head>
 <body>
-<nav class="sidenav" id="sidenav"></nav>
+<nav class="sidenav" id="sidebar"></nav>
 <main class="main-content" id="main"></main>
 
 <script src="js/supabase.js"></script>
@@ -40,6 +40,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   var ctx = await window.RahSahl.authGuard.guard();
   if (!ctx) return;
   window.RahSahl.sidebar.boot();
+  window.RahSahl.sidebarCtx = ctx;
   document.getElementById('sidenav').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
 
   function esc(s) {
@@ -57,8 +58,8 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   function fmtDZD(n) {
-    if (n == null) return '—';
-    return Number(n).toLocaleString('ar-DZ') + ' د.ج';
+    if (n == null) return 'â€”';
+    return Number(n).toLocaleString('ar-DZ') + ' Ø¯.Ø¬';
   }
 
   function renderForm(product) {
@@ -67,34 +68,34 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     return ''
       + '<form id="productForm" class="space-y-4">'
       + '  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">'
-      + '    <div><label class="block text-[13px] font-semibold text-navy mb-1.5">اسم المنتج *</label>'
+      + '    <div><label class="block text-[13px] font-semibold text-navy mb-1.5">Ø§Ø³Ù… Ø§Ù„Ù…Ù†ØªØ¬ *</label>'
       + '      <input id="pName" type="text" value="' + esc(p.name) + '" required/></div>'
       + '    <div><label class="block text-[13px] font-semibold text-navy mb-1.5">SKU</label>'
-      + '      <input id="pSku" type="text" value="' + esc(p.sku || '') + '" placeholder="اختياري"/></div>'
+      + '      <input id="pSku" type="text" value="' + esc(p.sku || '') + '" placeholder="Ø§Ø®ØªÙŠØ§Ø±ÙŠ"/></div>'
       + '  </div>'
-      + '  <div><label class="block text-[13px] font-semibold text-navy mb-1.5">الوصف</label>'
+      + '  <div><label class="block text-[13px] font-semibold text-navy mb-1.5">Ø§Ù„ÙˆØµÙ</label>'
       + '    <textarea id="pDesc" rows="2">' + esc(p.description || '') + '</textarea></div>'
       + '  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">'
-      + '    <div><label class="block text-[13px] font-semibold text-navy mb-1.5">السعر (د.ج) *</label>'
+      + '    <div><label class="block text-[13px] font-semibold text-navy mb-1.5">Ø§Ù„Ø³Ø¹Ø± (Ø¯.Ø¬) *</label>'
       + '      <input id="pPrice" type="number" min="0" step="0.01" dir="ltr" value="' + esc(p.price) + '" required/></div>'
-      + '    <div><label class="block text-[13px] font-semibold text-navy mb-1.5">المخزون</label>'
+      + '    <div><label class="block text-[13px] font-semibold text-navy mb-1.5">Ø§Ù„Ù…Ø®Ø²ÙˆÙ†</label>'
       + '      <input id="pStock" type="number" min="0" dir="ltr" value="' + esc(p.stock) + '"/></div>'
       + '  </div>'
       + '  <div class="flex items-center gap-2">'
       + '    <input id="pActive" type="checkbox" class="w-4 h-4 accent-sky-500" ' + (p.is_active ? 'checked' : '') + '/>'
-      + '    <label for="pActive" class="text-[13px] text-navy">منتج نشط (يظهر للعميل)</label>'
+      + '    <label for="pActive" class="text-[13px] text-navy">Ù…Ù†ØªØ¬ Ù†Ø´Ø· (ÙŠØ¸Ù‡Ø± Ù„Ù„Ø¹Ù…ÙŠÙ„)</label>'
       + '  </div>'
       + (isEdit ? '<input type="hidden" id="pId" value="' + esc(p.id) + '"/>' : '')
       + '  <div class="flex gap-2 pt-2">'
-      + '    <button type="submit" class="btn-primary">' + (isEdit ? 'حفظ التعديلات' : 'إضافة المنتج') + '</button>'
-      + '    <button type="button" id="cancelForm" class="btn-outline">إلغاء</button>'
+      + '    <button type="submit" class="btn-primary">' + (isEdit ? 'Ø­ÙØ¸ Ø§Ù„ØªØ¹Ø¯ÙŠÙ„Ø§Øª' : 'Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†ØªØ¬') + '</button>'
+      + '    <button type="button" id="cancelForm" class="btn-outline">Ø¥Ù„ØºØ§Ø¡</button>'
       + '  </div>'
       + '</form>';
   }
 
   function renderList(products) {
     if (products.length === 0) {
-      return '<div class="empty-state"><span class="material-symbols-outlined">inventory_2</span><p class="mt-2 text-[14px]">لا توجد منتجات. أضف أول منتج!</p></div>';
+      return '<div class="empty-state"><span class="material-symbols-outlined">inventory_2</span><p class="mt-2 text-[14px]">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†ØªØ¬Ø§Øª. Ø£Ø¶Ù Ø£ÙˆÙ„ Ù…Ù†ØªØ¬!</p></div>';
     }
     return ''
       + '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">'
@@ -107,13 +108,13 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
             + '      <h3 class="font-ar text-[16px] font-bold text-navy truncate">' + esc(p.name) + '</h3>'
             + (p.sku ? '      <p class="text-[11px] text-slate-400" dir="ltr">' + esc(p.sku) + '</p>' : '')
             + '    </div>'
-            + '    <span class="pill ' + (p.is_active ? 'pill-success' : 'pill-muted') + ' shrink-0">' + (p.is_active ? 'نشط' : 'مخفي') + '</span>'
+            + '    <span class="pill ' + (p.is_active ? 'pill-success' : 'pill-muted') + ' shrink-0">' + (p.is_active ? 'Ù†Ø´Ø·' : 'Ù…Ø®ÙÙŠ') + '</span>'
             + '  </div>'
             + (p.description ? '<p class="text-[13px] text-slate-500 mb-3 line-clamp-2">' + esc(p.description) + '</p>' : '')
             + '  <div class="flex justify-between items-end mt-auto pt-3 border-t" style="border-color:var(--card-border)">'
             + '    <div>'
             + '      <p class="text-[18px] font-bold text-sky-600">' + fmtDZD(p.price) + '</p>'
-            + '      <p class="text-[12px] ' + stockClass + ' font-semibold">المخزون: ' + (p.stock || 0) + '</p>'
+            + '      <p class="text-[12px] ' + stockClass + ' font-semibold">Ø§Ù„Ù…Ø®Ø²ÙˆÙ†: ' + (p.stock || 0) + '</p>'
             + '    </div>'
             + '    <div class="flex gap-1">'
             + '      <button data-id="' + p.id + '" data-action="edit" class="js-edit p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-sky-600">'
@@ -128,13 +129,13 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   async function load() {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المنتجات', '...', ctx)
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª', '...', ctx)
       + '<div class="card p-12"><div class="skeleton h-32"></div></div>';
 
     var res = await window.RahSahl.api.listProducts();
     if (res.error) {
-      document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المنتجات', '', ctx)
-        + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">فشل تحميل المنتجات: ' + esc(res.error.message) + '</p></div>';
+      document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª', '', ctx)
+        + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">ÙØ´Ù„ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª: ' + esc(res.error.message) + '</p></div>';
       return;
     }
     var products = res.data || [];
@@ -145,12 +146,12 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     var activeCount = products.filter(function (p) { return p.is_active; }).length;
     var totalStock = products.reduce(function (sum, p) { return sum + (p.stock || 0); }, 0);
     document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-      'المنتجات', products.length + ' منتج · ' + activeCount + ' نشط · ' + totalStock + ' وحدة في المخزون', ctx
+      'Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª', products.length + ' Ù…Ù†ØªØ¬ Â· ' + activeCount + ' Ù†Ø´Ø· Â· ' + totalStock + ' ÙˆØ­Ø¯Ø© ÙÙŠ Ø§Ù„Ù…Ø®Ø²ÙˆÙ†', ctx
     ) + ''
       + '<div class="flex gap-2 mb-6">'
       + '  <button id="btnNew" class="btn-primary">'
       + '    <span class="material-symbols-outlined text-[18px]">add</span>'
-      + '    منتج جديد'
+      + '    Ù…Ù†ØªØ¬ Ø¬Ø¯ÙŠØ¯'
       + '  </button>'
       + '</div>'
       + '<div id="formSlot"></div>'
@@ -161,7 +162,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
         + '<div class="card p-6 mb-6 border-2 border-sky-200">'
         + '  <h3 class="font-ar text-[16px] font-bold mb-4 flex items-center gap-2">'
         + '    <span class="material-symbols-outlined text-sky-500">add_circle</span>'
-        + '    إضافة منتج جديد'
+        + '    Ø¥Ø¶Ø§ÙØ© Ù…Ù†ØªØ¬ Ø¬Ø¯ÙŠØ¯'
         + '  </h3>'
         + renderForm(null)
         + '</div>';
@@ -176,7 +177,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     document.getElementById('productForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       var btn = e.target.querySelector('button[type="submit"]');
-      btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+      btn.disabled = true; btn.textContent = 'Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø­ÙØ¸...';
       var id = document.getElementById('pId') ? document.getElementById('pId').value : null;
       var payload = {
         name: document.getElementById('pName').value.trim(),
@@ -190,9 +191,9 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
       var res = id
         ? await window.RahSahl.api.updateProduct(id, payload)
         : await window.RahSahl.api.createProduct(payload);
-      btn.disabled = false; btn.textContent = id ? 'حفظ التعديلات' : 'إضافة المنتج';
-      if (res.error) { toast('فشل: ' + res.error.message, 'error'); return; }
-      toast(id ? 'تم تحديث المنتج' : 'تم إضافة المنتج', 'success');
+      btn.disabled = false; btn.textContent = id ? 'Ø­ÙØ¸ Ø§Ù„ØªØ¹Ø¯ÙŠÙ„Ø§Øª' : 'Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†ØªØ¬';
+      if (res.error) { toast('ÙØ´Ù„: ' + res.error.message, 'error'); return; }
+      toast(id ? 'ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ù†ØªØ¬' : 'ØªÙ… Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†ØªØ¬', 'success');
       load();
     });
     var cancel = document.getElementById('cancelForm');
@@ -209,7 +210,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
           + '<div class="card p-6 mb-6 border-2 border-sky-200">'
           + '  <h3 class="font-ar text-[16px] font-bold mb-4 flex items-center gap-2">'
           + '    <span class="material-symbols-outlined text-sky-500">edit</span>'
-          + '    تعديل: ' + esc(product.name)
+          + '    ØªØ¹Ø¯ÙŠÙ„: ' + esc(product.name)
           + '  </h3>'
           + renderForm(product)
           + '</div>';
@@ -220,11 +221,11 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     Array.prototype.forEach.call(document.querySelectorAll('.js-delete'), function (btn) {
       btn.addEventListener('click', async function () {
         var id = btn.getAttribute('data-id');
-        if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
+        if (!confirm('Ù‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ Ù…Ù† Ø­Ø°Ù Ù‡Ø°Ø§ Ø§Ù„Ù…Ù†ØªØ¬ØŸ')) return;
         btn.disabled = true;
         var res = await window.RahSahl.api.deleteProduct(id);
-        if (res.error) { toast('فشل: ' + res.error.message, 'error'); btn.disabled = false; return; }
-        toast('تم حذف المنتج', 'success');
+        if (res.error) { toast('ÙØ´Ù„: ' + res.error.message, 'error'); btn.disabled = false; return; }
+        toast('ØªÙ… Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬', 'success');
         load();
       });
     });

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>المحادثات — RahSahl</title>
+<title>Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª â€” RahSahl</title>
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -27,7 +27,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
 <link href="css/styles.css" rel="stylesheet"/>
 </head>
 <body>
-<nav class="sidenav" id="sidenav"></nav>
+<nav class="sidenav" id="sidebar"></nav>
 <main class="main-content" id="main"></main>
 
 <script src="js/supabase.js"></script>
@@ -40,6 +40,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   var ctx = await window.RahSahl.authGuard.guard();
   if (!ctx) return;
   window.RahSahl.sidebar.boot();
+  window.RahSahl.sidebarCtx = ctx;
   document.getElementById('sidenav').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
 
   function esc(s) {
@@ -52,10 +53,10 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     if (!iso) return '';
     var d = new Date(iso);
     var diff = (Date.now() - d.getTime()) / 1000;
-    if (diff < 60) return 'الآن';
-    if (diff < 3600) return 'منذ ' + Math.floor(diff / 60) + ' د';
-    if (diff < 86400) return 'منذ ' + Math.floor(diff / 3600) + ' س';
-    if (diff < 604800) return 'منذ ' + Math.floor(diff / 86400) + ' يوم';
+    if (diff < 60) return 'Ø§Ù„Ø¢Ù†';
+    if (diff < 3600) return 'Ù…Ù†Ø° ' + Math.floor(diff / 60) + ' Ø¯';
+    if (diff < 86400) return 'Ù…Ù†Ø° ' + Math.floor(diff / 3600) + ' Ø³';
+    if (diff < 604800) return 'Ù…Ù†Ø° ' + Math.floor(diff / 86400) + ' ÙŠÙˆÙ…';
     return d.toLocaleDateString('ar-DZ');
   }
 
@@ -73,13 +74,13 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   // Load all conversations grouped by sender
-  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '...', ctx)
+  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª', '...', ctx)
     + '<div class="card p-12"><div class="skeleton h-32"></div></div>';
 
   var res = await window.RahSahl.api.listConversations({ limit: 200 });
   if (res.error) {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '', ctx)
-      + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">فشل تحميل المحادثات: ' + esc(res.error.message) + '</p></div>';
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª', '', ctx)
+      + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">ÙØ´Ù„ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª: ' + esc(res.error.message) + '</p></div>';
     return;
   }
 
@@ -106,13 +107,13 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   });
 
   if (senders.length === 0) {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '', ctx)
-      + '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[14px]">لا توجد محادثات بعد. ابدأ بإرسال رسالة!</p></div>';
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª', '', ctx)
+      + '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[14px]">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ø­Ø§Ø¯Ø«Ø§Øª Ø¨Ø¹Ø¯. Ø§Ø¨Ø¯Ø£ Ø¨Ø¥Ø±Ø³Ø§Ù„ Ø±Ø³Ø§Ù„Ø©!</p></div>';
     return;
   }
 
   document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-    'المحادثات', senders.length + ' عميل نشط', ctx
+    'Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª', senders.length + ' Ø¹Ù…ÙŠÙ„ Ù†Ø´Ø·', ctx
   ) + ''
     + '<div class="card p-3">'
     + '  <div class="flex flex-col gap-2">' + senders.map(function (s) {
@@ -131,7 +132,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
           + '      </div>'
           + '      <p class="text-[12px] text-slate-500 truncate">' + esc((s.last_message.message || '').substring(0, 80)) + '</p>'
           + '    </div>'
-          + '    <span class="pill pill-info shrink-0">' + s.count + ' رسالة</span>'
+          + '    <span class="pill pill-info shrink-0">' + s.count + ' Ø±Ø³Ø§Ù„Ø©</span>'
           + '  </summary>'
           + '  <div class="border-t border-slate-200 p-4 bg-slate-50 space-y-2">' + s.messages.map(function (m) {
               var isUser = m.role === 'user';
@@ -143,7 +144,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
                 + '  </div>'
                 + '  <div class="flex-1 ' + (isUser ? 'bg-white' : 'bg-sky-50') + ' rounded-xl p-2.5 max-w-[80%]">'
                 + '    <p class="text-[13px] text-navy leading-relaxed">' + esc(m.message) + '</p>'
-                + '    <p class="text-[10px] text-slate-400 mt-1">' + timeAgo(m.created_at) + ' · ' + esc(m.channel) + '</p>'
+                + '    <p class="text-[10px] text-slate-400 mt-1">' + timeAgo(m.created_at) + ' Â· ' + esc(m.channel) + '</p>'
                 + '  </div>'
                 + '</div>';
             }).join('') + '</div>'
