@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الحسابات — RahSahl</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script>
+    tailwind.config={darkMode:'class',theme:{extend:{colors:{navy:'#0b1420',sky:'#0ea5e9',amber:'#f59e0b',teal:'#14b8a6'},fontFamily:{ar:['IBM Plex Sans Arabic','sans-serif'],en:['Inter','sans-serif']},animation:{blob:'blob 7s infinite','fade-up':'fadeUp 0.6s ease-out forwards','scale-in':'scaleIn 0.35s ease-out forwards','slide-up':'slideUp 0.4s ease-out forwards'},keyframes:{blob:{'0%,100%':{transform:'translate(0,0) scale(1)'},'33%':{transform:'translate(30px,-50px) scale(1.1)'},'66%':{transform:'translate(-20px,20px) scale(0.9)'}},fadeUp:{'0%':{opacity:'0',transform:'translateY(30px)'},'100%':{opacity:'1',transform:'translateY(0)'}},scaleIn:{'0%':{opacity:'0',transform:'scale(0.95)'},'100%':{opacity:'1',transform:'scale(1)'}},slideUp:{'0%':{opacity:'0',transform:'translateY(20px)'},'100%':{opacity:'1',transform:'translateY(0)'}}}}}}}
+  </script>
+  <style>
+    *{scroll-behavior:smooth}
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:3px}
+    ::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+    :root{--bg:#f5f0eb;--text:#334155;--heading:#0b1420;--muted:#64748b;--muted-400:#94a3b8;--card:#fff;--card-border:#e2e8f0;--card-hover-border:#cbd5e1;--section-alt:#fff;--nav-bg:rgba(255,255,255,0.85);--nav-border:#e2e8f0;--input-bg:#fff;--input-border:#e2e8f0;--soft-sky:#e0f2fe;--soft-teal:#ccfbf1;--soft-amber:#fef3c7;--chart-grid:#e2e8f0;--social-bg:rgba(0,0,0,0.05);--soft-slate:#f8fafc;--border-light:#e2e8f0;--hover-bg:rgba(14,165,233,0.04)}
+    html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--muted-400:#6b7a8a;--card:#18202d;--card-border:#2d3543;--card-hover-border:#3e4850;--section-alt:#0b1420;--nav-bg:rgba(11,20,32,0.85);--nav-border:#2d3543;--input-bg:#141c29;--input-border:#3e4850;--soft-sky:rgba(14,165,233,0.12);--soft-teal:rgba(20,184,166,0.12);--soft-amber:rgba(245,158,11,0.12);--chart-grid:#2d3543;--social-bg:rgba(255,255,255,0.08);--soft-slate:#141c29;--border-light:#2d3543;--hover-bg:rgba(14,165,233,0.08)}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);transition:background 0.3s,color 0.3s}
+    h1,h2,h3,h4{font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--heading)}
+    .glass-nav{background:var(--nav-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--nav-border)}
+    .card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;transition:all 0.3s ease}
+    .card:hover{box-shadow:0 12px 40px rgba(0,0,0,0.06);border-color:var(--card-hover-border);transform:translateY(-2px)}
+    .btn-primary{background:linear-gradient(135deg,#0ea5e9,#14b8a6);color:#fff;transition:all 0.3s;position:relative;overflow:hidden}
+    .btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#14b8a6,#0ea5e9);opacity:0;transition:opacity 0.3s}
+    .btn-primary:hover::after{opacity:1}
+    .btn-primary:hover{box-shadow:0 8px 25px rgba(14,165,233,0.35);transform:translateY(-2px)}
+    .btn-primary:active{transform:translateY(0)}
+    .btn-primary > *{position:relative;z-index:1}
+    .btn-outline{border:1px solid var(--card-border);color:var(--text);transition:all 0.2s;border-radius:12px}
+    .btn-outline:hover{border-color:#0ea5e9;color:#0ea5e9;background:var(--hover-bg);transform:translateY(-1px)}
+    .btn-ghost{background:transparent;color:var(--muted);transition:all 0.2s;border-radius:12px}
+    .btn-ghost:hover{background:var(--hover-bg);color:var(--heading)}
+    .btn-ghost:active{transform:scale(0.95)}
+    .gradient-text{background:linear-gradient(135deg,#0ea5e9,#14b8a6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.3;animation:blob 7s infinite;pointer-events:none;z-index:0}
+    .grid-dots{position:fixed;inset:0;opacity:0.015;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230ea5e9' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+    .aos{opacity:0;transform:translateY(30px);transition:all 0.6s ease-out}
+    .aos.show{opacity:1;transform:translateY(0)}
+    .aos-delay-1{transition-delay:0.05s}.aos-delay-2{transition-delay:0.1s}.aos-delay-3{transition-delay:0.15s}.aos-delay-4{transition-delay:0.2s}.aos-delay-5{transition-delay:0.25s}.aos-delay-6{transition-delay:0.3s}
+    .text-muted{color:var(--muted)}.text-heading{color:var(--heading)}.bg-section{background:var(--section-alt)}.border-light{border-color:var(--border-light)}.bg-soft-slate{background:var(--soft-slate)}
+    html.dark .text-navy{color:var(--heading)!important}
+    html.dark .text-slate-600{color:var(--text)!important}
+    html.dark .text-slate-400{color:var(--muted-400)!important}
+    html.dark .bg-white{background:var(--card)!important}
+    html.dark .bg-sky-100{background:var(--soft-sky)!important}
+    html.dark .bg-teal-100{background:var(--soft-teal)!important}
+    html.dark .text-sky-700{color:#38bdf8!important}
+    html.dark .text-sky-600{color:#38bdf8!important}
+    html.dark .text-teal-600{color:#2dd4bf!important}
+    html.dark .text-amber-600{color:#fbbf24!important}
+    html.dark .bg-sky-50{background:var(--soft-sky)!important}
+    html.dark .bg-teal-50{background:var(--soft-teal)!important}
+    html.dark .bg-amber-50{background:var(--soft-amber)!important}
+    html.dark .border{border-color:var(--border-light)!important}
+    html.dark input,html.dark select,html.dark textarea{background:var(--input-bg);border-color:var(--input-border);color:var(--text)}
+    html.dark .gradient-text{background:linear-gradient(135deg,#38bdf8,#2dd4bf);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    html.dark .blob{opacity:0.1!important}
+    html.dark .bg-red-50{background:rgba(239,68,68,0.12)!important}
+    html.dark .text-red-400{color:#f87171!important}
+    .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;display:inline-block}
+    .skeleton{background:linear-gradient(90deg,var(--soft-slate) 25%,var(--card-border) 50%,var(--soft-slate) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:12px}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .account-card{cursor:pointer;transition:all 0.3s ease;position:relative;overflow:hidden}
+    .account-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,0.08);border-color:#0ea5e9}
+    .account-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#0ea5e9,#14b8a6);opacity:0;transition:opacity 0.3s}
+    .account-card:hover::before{opacity:1}
+    .form-input{width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text);font-size:14px;outline:none;transition:border-color 0.2s,box-shadow 0.2s}
+    .form-input:focus{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,0.12)}
+    .platform-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 12px;border-radius:999px;font-size:12px;font-weight:600}
+    .modal-overlay{animation:fadeIn 0.25s ease-out forwards}
+    .modal-content{animation:scaleIn 0.3s ease-out forwards}
+    @keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
+    @keyframes scaleIn{0%{opacity:0;transform:scale(0.92)}100%{opacity:1;transform:scale(1)}}
+    .stat-icon{transition:transform 0.3s}
+    .card:hover .stat-icon{transform:scale(1.1) rotate(-5deg)}
+    .empty-state-icon{animation:float 6s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  </style>
+</head>
+<body class="antialiased min-h-screen selection:bg-sky-200/50">
+
+  <div class="grid-dots"></div>
+  <div class="blob w-[500px] h-[500px] bg-sky-300 top-[-15%] left-[-10%]"></div>
+  <div class="blob w-[400px] h-[400px] bg-teal-300 bottom-[-10%] right-[-5%]" style="animation-delay:2s"></div>
+
+  <div class="flex min-h-screen relative z-10">
+    <aside id="sidebar" class="w-64 shrink-0 min-h-screen sticky top-0 flex flex-col border-l" style="background:var(--card);border-color:var(--card-border)"></aside>
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+      <div id="topbar"></div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="card p-5 aos show">
+          <div class="flex items-center gap-3">
+            <div class="stat-icon w-10 h-10 rounded-xl flex items-center justify-center bg-sky-50">
+              <span class="material-symbols-outlined text-sky-600" style="font-variation-settings:'FILL' 1">accounts</span>
+            </div>
+            <div>
+              <p class="text-[13px] text-muted">إجمالي الحسابات</p>
+              <p class="font-bold text-[22px] text-heading"><span class="counter" id="totalAccounts">—</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="card p-5 aos show aos-delay-1">
+          <div class="flex items-center gap-3">
+            <div class="stat-icon w-10 h-10 rounded-xl flex items-center justify-center bg-teal-50">
+              <span class="material-symbols-outlined text-teal-600" style="font-variation-settings:'FILL' 1">check_circle</span>
+            </div>
+            <div>
+              <p class="text-[13px] text-muted">نشط</p>
+              <p class="font-bold text-[22px] text-heading"><span class="counter" id="activeAccounts">—</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="card p-5 aos show aos-delay-2">
+          <div class="flex items-center gap-3">
+            <div class="stat-icon w-10 h-10 rounded-xl flex items-center justify-center bg-amber-50">
+              <span class="material-symbols-outlined text-amber-600" style="font-variation-settings:'FILL' 1">today</span>
+            </div>
+            <div>
+              <p class="text-[13px] text-muted">آخر تحديث</p>
+              <p class="font-bold text-[14px] text-heading" id="lastSync">—</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="card p-4 mb-6 aos">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="relative flex-1 min-w-[200px]">
+            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-muted text-[20px]">search</span>
+            <input id="searchInput" class="form-input pl-3 pr-10" placeholder="ابحث باسم مستخدم أو ID...">
+          </div>
+          <select id="filterPlatform" class="form-input w-auto min-w-[140px]">
+            <option value="all">كل المنصات</option>
+            <option value="netflix">Netflix</option>
+            <option value="crunchyroll">Crunchyroll</option>
+            <option value="spotify">Spotify</option>
+            <option value="tidal">Tidal</option>
+            <option value="canva">Canva</option>
+            <option value="microsoft">Microsoft 365</option>
+          </select>
+          <select id="filterStatus" class="form-input w-auto min-w-[120px]">
+            <option value="all">كل الحالات</option>
+            <option value="active">نشط</option>
+            <option value="expiring">سينتهي قريباً</option>
+            <option value="expired">منتهي</option>
+            <option value="suspended">موقوف</option>
+          </select>
+          <button class="btn-primary px-5 py-2 rounded-xl text-[14px] font-semibold flex items-center gap-1.5" id="btnAddAccount">
+            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1">add</span> إضافة حساب
+          </button>
+        </div>
+      </div>
+
+      <!-- Accounts Grid -->
+      <div id="accountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div class="skeleton h-40"></div>
+        <div class="skeleton h-40"></div>
+        <div class="skeleton h-40"></div>
+        <div class="skeleton h-40"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Account Modal -->
+  <div id="addModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 modal-overlay" style="background:rgba(0,0,0,0.5);backdrop-filter:blur(4px)">
+    <div class="card p-6 w-full max-w-md modal-content" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="font-ar text-[20px] font-bold text-heading">إضافة حساب جديد</h3>
+        <button id="closeModal" class="btn-ghost w-9 h-9 flex items-center justify-center rounded-xl">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="addForm" class="space-y-4">
+        <div>
+          <label class="text-[13px] font-semibold text-heading block mb-1">المنصة</label>
+          <select id="fieldPlatform" class="form-input" required>
+            <option value="">اختر منصة...</option>
+            <option value="netflix">Netflix</option>
+            <option value="crunchyroll">Crunchyroll</option>
+            <option value="spotify">Spotify</option>
+            <option value="tidal">Tidal</option>
+            <option value="canva">Canva</option>
+            <option value="microsoft">Microsoft 365</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-[13px] font-semibold text-heading block mb-1">اسم المستخدم أو البريد</label>
+          <input id="fieldUsername" class="form-input" placeholder="مثال: user@example.com" required>
+        </div>
+        <div>
+          <label class="text-[13px] font-semibold text-heading block mb-1">كلمة المرور</label>
+          <div class="relative">
+            <input id="fieldPassword" type="password" class="form-input pl-10" placeholder="••••••••" required>
+            <button type="button" id="togglePw" class="absolute left-3 top-1/2 -translate-y-1/2 text-muted hover:text-heading transition-colors">
+              <span class="material-symbols-outlined text-[20px]">visibility</span>
+            </button>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[13px] font-semibold text-heading block mb-1">تاريخ الانتهاء</label>
+            <input id="fieldExpiry" type="date" class="form-input">
+          </div>
+          <div>
+            <label class="text-[13px] font-semibold text-heading block mb-1">الملاحظات</label>
+            <input id="fieldNotes" class="form-input" placeholder="اختياري">
+          </div>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="submit" class="btn-primary flex-1 py-2.5 rounded-xl font-semibold text-[14px]">حفظ الحساب</button>
+          <button type="button" id="cancelModal" class="btn-outline px-6 py-2.5 rounded-xl text-[14px]">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { supabaseGuard } from './js/auth-guard.js';
+
+    supabaseGuard(async function (ctx) {
+      const api = window.RahSahl.api;
+      const sid = window.RahSahl.sidebar;
+
+      document.getElementById('sidebar').innerHTML = sid.renderSidebar(ctx);
+      document.getElementById('topbar').innerHTML = sid.renderTopbar('الحسابات', 'إدارة وتنظيم حسابات العملاء', ctx);
+      sid.boot();
+
+      // AOS
+      setTimeout(() => document.querySelectorAll('.aos').forEach(el => el.classList.add('show')), 50);
+
+      // Counter animation
+      function animateCounter(el, target) {
+        if (!el) return;
+        const t = parseInt(target) || 0;
+        if (t === 0) { el.textContent = '0'; return; }
+        let current = 0;
+        const step = Math.max(1, Math.floor(t / 40));
+        const interval = setInterval(() => {
+          current += step;
+          if (current >= t) { current = t; clearInterval(interval); }
+          el.textContent = current.toLocaleString('ar-DZ');
+        }, 25);
+      }
+
+      let allAccounts = [];
+
+      // ---------- Load Accounts ----------
+      async function loadAccounts() {
+        const { data } = await api.listAccounts();
+        allAccounts = data ?? [];
+        renderAccounts(allAccounts);
+        updateStats(allAccounts);
+      }
+
+      function updateStats(accounts) {
+        const total = accounts.length;
+        const active = accounts.filter(a => a.status === 'active').length;
+        animateCounter(document.getElementById('totalAccounts'), total);
+        animateCounter(document.getElementById('activeAccounts'), active);
+        document.getElementById('lastSync').textContent = new Date().toLocaleDateString('ar-DZ', { hour: '2-digit', minute: '2-digit' });
+      }
+
+      function renderAccounts(accounts) {
+        const grid = document.getElementById('accountsGrid');
+        if (!accounts.length) {
+          grid.innerHTML = `<div class="col-span-full card p-12 text-center card-static"><div class="empty-state-icon"><span class="material-symbols-outlined text-[56px] text-muted" style="font-variation-settings:'FILL' 1">account_box</span></div><p class="text-muted text-[16px] mt-3">لا توجد حسابات بعد</p><p class="text-[13px] text-muted-400 mb-4">أضف أول حساب لبدء تنظيم حساباتك</p><button class="btn-primary px-6 py-2.5 rounded-xl text-[14px]" onclick="document.getElementById('btnAddAccount').click()">أضف أول حساب</button></div>`;
+          return;
+        }
+        const platformNames = { netflix: 'Netflix', crunchyroll: 'Crunchyroll', spotify: 'Spotify', tidal: 'Tidal', canva: 'Canva', microsoft: 'Microsoft 365' };
+        const platformColors = { netflix: ['bg-red-50','text-red-600'], crunchyroll: ['bg-orange-50','text-orange-600'], spotify: ['bg-green-50','text-green-600'], tidal: ['bg-sky-100','text-sky-700'], canva: ['bg-purple-50','text-purple-600'], microsoft: ['bg-blue-50','text-blue-600'] };
+        const statusLabels = { active: 'نشط', expiring: 'سينتهي قريباً', expired: 'منتهي', suspended: 'موقوف' };
+        const statusColors = { active: 'bg-teal-100 text-teal-700', expiring: 'bg-amber-100 text-amber-700', expired: 'bg-red-100 text-red-600', suspended: 'bg-soft-slate text-muted' };
+
+        grid.innerHTML = accounts.map((a, i) => {
+          const pc = platformColors[a.platform] || ['bg-sky-50','text-sky-600'];
+          const sc = statusColors[a.status] || 'bg-soft-slate text-muted';
+          return `<div class="card p-5 account-card aos" style="transition-delay:${Math.min(i * 0.03, 0.3)}s">
+            <div class="flex items-center justify-between mb-3">
+              <span class="platform-badge ${pc[0]} ${pc[1]}">${platformNames[a.platform] || a.platform}</span>
+              <span class="badge text-[11px] ${sc}">${statusLabels[a.status] || a.status}</span>
+            </div>
+            <p class="font-semibold text-heading text-[14px] truncate" dir="ltr" style="text-align:right">${a.username || '—'}</p>
+            <p class="text-[13px] text-muted mt-1.5 line-clamp-1">${a.notes || ''}</p>
+            <div class="flex items-center justify-between mt-4 pt-3" style="border-top:1px solid var(--border-light)">
+              <span class="text-[12px] text-muted">${a.expiry_date ? new Date(a.expiry_date).toLocaleDateString('ar-DZ') : '<span class="text-muted-400">بدون تاريخ</span>'}</span>
+              <div class="flex gap-0.5">
+                <button class="btn-ghost w-8 h-8 flex items-center justify-center rounded-lg edit-btn" data-id="${a.id}" title="تعديل"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                <button class="btn-ghost w-8 h-8 flex items-center justify-center rounded-lg text-red-400 hover:!text-red-500 delete-btn" data-id="${a.id}" title="حذف"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+              </div>
+            </div>
+          </div>`;
+        }).join('');
+        // Trigger staggered entrance
+        requestAnimationFrame(() => {
+          grid.querySelectorAll('.aos').forEach((el, i) => {
+            setTimeout(() => el.classList.add('show'), i * 40);
+          });
+        });
+      }
+
+      await loadAccounts();
+
+      // ---------- Search & Filter ----------
+      let filterTimeout;
+      function filterAndRender() {
+        clearTimeout(filterTimeout);
+        filterTimeout = setTimeout(() => {
+          const q = document.getElementById('searchInput').value.toLowerCase();
+          const pf = document.getElementById('filterPlatform').value;
+          const st = document.getElementById('filterStatus').value;
+          let filtered = allAccounts;
+          if (q) filtered = filtered.filter(a => a.username?.toLowerCase().includes(q) || a.id?.toString().includes(q));
+          if (pf !== 'all') filtered = filtered.filter(a => a.platform === pf);
+          if (st !== 'all') filtered = filtered.filter(a => a.status === st);
+          renderAccounts(filtered);
+        }, 200);
+      }
+
+      document.getElementById('searchInput').addEventListener('input', filterAndRender);
+      document.getElementById('filterPlatform').addEventListener('change', filterAndRender);
+      document.getElementById('filterStatus').addEventListener('change', filterAndRender);
+
+      // ---------- Modal ----------
+      const modal = document.getElementById('addModal');
+      document.getElementById('btnAddAccount').addEventListener('click', () => modal.classList.remove('hidden'));
+      document.getElementById('closeModal').addEventListener('click', () => modal.classList.add('hidden'));
+      document.getElementById('cancelModal').addEventListener('click', () => modal.classList.add('hidden'));
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+      document.getElementById('togglePw').addEventListener('click', () => {
+        const pw = document.getElementById('fieldPassword');
+        const icon = document.getElementById('togglePw').querySelector('.material-symbols-outlined');
+        if (pw.type === 'password') { pw.type = 'text'; icon.textContent = 'visibility_off'; }
+        else { pw.type = 'password'; icon.textContent = 'visibility'; }
+      });
+
+      document.getElementById('addForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+          platform: document.getElementById('fieldPlatform').value,
+          username: document.getElementById('fieldUsername').value,
+          password: document.getElementById('fieldPassword').value,
+          expiry_date: document.getElementById('fieldExpiry').value || null,
+          notes: document.getElementById('fieldNotes').value || null,
+        };
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> جاري الحفظ...</span>';
+        const { error } = await api.createAccount(payload);
+        btn.disabled = false; btn.innerHTML = 'حفظ الحساب';
+        if (error) { alert('فشل الحفظ: ' + error.message); return; }
+        modal.classList.add('hidden');
+        e.target.reset();
+        await loadAccounts();
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RahSahl — وكيل ذكاء اصطناعي يبيع نيابة عنك</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={darkMode:'class',theme:{extend:{colors:{navy:'#0b1420',sky:'#0ea5e9',amber:'#f59e0b',teal:'#14b8a6'},fontFamily:{ar:['IBM Plex Sans Arabic','sans-serif'],en:['Inter','sans-serif']},animation:{blob:'blob 7s infinite',float:'float 6s ease-in-out infinite','fade-up':'fadeUp 0.6s ease-out forwards'},keyframes:{blob:{'0%,100%':{transform:'translate(0,0) scale(1)'},'33%':{transform:'translate(30px,-50px) scale(1.1)'},'66%':{transform:'translate(-20px,20px) scale(0.9)'}},float:{'0%,100%':{transform:'translateY(0)'},'50%':{transform:'translateY(-12px)'}},fadeUp:{'0%':{opacity:'0',transform:'translateY(30px)'},'100%':{opacity:'1',transform:'translateY(0)'}}}}}}}
+</script>
+<style>
+*{scroll-behavior:smooth}
+:root{--bg:#f5f0eb;--text:#334155;--heading:#0b1420;--muted:#64748b;--muted-400:#94a3b8;--card:#fff;--card-border:#e2e8f0;--card-hover-border:#cbd5e1;--section-alt:#fff;--nav-bg:rgba(255,255,255,0.85);--nav-border:#e2e8f0;--input-bg:#fff;--input-border:#e2e8f0;--soft-sky:#e0f2fe;--soft-teal:#ccfbf1;--soft-amber:#fef3c7;--chart-grid:#e2e8f0;--social-bg:rgba(0,0,0,0.05);--soft-slate:#f8fafc;--border-light:#e2e8f0;--hover-bg:rgba(14,165,233,0.04)}
+html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--muted-400:#6b7a8a;--card:#18202d;--card-border:#2d3543;--card-hover-border:#3e4850;--section-alt:#0b1420;--nav-bg:rgba(11,20,32,0.85);--nav-border:#2d3543;--input-bg:#141c29;--input-border:#3e4850;--soft-sky:rgba(14,165,233,0.12);--soft-teal:rgba(20,184,166,0.12);--soft-amber:rgba(245,158,11,0.12);--chart-grid:#2d3543;--social-bg:rgba(255,255,255,0.08);--soft-slate:#141c29;--border-light:#2d3543;--hover-bg:rgba(14,165,233,0.08)}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);transition:background 0.3s,color 0.3s}
+h1,h2,h3,h4{font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--heading)}
+.glass-nav{background:var(--nav-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--nav-border);transition:background 0.3s}
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;transition:all 0.3s ease}
+.card:hover{box-shadow:0 12px 40px rgba(0,0,0,0.06);border-color:var(--card-hover-border);transform:translateY(-2px)}
+.btn-primary{background:linear-gradient(135deg,#0ea5e9,#14b8a6);color:#fff;transition:all 0.3s}
+.btn-primary:hover{box-shadow:0 8px 25px rgba(14,165,233,0.3);transform:translateY(-2px)}
+.btn-outline{border:1px solid var(--card-border);color:var(--text);transition:all 0.2s}
+.btn-outline:hover{border-color:#0ea5e9;color:#0ea5e9;background:var(--hover-bg)}
+.gradient-text{background:linear-gradient(135deg,#0ea5e9,#14b8a6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.4;animation:blob 7s infinite}
+.social-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:14px;transition:all 0.3s;background:var(--social-bg)}
+.social-icon:hover{transform:scale(1.15)}
+.scroll-hide::-webkit-scrollbar{display:none}
+.scroll-hide{-ms-overflow-style:none;scrollbar-width:none}
+.aos{opacity:0;transform:translateY(30px);transition:all 0.6s ease-out}
+.aos.show{opacity:1;transform:translateY(0)}
+.aos-delay-1{transition-delay:0.1s}
+.aos-delay-2{transition-delay:0.2s}
+.aos-delay-3{transition-delay:0.3s}
+.aos-delay-4{transition-delay:0.4s}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height 0.35s ease}
+.faq-item.open .faq-answer{max-height:300px}
+.faq-item.open .faq-icon{transform:rotate(180deg)}
+.faq-icon{transition:transform 0.3s}
+#darkToggle{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid var(--card-border);background:var(--card);cursor:pointer;transition:all 0.2s;color:var(--muted)}
+#darkToggle:hover{color:var(--heading);border-color:var(--card-hover-border)}
+.text-muted{color:var(--muted)}.text-heading{color:var(--heading)}.text-muted-400{color:var(--muted-400)}.bg-section{background:var(--section-alt)}.border-light{border-color:var(--border-light)}.bg-soft-slate{background:var(--soft-slate)}
+html.dark .text-navy{color:var(--heading)!important}
+html.dark .text-slate-600{color:var(--text)!important}
+html.dark .text-slate-400{color:var(--muted-400)!important}
+html.dark .border-slate-200{border-color:var(--border-light)!important}
+html.dark .bg-sky-100{background:var(--soft-sky)!important}
+html.dark .bg-teal-100{background:var(--soft-teal)!important}
+html.dark .bg-amber-100{background:var(--soft-amber)!important}
+html.dark .bg-white{background:var(--card)!important}
+html.dark nav a img{filter:brightness(0) invert(1)}
+html.dark .gradient-text{background:linear-gradient(135deg,#38bdf8,#2dd4bf);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+html.dark .bg-slate-200{background:var(--border-light)!important}
+html.dark .shadow-sky-200\/50{--tw-shadow-color:rgba(0,0,0,0.4)!important}
+html.dark .shadow-sky-100\/50{--tw-shadow-color:rgba(0,0,0,0.4)!important}
+html.dark img[src*="logo.svg"]{filter:brightness(0) invert(1)}
+html.dark .hero-bg{background:linear-gradient(135deg,#0d1a2a,#0b1420,#0d1a2a)!important}
+html.dark .hero-blob{opacity:0.12!important}
+.scroll-wrap{padding:1.25rem 2.5rem}
+</style>
+</head>
+<body class="antialiased selection:bg-sky-200/50">
+<!-- Navbar -->
+<nav class="fixed top-0 w-full z-50 glass-nav" dir="rtl">
+  <div class="max-w-6xl mx-auto flex items-center justify-between h-16 px-4 md:px-8">
+    <a class="flex items-center gap-3 shrink-0" href="index.html">
+      <img alt="RahSahl" class="h-10 md:h-12 w-auto" src="assets/logo.svg"/>
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a class="text-slate-600 hover:text-sky-600 transition-colors text-[15px] font-medium" href="index.html#features">المميزات</a>
+      <a class="text-slate-600 hover:text-sky-600 transition-colors text-[15px] font-medium" href="index.html#how">كيف يعمل</a>
+      <a class="text-slate-600 hover:text-sky-600 transition-colors text-[15px] font-medium" href="index.html#pricing">شحن الرصيد</a>
+      <a class="text-slate-600 hover:text-sky-600 transition-colors text-[15px] font-medium" href="index.html#faq">الأسئلة</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="darkToggle" title="الوضع الليلي"><span class="material-symbols-outlined dark:hidden text-[20px]">dark_mode</span><span class="material-symbols-outlined hidden dark:inline text-[20px]">light_mode</span></button>
+      <a class="text-slate-600 hover:text-navy transition-colors text-[15px] font-medium" href="login.html">تسجيل الدخول</a>
+      <a class="btn-primary text-[15px] font-semibold px-5 py-2.5 rounded-full" href="signup.html">ابدأ مجاناً</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-sky-50 via-white to-amber-50 hero-bg"></div>
+  <div class="blob hero-blob w-[500px] h-[500px] bg-sky-300 top-[-10%] left-[-5%]"></div>
+  <div class="blob hero-blob w-[400px] h-[400px] bg-teal-300 bottom-[-10%] right-[-5%]" style="animation-delay:2s"></div>
+  <div class="blob hero-blob w-[300px] h-[300px] bg-amber-300 top-[40%] right-[30%]" style="animation-delay:4s"></div>
+  <div class="absolute inset-0 opacity-[0.015]" style="background-image:url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230ea5e9' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);pointer-events:none"></div>
+  <div class="relative z-10 text-center max-w-4xl mx-auto px-4">
+
+    <h1 class="font-ar text-[40px] md:text-[56px] leading-tight font-bold text-navy mb-5 aos show aos-delay-1">وكيل ذكاء اصطناعي <br/><span class="gradient-text">يبيع نيابة عنك</span></h1>
+    <p class="text-[18px] md:text-[20px] text-muted max-w-2xl mx-auto mb-8 leading-relaxed aos show aos-delay-2">يرد على عملاءك عبر واتساب، إنستغرام وفيسبوك — 24/7، بالعربية والفرنسية والإنجليزية. بدون تعقيد. <strong class="text-navy">راه ساهل.</strong></p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center aos show aos-delay-3">
+      <a class="btn-primary text-[16px] font-semibold px-7 py-3.5 rounded-full flex items-center gap-2 shadow-lg shadow-sky-200/50" href="signup.html">ابدأ التجربة المجانية <span class="material-symbols-outlined text-[20px]">arrow_forward</span></a>
+      <a class="btn-outline text-[16px] font-semibold px-7 py-3.5 rounded-full flex items-center gap-2" href="#how"><span class="material-symbols-outlined text-[20px]">play_circle</span> شاهد كيف يعمل</a>
+    </div>
+    <div class="mt-10 flex justify-center gap-8 aos show aos-delay-4">
+      <div class="text-center"><div class="font-ar text-[40px] md:text-[48px] font-bold text-sky-500">24/7</div><div class="text-[15px] text-muted font-medium">متاح</div></div>
+      <div class="w-px bg-slate-200"></div>
+      <div class="text-center"><div class="font-ar text-[40px] md:text-[48px] font-bold text-sky-500">3</div><div class="text-[15px] text-muted font-medium">منصات</div></div>
+      <div class="w-px bg-slate-200"></div>
+      <div class="text-center"><div class="font-ar text-[40px] md:text-[48px] font-bold text-sky-500">4</div><div class="text-[15px] text-muted font-medium">لغات</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Partners Bar (static) -->
+<div class="border-y border-slate-200 bg-white">
+  <div class="max-w-6xl mx-auto px-4 py-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 md:gap-x-16">
+    <div class="flex items-center gap-3">
+      <div class="social-icon bg-[#25D366]/10"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div>
+      <span class="text-[15px] font-semibold text-slate-600">WhatsApp</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="social-icon" style="background:linear-gradient(135deg,rgba(240,147,51,0.15),rgba(188,24,136,0.15))"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="#bc1888"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div>
+      <span class="text-[15px] font-semibold text-slate-600">Instagram</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="social-icon bg-[#1877F2]/10"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div>
+      <span class="text-[15px] font-semibold text-slate-600">Facebook</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="social-icon bg-[#00B2FF]/10"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="#00B2FF"><path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652V24l4.086-2.242c1.09.301 2.246.464 3.442.464 6.627 0 12-4.974 12-11.111C24 4.975 18.627 0 12 0zm1.193 14.963l-3.056-3.259-5.963 3.259L10.732 8.2l3.131 3.259L19.752 8.2l-6.559 6.763z"/></svg></div>
+      <span class="text-[15px] font-semibold text-slate-600">Messenger</span>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<section id="features" class="py-24 md:py-32 px-4 max-w-6xl mx-auto">
+  <div class="text-center mb-16 aos">
+    <h2 class="font-ar text-[36px] md:text-[40px] font-bold text-navy mb-4">لماذا راه ساهل؟</h2>
+    <p class="text-[18px] md:text-[20px] text-muted max-w-xl mx-auto">حلول أتمتة متقدمة مصممة خصيصاً للسوق العربي</p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="card p-8 text-center aos aos-delay-1">
+      <div class="w-14 h-14 rounded-2xl bg-sky-100 flex items-center justify-center mx-auto mb-5"><span class="material-symbols-outlined text-sky-500 text-3xl" style="font-variation-settings:'FILL'1">language</span></div>
+      <h3 class="font-ar text-[22px] font-semibold text-navy mb-3">فهم متعدد اللغات</h3>
+      <p class="text-[15px] text-muted leading-relaxed">يفهم العربية، الدارجة، الفرنسية والإنجليزية. يتعامل مع نصوص وصوت.</p>
+    </div>
+    <div class="card p-8 text-center aos aos-delay-2">
+      <div class="w-14 h-14 rounded-2xl bg-teal-100 flex items-center justify-center mx-auto mb-5"><span class="material-symbols-outlined text-teal-500 text-3xl" style="font-variation-settings:'FILL'1">schedule</span></div>
+      <h3 class="font-ar text-[22px] font-semibold text-navy mb-3">عمل متواصل 24/7</h3>
+      <p class="text-[15px] text-muted leading-relaxed">لا تفوت أي زبون. رد فوري في أي وقت، حتى خارج أوقات الدوام.</p>
+    </div>
+    <div class="card p-8 text-center aos aos-delay-3">
+      <div class="w-14 h-14 rounded-2xl bg-sky-100 flex items-center justify-center mx-auto mb-5"><span class="material-symbols-outlined text-sky-500 text-3xl" style="font-variation-settings:'FILL'1">dashboard</span></div>
+      <h3 class="font-ar text-[22px] font-semibold text-navy mb-3">لوحة تحكم شاملة</h3>
+      <p class="text-[15px] text-muted leading-relaxed">إدارة مركزية للطلبات، المبيعات، وتحليلات دقيقة لنمو متجرك.</p>
+    </div>
+    <div class="card p-8 text-center aos aos-delay-4">
+      <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center mx-auto mb-5"><span class="material-symbols-outlined text-amber-500 text-3xl" style="font-variation-settings:'FILL'1">auto_awesome</span></div>
+      <h3 class="font-ar text-[22px] font-semibold text-navy mb-3">تعامل ذكي مع الوسائط</h3>
+      <p class="text-[15px] text-muted leading-relaxed">تحليل صور المنتجات والرسائل الصوتية وتحويل للبشري عند الحاجة.</p>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section id="how" class="py-24 md:py-32 px-4 bg-white">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16 aos">
+      <h2 class="font-ar text-[36px] md:text-[40px] font-bold text-navy mb-4">كيف يعمل؟</h2>
+      <p class="text-[18px] md:text-[20px] text-muted max-w-xl mx-auto">3 خطوات فقط وتبدأ الأتمتة</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+      <div class="card p-8 text-center relative aos aos-delay-1">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-sky-500 to-teal-500 text-white text-[18px] font-bold flex items-center justify-center mx-auto -mt-12 mb-5 shadow-lg shadow-sky-200/50">1</div>
+        <div class="w-14 h-14 mx-auto mb-4 text-sky-500"><span class="material-symbols-outlined text-4xl">link</span></div>
+        <h3 class="font-ar text-[22px] font-semibold text-navy mb-3">ربط القنوات</h3>
+        <p class="text-[15px] text-muted">اربط واتساب، إنستغرام وفيسبوك بنقرة واحدة.</p>
+      </div>
+      <div class="hidden md:block absolute top-1/3 left-[15%] right-[15%] h-0.5 bg-gradient-to-r from-sky-200 via-teal-200 to-amber-200 -z-10"></div>
+      <div class="card p-8 text-center relative aos aos-delay-2">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-sky-500 to-teal-500 text-white text-[18px] font-bold flex items-center justify-center mx-auto -mt-12 mb-5 shadow-lg shadow-sky-200/50">2</div>
+        <div class="w-14 h-14 mx-auto mb-4 text-teal-500"><span class="material-symbols-outlined text-4xl">smart_toy</span></div>
+        <h3 class="font-ar text-[22px] font-semibold text-navy mb-3">تخصيص الوكيل</h3>
+        <p class="text-[15px] text-muted">اختر نبرة الرد واللغات التي تناسب متجرك.</p>
+      </div>
+      <div class="card p-8 text-center relative aos aos-delay-3">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-sky-500 to-teal-500 text-white text-[18px] font-bold flex items-center justify-center mx-auto -mt-12 mb-5 shadow-lg shadow-sky-200/50">3</div>
+        <div class="w-14 h-14 mx-auto mb-4 text-amber-500"><span class="material-symbols-outlined text-4xl">rocket_launch</span></div>
+        <h3 class="font-ar text-[22px] font-semibold text-navy mb-3">انطلاق الأتمتة</h3>
+        <p class="text-[15px] text-muted">الوكيل يبدأ الرد على العملاء وزيادة مبيعاتك فوراً.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing" class="py-24 md:py-32 px-4">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-12 aos">
+      <h2 class="font-ar text-[36px] md:text-[40px] font-bold text-navy mb-4">أختر باقتك <span class="gradient-text">وانطلق</span></h2>
+      <p class="text-[18px] md:text-[20px] text-muted max-w-xl mx-auto">نظامنا ينمو معاك. كل باقة تشمل رصيد نقط، ميزات تلقائية وكامل الدعم.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div class="card p-6 aos aos-delay-1 bg-white">
+        <div class="flex items-center gap-3 mb-5"><div class="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center"><span class="material-symbols-outlined text-sky-500">rocket</span></div><div><h3 class="font-ar text-[20px] font-bold text-navy">بداية</h3><p class="text-[13px] text-slate-400">للمتاجر الصغيرة</p></div></div>
+        <div class="mb-6"><span class="font-ar text-[40px] font-bold text-navy">500</span><span class="text-[16px] text-slate-400 mr-1">د.ج/شهر</span></div>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span><strong>500 نقطة</strong> شهرياً</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span>منصة وحدة (واتساب أو إنستغرام)</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span>لوحة تحكم أساسية</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-400"><span class="material-symbols-outlined text-slate-300 text-[18px]">cancel</span>ردود وسائط متعددة</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-400"><span class="material-symbols-outlined text-slate-300 text-[18px]">cancel</span>دعم priority</li>
+        </ul>
+        <a class="block w-full btn-outline text-[14px] font-semibold py-2.5 rounded-xl text-center" href="signup.html">اشترك الآن</a>
+      </div>
+      <div class="card p-6 aos aos-delay-2 relative border-sky-200 shadow-xl shadow-sky-100/50 bg-white scale-105"><div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-[11px] px-3 py-1 rounded-full font-bold">الأكثر مبيعاً</div>
+        <div class="flex items-center gap-3 mb-5"><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-teal-500 flex items-center justify-center"><span class="material-symbols-outlined text-white">trending_up</span></div><div><h3 class="font-ar text-[20px] font-bold text-navy">نمو</h3><p class="text-[13px] text-slate-400">للمتاجر المتوسطة</p></div></div>
+        <div class="mb-6"><span class="font-ar text-[40px] font-bold text-navy">8,500</span><span class="text-[16px] text-slate-400 mr-1">د.ج/شهر</span></div>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span><strong>5,000 نقطة</strong> شهرياً</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span>جميع المنصات (واتساب + إنستغرام + فيسبوك)</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span>لوحة تحكم متقدمة + تحليلات</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span>ردود وسائط متعددة</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span>دعم priority</li>
+        </ul>
+        <a class="block w-full btn-primary text-[14px] font-semibold py-2.5 rounded-xl text-center" href="signup.html">اختر الباقة</a>
+      </div>
+      <div class="card p-6 aos aos-delay-3 bg-white">
+        <div class="flex items-center gap-3 mb-5"><div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center"><span class="material-symbols-outlined text-amber-500">workspace_premium</span></div><div><h3 class="font-ar text-[20px] font-bold text-navy">غير محدود</h3><p class="text-[13px] text-slate-400">للمتاجر الكبيرة</p></div></div>
+        <div class="mb-6"><span class="font-ar text-[40px] font-bold text-navy">14,500</span><span class="text-[16px] text-slate-400 mr-1">د.ج/شهر</span></div>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span><strong>نقاط غير محدودة</strong> — بدون حدود</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span>جميع المنصات (واتساب + إنستغرام + فيسبوك)</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span>لوحة تحكم كاملة + تقارير مخصصة</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span>وكيل مخصص + تدريب على منتجاتك</li>
+          <li class="flex items-center gap-3 text-[14px] text-slate-600"><span class="material-symbols-outlined text-teal-500 text-[18px]" style="font-variation-settings:'FILL'1">check_circle</span>دعم VIP 24/7</li>
+        </ul>
+        <a class="block w-full btn-outline text-[14px] font-semibold py-2.5 rounded-xl text-center" href="signup.html">اختر الباقة</a>
+      </div>
+    </div>
+    <div class="text-center mt-6"><p class="text-[14px] text-slate-400">جميع الباقات تشمل تحديثات مجانية ودعم فني. النقاط غير المستهلكة تترحل للشهر الموالي.</p></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="py-24 md:py-32 px-4 bg-white">
+  <div class="max-w-4xl mx-auto">
+    <div class="text-center mb-14 aos">
+      <h2 class="font-ar text-[36px] md:text-[40px] font-bold text-navy mb-4">الأسئلة الشائعة</h2>
+      <p class="text-[18px] md:text-[20px] text-muted">أهم ما يسأل عنه التجار قبل البدء</p>
+    </div>
+    <div class="space-y-4">
+      <div class="faq-item card p-5 cursor-pointer aos aos-delay-1"><div class="flex justify-between items-center"><h3 class="font-ar text-[18px] font-semibold text-navy">كم من الوقت يستغرق إعداد الوكيل؟</h3><span class="material-symbols-outlined faq-icon text-slate-400">expand_more</span></div><div class="faq-answer"><p class="text-[15px] text-muted mt-4 leading-relaxed">لا يتعدى 10 دقائق. سجل حسابك، اختر المنصات وطريقة الرد، والوكيل يبدأ العمل فوراً. يمكنك تعديل أي إعداد لاحقاً من لوحة التحكم.</p></div></div>
+      <div class="faq-item card p-5 cursor-pointer aos aos-delay-2"><div class="flex justify-between items-center"><h3 class="font-ar text-[18px] font-semibold text-navy">هل يتعامل الوكيل مع عدة لغات في محادثة واحدة؟</h3><span class="material-symbols-outlined faq-icon text-slate-400">expand_more</span></div><div class="faq-answer"><p class="text-[15px] text-muted mt-4 leading-relaxed">نعم! إذا كتب العميل بالدارجة ثم انتقل للفرنسية، الوكيل يتابع دون مشكلة. كأنه موظف بشري يتقن كل اللغات التي تدرب عليها.</p></div></div>
+      <div class="faq-item card p-5 cursor-pointer aos aos-delay-3"><div class="flex justify-between items-center"><h3 class="font-ar text-[18px] font-semibold text-navy">هل يمكنني تخصيص الردود لكل منتج على حدة؟</h3><span class="material-symbols-outlined faq-icon text-slate-400">expand_more</span></div><div class="faq-answer"><p class="text-[15px] text-muted mt-4 leading-relaxed">طبعاً. من لوحة التحكم تقدر تضيف معلومات كل منتج، والأسعار، والتوفر. الوكيل يستخدم هذه المعلومات ليرد بدقة على استفسارات العملاء. تقدر ترفع كتالوج كامل أو تربط متجرك الإلكتروني.</p></div></div>
+      <div class="faq-item card p-5 cursor-pointer aos aos-delay-4"><div class="flex justify-between items-center"><h3 class="font-ar text-[18px] font-semibold text-navy">كيف أتأكد أن الوكيل يرد بشكل صحيح؟</h3><span class="material-symbols-outlined faq-icon text-slate-400">expand_more</span></div><div class="faq-answer"><p class="text-[15px] text-muted mt-4 leading-relaxed">لوحة التحكم تظهر لك كل المحادثات والردود في الوقت الحقيقي. تقدر تشوف سجل كل محادثة، معدل الرضا، وعدد التحويلات للبشري. أي رد يبدو غير مناسب، تقدر تعدله يدوياً والوكيل يتعلم من التعديل.</p></div></div>
+      <div class="faq-item card p-5 cursor-pointer aos aos-delay-5"><div class="flex justify-between items-center"><h3 class="font-ar text-[18px] font-semibold text-navy">ماذا يحدث لبياناتي إذا أوقفت الاشتراك؟</h3><span class="material-symbols-outlined faq-icon text-slate-400">expand_more</span></div><div class="faq-answer"><p class="text-[15px] text-muted mt-4 leading-relaxed">جميع بياناتك تبقى محفوظة لمدة 90 يوماً. تقدر ترجع لأي وقت وتستأنف من حيث توقفت. بيانات العملاء والمحادثات والتقارير كلها في أمان ولا تُمسح إلا بطلب صريح منك.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-20 px-4 aos">
+  <div class="max-w-3xl mx-auto text-center card p-12 md:p-16 relative overflow-hidden bg-gradient-to-br from-sky-500 via-sky-400 to-teal-400 border-0">
+    <div class="absolute inset-0 opacity-10" style="background-image:url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);pointer-events:none"></div>
+    <div class="relative z-10"><h2 class="font-ar text-[32px] md:text-[40px] font-bold text-white mb-5">جهز وكيلك الذكي اليوم</h2><p class="text-[18px] text-white/80 mb-8 max-w-lg mx-auto">آلاف التجار العرب وثقوا في راه ساهل لأتمتة مبيعاتهم. انضم إليهم الآن.</p><a class="inline-flex items-center gap-2 bg-white text-sky-600 font-semibold text-[16px] px-8 py-3.5 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all" href="signup.html">ابدأ التجربة المجانية <span class="material-symbols-outlined">arrow_forward</span></a></div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-slate-200 bg-white py-10 px-4">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+    <div class="flex items-center gap-3"><img alt="RahSahl" class="h-8 w-auto" src="assets/logo.svg"/><span class="text-[14px] text-slate-400">© 2026 RahSahl. جميع الحقوق محفوظة.</span></div>
+    <div class="flex gap-6">
+      <a class="text-[14px] text-muted hover:text-sky-600 transition-colors" href="privacy.html">الخصوصية</a>
+      <a class="text-[14px] text-muted hover:text-sky-600 transition-colors" href="terms.html">الشروط</a>
+      <a class="text-[14px] text-muted hover:text-sky-600 transition-colors" href="contact.html">اتصل بنا</a>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.faq-item').forEach(function(e){e.addEventListener('click',function(){this.classList.toggle('open')})});
+var observer=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting){e.target.classList.add('show')}})},{threshold:0.1});
+document.querySelectorAll('.aos').forEach(function(e){observer.observe(e)});
+(function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('rahsahl-dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('rahsahl-dark',d.classList.contains('dark')?'true':'false')})})();
+</script>
+</body></html>

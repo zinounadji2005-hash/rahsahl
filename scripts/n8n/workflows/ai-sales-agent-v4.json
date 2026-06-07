@@ -1,0 +1,513 @@
+{
+  "name": "AI Sales Agent v4 — Production",
+  "nodes": [
+    {
+      "id": "wh-1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "v1/social-inbound",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "hmac-1",
+      "name": "HMAC Verify",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const data = $input.item.json;\nconst body = data.body || data;\nconst headers = data.headers || {};\n\nconst sig = headers['x-hub-signature-256']\n         || headers['X-Hub-Signature-256']\n         || headers['x-signature']\n         || null;\n\nif (!body.shop_id) {\n  throw new Error('shop_id required for HMAC verification');\n}\nif (!sig) {\n  throw new Error('Missing signature header (x-hub-signature-256 or x-signature)');\n}\n\nconst bodyStr = JSON.stringify(body);\n\nconst result = await this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/functions/v1/verify-hmac',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY'\n  },\n  body: JSON.stringify({ shop_id: body.shop_id, signature: sig, body: bodyStr }),\n  timeout: 8000,\n  json: true\n});\n\nif (!result.valid) {\n  throw new Error('HMAC verification failed: ' + (result.reason || 'unknown'));\n}\n\nreturn { json: { ...body, _signature_check: 'verified' } };"
+      }
+    },
+    {
+      "id": "val-1",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const body = $input.item.json;\nconst errors = [];\n\nif (!body.shop_id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.shop_id)) {\n  errors.push('shop_id must be a valid UUID');\n}\nif (!body.sender_id || typeof body.sender_id !== 'string' || body.sender_id.length > 256) {\n  errors.push('sender_id required, max 256 chars');\n}\nif (!body.message || typeof body.message !== 'string' || body.message.length < 1 || body.message.length > 4096) {\n  errors.push('message required, 1..4096 chars');\n}\nconst channel = (body.channel || 'instagram').toLowerCase();\nif (!['instagram', 'whatsapp', 'telegram', 'messenger'].includes(channel)) {\n  errors.push('channel must be one of: instagram, whatsapp, telegram, messenger');\n}\n\nif (errors.length > 0) {\n  throw new Error('Validation failed: ' + errors.join('; '));\n}\n\nreturn {\n  json: {\n    shop_id: body.shop_id,\n    sender_id: body.sender_id,\n    message: body.message.trim(),\n    channel: channel,\n    received_at: new Date().toISOString(),\n    execution_id: $execution.id\n  }\n};"
+      }
+    },
+    {
+      "id": "log-val",
+      "name": "Log Validation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const v = $('Validate Input').first().json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: v.execution_id,\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    stage: 'validation',\n    status: 'success'\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
+      }
+    },
+    {
+      "id": "load-bs",
+      "name": "Load Bot Settings",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        200
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const v = $json;\nconst r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/bot_settings?shop_id=eq.' + v.shop_id + '&select=prompt_context,target_dialect,is_active,currency,shipping_fee,delivery_cities,response_style,business_hours,fallback_message&limit=1',\n  headers: { 'apikey': 'SUPABASE_SERVICE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { ...v, bot_settings: r[0] || null } };"
+      }
+    },
+    {
+      "id": "load-conv",
+      "name": "Load Conversation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        400
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const v = $json;\nlet history = [];\ntry {\n  const r = await this.helpers.httpRequest({\n    method: 'GET',\n    url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/conversations?select=role,message,created_at&shop_id=eq.' + v.shop_id + '&sender_id=eq.' + encodeURIComponent(v.sender_id) + '&order=created_at.desc&limit=10',\n    headers: { 'apikey': 'SUPABASE_SERVICE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_KEY' },\n    json: true,\n    timeout: 5000\n  });\n  history = (r || []).reverse();  // oldest first\n} catch (e) {\n  history = [];\n}\nreturn { json: { ...v, conversation_history: history } };"
+      }
+    },
+    {
+      "id": "fallback-ctx",
+      "name": "Fallback Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const settingsArr = ($('Load Bot Settings').first() || {}).json;\nreturn {\n  json: {\n    settings: Array.isArray(settingsArr) ? settingsArr[0] : settingsArr,\n    conversations: []\n  }\n};"
+      }
+    },
+    {
+      "id": "norm-1",
+      "name": "Normalize With Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const validated = $('Validate Input').first().json;\nconst ctx = $('Fallback Context').first().json;\nconst settingsArr = ctx.settings;\nconst convArr     = ctx.conversations || [];\n\nconst settings = settingsArr;\n\nconst defaultSettings = {\n  prompt_context: 'You are a sales assistant for a small business. Help customers with their orders politely. Reply in Algerian Darija.',\n  target_dialect: 'Algerian Darija',\n  is_active: true\n};\nconst cfg = settings || defaultSettings;\n\nif (cfg.is_active === false) {\n  throw new Error('Bot is currently disabled for this shop');\n}\n\nconst history = Array.isArray(convArr) ? convArr.reverse() : [];\nconst historyText = history.length === 0\n  ? '(no prior conversation)'\n  : history.map(h => (h.role === 'user' ? 'Customer' : 'You') + ': ' + h.message).join('\\n');\n\nconst userPrompt = '[Shop context]\\n' + cfg.prompt_context + '\\n\\n'\n  + '[Conversation history (oldest -> newest)]\\n' + historyText + '\\n\\n'\n  + '[Current message]\\n'\n  + 'Channel: ' + validated.channel + '\\n'\n  + 'Customer says: \"' + validated.message + '\"\\n\\n'\n  + 'Reply in ' + cfg.target_dialect + ' with a JSON object containing:\\n'\n  + '{\\n'\n  + '  \"order_complete\": boolean (true only if customer_name, phone, location_city, product_requested and quantity are ALL present),\\n'\n  + '  \"customer_name\": string or null,\\n'\n  + '  \"phone\": string or null,\\n'\n  + '  \"location_city\": string or null,\\n'\n  + '  \"product_requested\": string or null,\\n'\n  + '  \"quantity\": integer (default 1),\\n'\n  + '  \"reply_text\": \"your friendly reply in Darija\"\\n'\n  + '}\\n'\n  + 'If anything is missing, set order_complete=false and ask for it in reply_text. ONLY return the JSON object, nothing else.';\n\nreturn {\n  json: {\n    shop_id:        validated.shop_id,\n    sender_id:      validated.sender_id,\n    message:        validated.message,\n    channel:        validated.channel,\n    received_at:    validated.received_at,\n    execution_id:   validated.execution_id,\n    system_message: cfg.prompt_context + '\\n\\nIMPORTANT: Always reply in JSON format with the extracted order fields.',\n    dialect:        cfg.target_dialect,\n    history:        history,\n    user_prompt:    userPrompt,\n    model:          'llama-3.3-70b-versatile',\n    messages_json:  JSON.stringify([\n      { role: 'system', content: cfg.prompt_context + '\\n\\nIMPORTANT: Always reply in JSON format.' },\n      { role: 'user',   content: userPrompt }\n    ])\n  }\n};"
+      }
+    },
+    {
+      "id": "agent-1",
+      "name": "Sales Agent (Groq)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const ctx = $('Build Groq Body').first().json;\nconst groqBody = JSON.parse(ctx.groq_body_json);\n\ntry {\n  const response = await this.helpers.httpRequest({\n    method: 'POST',\n    url: 'https://api.groq.com/openai/v1/chat/completions',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': 'Bearer GROQ_API_KEY'\n    },\n    body: groqBody,\n    json: true,\n    timeout: 15000\n  });\n  return { json: response };\n} catch (err) {\n  throw new Error('Groq failed: ' + (err.message || 'unknown'));\n}"
+      }
+    },
+    {
+      "id": "build-groq",
+      "name": "Build Groq Body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1450,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const ctx = $('Normalize With Context').first().json;\nconst groqBody = {\n  model: 'llama-3.3-70b-versatile',\n  messages: [\n    { role: 'system', content: ctx.system_message },\n    { role: 'user',   content: ctx.user_prompt }\n  ],\n  temperature: 0.1,\n  max_tokens: 1024,\n  response_format: { type: 'json_object' }\n};\n// Also forward ctx fields that downstream nodes need\nreturn {\n  json: Object.assign({}, ctx, { groq_body_json: JSON.stringify(groqBody) })\n};"
+      }
+    },
+    {
+      "id": "enrich-1",
+      "name": "Enrich Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const groqOut = $input.item.json;\nconst ctx = $('Normalize With Context').first().json;\n\n// Groq returns { choices: [{ message: { content: \"...\" } }] }\nlet parsed;\ntry {\n  const content = groqOut.choices?.[0]?.message?.content || '{}';\n  parsed = typeof content === 'string' ? JSON.parse(content) : content;\n} catch (e) {\n  parsed = {};\n}\n\nconst clean = (v) => (v === null || v === undefined || v === 'null' || v === '') ? null : v;\nconst toInt = (v) => { const n = parseInt(v, 10); return isNaN(n) ? 1 : n; };\n\nreturn {\n  json: {\n    order_complete:    parsed.order_complete === true,\n    customer_name:     clean(parsed.customer_name),\n    phone:             clean(parsed.phone),\n    location_city:     clean(parsed.location_city),\n    product_requested: clean(parsed.product_requested),\n    quantity:          toInt(parsed.quantity),\n    reply_text:        parsed.reply_text || 'شكرا، راني نخدم على طلبك...',\n    channel:           ctx.channel,\n    sender_id:         ctx.sender_id,\n    shop_id:           ctx.shop_id,\n    execution_id:      ctx.execution_id,\n    user_message:      ctx.message\n  }\n};"
+      }
+    },
+    {
+      "id": "save-turn",
+      "name": "Save Turn",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2040,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const v = $json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/conversations',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    role: 'assistant',\n    message: v.reply_text || ''\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
+      }
+    },
+    {
+      "id": "restore-ctx",
+      "name": "Restore Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2150,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const enrich = $('Enrich Output').first().json;\nreturn {\n  json: {\n    execution_id:      enrich.execution_id || 'no-exec-id',\n    shop_id:           enrich.shop_id || 'no-shop',\n    sender_id:         enrich.sender_id || 'no-sender',\n    channel:           enrich.channel || 'instagram',\n    customer_name:     enrich.customer_name,\n    phone:             enrich.phone,\n    location_city:     enrich.location_city,\n    product_requested: enrich.product_requested,\n    quantity:          enrich.quantity,\n    quantity_str:      String(enrich.quantity || 1),\n    reply_text:        enrich.reply_text,\n    order_complete:    enrich.order_complete\n  }\n};"
+      }
+    },
+    {
+      "id": "if-1",
+      "name": "Order Complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2260,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "is-complete",
+              "leftValue": "={{ $json.order_complete }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "ins-ord",
+      "name": "Insert Order",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2480,
+        200
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const v = $json;\nconst qty = parseInt(v.quantity, 10) || parseInt(v.quantity_str, 10) || 1;\nconst resp = await this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/orders',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=representation'\n  },\n  body: {\n    shop_id:           v.shop_id,\n    sender_id:         v.sender_id,\n    customer_name:     v.customer_name || 'Unknown',\n    phone:             v.phone || '',\n    location_city:     v.location_city || '',\n    product_requested: v.product_requested || '',\n    quantity:          qty,\n    order_status:      'pending'\n  },\n  json: true,\n  timeout: 10000\n});\nreturn { json: { ...v, order_id: (resp[0] && resp[0].id) || null, quantity: qty, order_status: 'pending' } };"
+      }
+    },
+    {
+      "id": "log-ord",
+      "name": "Log Order Captured",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2700,
+        200
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const v = $json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: v.execution_id,\n    shop_id:      v.shop_id,\n    sender_id:    v.sender_id,\n    stage:        'order_captured',\n    status:       'success',\n    payload:      { order_id: v.order_id || null, customer: v.customer_name, product: v.product_requested, qty: v.quantity }\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
+      }
+    },
+    {
+      "id": "rsp-ok",
+      "name": "Confirm Order",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2920,
+        200
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "status": "order_captured",
+          "reply": "={{ $json.reply_text || \"شكرا! تم استلام طلبك، راني نتواصل معاك قريبا ✅\" }}",
+          "channel": "={{ $json.channel }}",
+          "sender_id": "={{ $json.sender_id }}",
+          "product_requested": "={{ $json.product_requested }}",
+          "quantity": "={{ $json.quantity }}",
+          "customer_name": "={{ $json.customer_name }}",
+          "location_city": "={{ $json.location_city }}"
+        }
+      }
+    },
+    {
+      "id": "log-ni",
+      "name": "Log Needs Info",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2480,
+        400
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const v = $json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: v.execution_id,\n    shop_id:      v.shop_id,\n    sender_id:    v.sender_id,\n    stage:        'needs_more_info',\n    status:       'info',\n    payload:      { reply: v.reply_text || '', missing: v.missing_fields || [] }\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
+      }
+    },
+    {
+      "id": "rsp-ask",
+      "name": "Ask For Info",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2700,
+        400
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "status": "needs_more_info",
+          "reply": "={{ $json.reply_text || \"ممكن تعاود توضحلنا شنو تحب تطلب؟\" }}",
+          "channel": "={{ $json.channel }}",
+          "sender_id": "={{ $json.sender_id }}"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HMAC Verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HMAC Verify": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Log Validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Validation": {
+      "main": [
+        [
+          {
+            "node": "Load Bot Settings",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Load Conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Bot Settings": {
+      "main": [
+        [
+          {
+            "node": "Fallback Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fallback Context": {
+      "main": [
+        [
+          {
+            "node": "Normalize With Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize With Context": {
+      "main": [
+        [
+          {
+            "node": "Build Groq Body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Groq Body": {
+      "main": [
+        [
+          {
+            "node": "Sales Agent (Groq)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales Agent (Groq)": {
+      "main": [
+        [
+          {
+            "node": "Enrich Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrich Output": {
+      "main": [
+        [
+          {
+            "node": "Save Turn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Turn": {
+      "main": [
+        [
+          {
+            "node": "Restore Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore Context": {
+      "main": [
+        [
+          {
+            "node": "Order Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order Complete?": {
+      "main": [
+        [
+          {
+            "node": "Insert Order",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Needs Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Order": {
+      "main": [
+        [
+          {
+            "node": "Log Order Captured",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Order Captured": {
+      "main": [
+        [
+          {
+            "node": "Confirm Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Needs Info": {
+      "main": [
+        [
+          {
+            "node": "Ask For Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

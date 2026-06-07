@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>تسجيل الدخول - راه ساهل</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/auth.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>tailwind.config={darkMode:'class',theme:{extend:{colors:{navy:'#0b1420',sky:'#0ea5e9',amber:'#f59e0b',teal:'#14b8a6'},fontFamily:{ar:['IBM Plex Sans Arabic','sans-serif'],en:['Inter','sans-serif']}}}}</script>
+<style>
+body{font-family:'Inter',sans-serif;background:var(--bg,#f5f0eb);color:var(--text,#334155)}
+h1,h2,h3,h4{font-family:'IBM Plex Sans Arabic',sans-serif}
+.glass-panel{background:var(--card,#fff);border:1px solid var(--card-border,#e2e8f0);border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.04)}
+.btn-primary{background:linear-gradient(135deg,#0ea5e9,#14b8a6);color:#fff;transition:all 0.3s}
+.btn-primary:hover{box-shadow:0 8px 25px rgba(14,165,233,0.3);transform:translateY(-1px)}
+.input-focus{border:1px solid var(--card-border,#e2e8f0);transition:all 0.2s}
+.input-focus:focus{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,0.12);outline:none}
+input{background:var(--input-bg,#fff)!important}
+html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--card:#18202d;--card-border:#2d3543;--section-alt:#0b1420;--nav-bg:rgba(11,20,32,0.85);--input-bg:#141c29;--input-border:#3e4850}
+html.dark .brand-side{background:linear-gradient(135deg,#0d1a2a,#0b1420)!important}
+html.dark .brand-side .blur-circle{background:rgba(14,165,233,0.08)!important}
+html.dark .brand-side img{filter:brightness(0) invert(1)}
+#darkToggle{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid var(--card-border,#e2e8f0);background:var(--card,#fff);cursor:pointer;transition:all 0.2s;color:var(--muted,#94a3b8)}
+#darkToggle:hover{color:var(--heading,#0b1420);border-color:var(--card-hover-border,var(--card-border))}
+@media(max-width:767px){.brand-side{display:none}}
+</style>
+</head>
+<body class="min-h-screen flex antialiased selection:bg-sky-200/50" style="background:var(--bg,#f5f0eb);color:var(--text,#334155)">
+<div class="brand-side w-1/2 flex flex-col justify-center p-12 relative overflow-hidden" style="background:var(--section-alt,linear-gradient(135deg,#f0f9ff,#fff,#f0fdfa));border-left:1px solid var(--card-border,#e2e8f0)">
+  <div class="blur-circle absolute top-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full blur-[120px]" style="background:rgba(14,165,233,0.15)"></div>
+  <div class="blur-circle absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[120px]" style="background:rgba(20,184,166,0.1)"></div>
+  <div class="relative z-10 max-w-md mx-auto">
+    <img alt="RahSahl" class="h-16 w-auto mb-8" src="assets/logo.svg"/>
+    <h1 class="font-ar text-[40px] font-bold mb-4 leading-tight" style="color:var(--heading,#0b1420)">أتمتة مبيعاتك <br/><span class="text-sky-500">بكل سهولة</span></h1>
+    <p class="text-[18px] mb-8" style="color:var(--muted,#64748b)">وكيل ذكاء اصطناعي يبيع نيابة عنك عبر واتساب، إنستغرام، وفيسبوك — بالعربية والفرنسية والإنجليزية.</p>
+    <div class="flex flex-col gap-5">
+      <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sky-500" style="background:var(--card,#fff);box-shadow:0 1px 3px rgba(0,0,0,0.06)"><span class="material-symbols-outlined">auto_awesome</span></div><div><h3 class="text-[15px] font-semibold" style="color:var(--heading,#0b1420)">ذكاء اصطناعي متعدد اللغات</h3><p class="text-[14px]" style="color:var(--muted,#64748b)">يفهم العربية، الدارجة، الفرنسية والإنجليزية</p></div></div>
+      <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-teal-500" style="background:var(--card,#fff);box-shadow:0 1px 3px rgba(0,0,0,0.06)"><span class="material-symbols-outlined">rocket_launch</span></div><div><h3 class="text-[15px] font-semibold" style="color:var(--heading,#0b1420)">انطلاقة سريعة</h3><p class="text-[14px]" style="color:var(--muted,#64748b)">إعداد حسابك في دقائق والبدء فوراً</p></div></div>
+      <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-amber-500" style="background:var(--card,#fff);box-shadow:0 1px 3px rgba(0,0,0,0.06)"><span class="material-symbols-outlined">insights</span></div><div><h3 class="text-[15px] font-semibold" style="color:var(--heading,#0b1420)">تقارير دقيقة</h3><p class="text-[14px]" style="color:var(--muted,#64748b)">تتبع أداء مبيعاتك وتحليلات لحظية</p></div></div>
+    </div>
+  </div>
+</div>
+<main class="w-full md:w-1/2 flex items-center justify-center p-6 md:p-10 relative">
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0"><div class="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full blur-[100px]" style="background:rgba(14,165,233,0.1)"></div></div>
+  <div class="w-full max-w-[400px] z-10">
+    <div class="flex justify-center mb-6"><button id="darkToggle" title="الوضع الليلي"><span class="material-symbols-outlined dark:hidden text-[20px]">dark_mode</span><span class="material-symbols-outlined hidden dark:inline text-[20px]">light_mode</span></button></div>
+    <div class="flex justify-center mb-6 md:hidden"><img alt="RahSahl" class="h-14 w-auto" src="assets/logo.svg"/></div>
+    <div class="glass-panel p-6 md:p-8">
+      <div class="text-center mb-6"><h1 class="font-ar text-[26px] font-bold mb-2" style="color:var(--heading,#0b1420)">مرحباً بعودتك</h1><p class="text-[15px]" style="color:var(--muted,#64748b)">قم بتسجيل الدخول للوصول إلى لوحة التحكم</p></div>
+      <div id="auth-error" class="hidden bg-red-50 border border-red-200 text-red-600 text-[14px] px-4 py-2.5 rounded-lg mb-4"></div>
+      <form class="space-y-5" id="login-form">
+        <div><label class="block text-[14px] font-semibold mb-1.5" for="email" style="color:var(--heading,#475569)">البريد الإلكتروني</label><div class="relative"><span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color:var(--muted,#94a3b8)">mail</span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-11 pl-3" id="email" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" dir="ltr" placeholder="name@company.com" required="" type="email"/></div></div>
+        <div><div class="flex justify-between items-center mb-1.5"><label class="block text-[14px] font-semibold" for="password" style="color:var(--heading,#475569)">كلمة المرور</label><a class="text-[13px] text-sky-600 hover:text-sky-700 transition-colors" href="#">نسيت كلمة المرور؟</a></div><div class="relative"><span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color:var(--muted,#94a3b8)">lock</span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-11 pl-3" id="password" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" dir="ltr" placeholder="••••••••" required="" type="password"/></div></div>
+        <button class="w-full btn-primary text-[15px] font-semibold rounded-xl py-3 flex justify-center items-center gap-2" type="submit"><span>تسجيل الدخول</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span></button>
+      </form>
+
+      <div class="mt-6 text-center"><p class="text-[14px]" style="color:var(--muted,#64748b)">ليس لديك حساب؟ <a class="text-[15px] font-semibold text-sky-600 hover:text-sky-700 transition-colors" href="signup.html">إنشاء حساب جديد</a></p></div>
+    </div>
+    <div class="mt-4 text-center"><p class="text-[13px]" style="color:var(--muted,#94a3b8)">بتسجيل الدخول، أنت توافق على <a class="hover:text-[var(--heading)] transition-colors underline" style="color:var(--muted,#94a3b8)" href="terms.html">شروط الخدمة</a> و <a class="hover:text-[var(--heading)] transition-colors underline" style="color:var(--muted,#94a3b8)" href="privacy.html">سياسة الخصوصية</a></p></div>
+  </div>
+</main>
+<script>
+document.getElementById('login-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var email=document.getElementById('email').value.trim(),password=document.getElementById('password').value;
+  if(!email||!password){document.getElementById('auth-error').textContent='يرجى إدخال البريد الإلكتروني وكلمة المرور';document.getElementById('auth-error').classList.remove('hidden');return}
+  var btn=this.querySelector('button[type="submit"]');btn.disabled=true;btn.innerHTML='<span class="material-symbols-outlined animate-spin">sync</span>';
+  RahSahlAuth.login(email,password).then(function(r){
+    if(r.data.user)window.location.href='dashboard/'
+  }).catch(function(e){
+    document.getElementById('auth-error').textContent=e.message==='Invalid login credentials'?'بريد إلكتروني أو كلمة مرور غير صحيحة':e.message;
+    document.getElementById('auth-error').classList.remove('hidden');
+    btn.disabled=false;btn.innerHTML='تسجيل الدخول<span class="material-symbols-outlined text-[18px]">arrow_forward</span>'
+  })
+});
+
+// Honor ?next= for post-login redirect
+var nextUrl = new URLSearchParams(window.location.search).get('next');
+
+RahSahlAuth.session().then(function(s){if(s)window.location.href = nextUrl || 'dashboard/'});
+(function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('rahsahl-dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('rahsahl-dark',d.classList.contains('dark')?'true':'false')})})();
+</script>
+</body></html>

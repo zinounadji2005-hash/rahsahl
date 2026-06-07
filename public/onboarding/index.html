@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>تهيئة حسابك - RahSahl</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/auth.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>tailwind.config={darkMode:'class',theme:{extend:{colors:{navy:'#0b1420',sky:'#0ea5e9',amber:'#f59e0b',teal:'#14b8a6'},fontFamily:{ar:['IBM Plex Sans Arabic','sans-serif'],en:['Inter','sans-serif']}}}}</script>
+<style>
+body{font-family:'Inter',sans-serif;background:var(--bg,#f5f0eb);color:var(--text,#334155)}
+h1,h2,h3,h4{font-family:'IBM Plex Sans Arabic',sans-serif}
+.card{background:var(--card,#fff);border:1px solid var(--card-border,#e2e8f0);border-radius:16px}
+.btn-primary{background:linear-gradient(135deg,#0ea5e9,#14b8a6);color:#fff;transition:all 0.3s}
+.btn-primary:hover{box-shadow:0 8px 25px rgba(14,165,233,0.3);transform:translateY(-1px)}
+.platform-card{cursor:pointer;transition:all 0.2s;border:1px solid var(--card-border,#e2e8f0);background:var(--card,#fff)}
+.platform-card:hover{border-color:#0ea5e9;box-shadow:0 0 20px rgba(14,165,233,0.1)}
+.platform-selected{border-color:#0ea5e9;background:rgba(14,165,233,0.04)}
+.tone-btn{cursor:pointer;transition:all 0.2s;border:1px solid var(--card-border,#e2e8f0);background:var(--card,#fff)}
+.tone-btn:hover{border-color:#0ea5e9}
+.tone-selected{border-color:#0ea5e9;background:rgba(14,165,233,0.04)}
+.bar-fill{transition:width 0.4s ease-in-out}
+.step{display:none}
+.step.active{display:block}
+#darkToggle{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--card-border,#e2e8f0);background:var(--card,#fff);cursor:pointer;transition:all 0.2s;color:var(--muted,#94a3b8)}
+#darkToggle:hover{color:var(--heading,#0b1420);border-color:var(--card-hover-border,var(--card-border))}
+html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--card:#18202d;--card-border:#2d3543;--input-bg:#141c29;--input-border:#3e4850;--section-alt:#0b1420;--soft-slate:#141c29}
+html.dark .bg-slate-50{background:var(--soft-slate,#f8fafc)!important}
+html.dark .bg-slate-100{background:var(--soft-slate,#f8fafc)!important}
+html.dark .border-slate-200{border-color:var(--card-border,#e2e8f0)!important}
+html.dark .text-slate-500{color:var(--muted,#64748b)!important}
+html.dark .text-slate-600{color:var(--heading,#cbd5e1)!important}
+html.dark .text-navy{color:var(--heading,#f1f5f9)!important}
+html.dark .bg-white{background:var(--card,#18202d)!important}
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6 md:p-10 relative overflow-hidden antialiased selection:bg-sky-200/50" style="background:var(--bg,#f5f0eb);color:var(--text,#334155)">
+<div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+  <div class="absolute top-[-10%] right-[-5%] w-96 h-96 rounded-full blur-[100px]" style="background:rgba(14,165,233,0.15)"></div>
+  <div class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full blur-[120px]" style="background:rgba(20,184,166,0.1)"></div>
+</div>
+<header class="w-full max-w-4xl flex justify-between items-center mb-8">
+  <div class="flex items-center gap-3"><img alt="RahSahl" class="h-10 w-auto" src="../assets/logo.svg"/><span class="font-ar text-[22px] font-bold text-sky-600">RahSahl</span></div>
+  <div class="flex items-center gap-3"><button id="darkToggle" title="الوضع الليلي"><span class="material-symbols-outlined dark:hidden text-[18px]">dark_mode</span><span class="material-symbols-outlined hidden dark:inline text-[18px]">light_mode</span></button><button id="skipBtn" class="transition-colors text-[14px] font-semibold flex items-center gap-1" style="color:var(--muted,#64748b)">تخطي <span class="material-symbols-outlined text-[16px]">arrow_forward</span></button></div>
+</header>
+<main class="w-full max-w-4xl card p-6 md:p-8 relative overflow-hidden">
+  <div class="mb-8">
+    <h1 class="font-ar text-[28px] md:text-[32px] font-bold text-navy mb-2">إعداد وكيلك الذكي</h1>
+    <p class="text-[16px] text-slate-500">خطوات بسيطة لتخصيص مساعدك الآلي وبدء الأتمتة.</p>
+    <div class="mt-6 flex items-center gap-3"><div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-sky-500 to-teal-500 rounded-full bar-fill" id="progressBar" style="width:33%"></div></div><span class="text-[13px] font-medium text-slate-400 whitespace-nowrap" id="stepLabel">الخطوة 1 من 3</span></div>
+  </div>
+  <div class="step active" id="step1">
+    <h2 class="font-ar text-[24px] font-bold text-navy mb-3">ربط قنوات التواصل</h2>
+    <p class="text-[15px] text-slate-500 mb-6">اختر المنصات التي تريد تفعيل الوكيل عليها.</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div class="platform-card platform-selected flex flex-col items-center justify-center p-6 rounded-xl relative overflow-hidden" data-platform="whatsapp"><div class="absolute top-3 right-3 text-sky-500"><span class="material-symbols-outlined">check_circle</span></div><div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-4" style="background:rgba(37,211,102,0.12)"><svg class="w-7 h-7" fill="#25D366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div><span class="text-[15px] font-semibold text-navy">واتساب</span></div>
+      <div class="platform-card flex flex-col items-center justify-center p-6 rounded-xl relative overflow-hidden" data-platform="instagram"><div class="absolute top-3 right-3 text-sky-500 opacity-0"><span class="material-symbols-outlined">check_circle</span></div><div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-4" style="background:linear-gradient(135deg,#f09433,#bc1888);opacity:0.12"><svg class="w-7 h-7" fill="#bc1888" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div><span class="text-[15px] font-semibold text-navy">إنستغرام</span></div>
+      <div class="platform-card flex flex-col items-center justify-center p-6 rounded-xl relative overflow-hidden" data-platform="facebook"><div class="absolute top-3 right-3 text-sky-500 opacity-0"><span class="material-symbols-outlined">check_circle</span></div><div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-4" style="background:rgba(24,119,242,0.12)"><svg class="w-7 h-7" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div><span class="text-[15px] font-semibold text-navy">فيسبوك</span></div>
+    </div>
+  </div>
+  <div class="step" id="step2">
+    <h2 class="font-ar text-[24px] font-bold text-navy mb-3">شخصية الوكيل الذكي</h2>
+    <p class="text-[15px] text-slate-500 mb-6">اختر نبرة الرد واللغات التي يتحدث بها وكيلك.</p>
+    <div class="space-y-6">
+      <div><label class="block text-[15px] font-semibold text-slate-600 mb-4">نبرة الرد</label><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="tone-btn tone-selected p-5 rounded-xl text-center" data-tone="professional"><span class="material-symbols-outlined text-3xl text-sky-500 mb-2">badge</span><h4 class="text-[15px] font-semibold text-navy">مهنية</h4><p class="text-[13px] text-slate-500 mt-1">ردود رسمية محترفة</p></div><div class="tone-btn p-5 rounded-xl text-center" data-tone="friendly"><span class="material-symbols-outlined text-3xl text-amber-500 mb-2">tag_faces</span><h4 class="text-[15px] font-semibold text-navy">ودية</h4><p class="text-[13px] text-slate-500 mt-1">ردود عفوية قريبة</p></div><div class="tone-btn p-5 rounded-xl text-center" data-tone="balanced"><span class="material-symbols-outlined text-3xl text-teal-500 mb-2">balance</span><h4 class="text-[15px] font-semibold text-navy">متوازنة</h4><p class="text-[13px] text-slate-500 mt-1">خليط من المهنية والود</p></div></div></div>
+      <div><label class="block text-[15px] font-semibold text-slate-600 mb-4">اللغات</label><div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-sky-300 transition-colors"><input data-lang="ar" checked class="w-4 h-4 accent-sky-500" type="checkbox"/><span class="text-[14px] text-slate-600">العربية</span></label><label class="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-sky-300 transition-colors"><input data-lang="darija" checked class="w-4 h-4 accent-sky-500" type="checkbox"/><span class="text-[14px] text-slate-600">الدارجة الجزائرية</span></label><label class="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-sky-300 transition-colors"><input data-lang="fr" class="w-4 h-4 accent-sky-500" type="checkbox"/><span class="text-[14px] text-slate-600">الفرنسية</span></label><label class="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-sky-300 transition-colors"><input data-lang="en" class="w-4 h-4 accent-sky-500" type="checkbox"/><span class="text-[14px] text-slate-600">الإنجليزية</span></label></div></div>
+    </div>
+  </div>
+  <div class="step" id="step3">
+    <h2 class="font-ar text-[24px] font-bold text-navy mb-3">مراجعة وتفعيل</h2>
+    <p class="text-[15px] text-slate-500 mb-6">راجع الإعدادات قبل تفعيل وكيلك الذكي.</p>
+    <div class="space-y-3 mb-8">
+      <div class="p-4 bg-slate-50 rounded-xl flex justify-between items-center"><span class="text-[14px] text-slate-500">المنصات المحددة</span><span class="text-[15px] font-semibold text-navy" id="reviewPlatforms">واتساب</span></div>
+      <div class="p-4 bg-slate-50 rounded-xl flex justify-between items-center"><span class="text-[14px] text-slate-500">نبرة الرد</span><span class="text-[15px] font-semibold text-navy" id="reviewTone">مهنية</span></div>
+      <div class="p-4 bg-slate-50 rounded-xl flex justify-between items-center"><span class="text-[14px] text-slate-500">اللغات</span><span class="text-[15px] font-semibold text-navy" id="reviewLanguages">العربية, الدارجة</span></div>
+      <div class="p-4 bg-slate-50 rounded-xl flex justify-between items-center"><span class="text-[14px] text-slate-500">الحالة</span><span class="text-[13px] font-semibold text-teal-600 bg-teal-50 px-3 py-1 rounded-lg">جاهز للتفعيل</span></div>
+    </div>
+  </div>
+  <div class="flex justify-between items-center pt-6 border-t border-slate-200">
+    <button id="prevBtn" class="text-slate-500 hover:text-navy text-[14px] font-semibold opacity-50 cursor-not-allowed px-5 py-2 rounded-xl transition-colors">السابق</button>
+    <button id="nextBtn" class="btn-primary text-[14px] font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2">متابعة <span class="material-symbols-outlined text-[16px]">arrow_back</span></button>
+  </div>
+</main>
+<script>
+RahSahlAuth.requireAuth('../login.html');
+var currentStep=1,selectedPlatforms=['whatsapp'],selectedTone='professional';
+var selectedLanguages=['ar','darija'];
+
+function updateStep(){
+  document.querySelectorAll('.step').forEach(function(e){e.classList.remove('active')});
+  document.getElementById('step'+currentStep).classList.add('active');
+  document.getElementById('progressBar').style.width=(currentStep*33)+'%';
+  document.getElementById('stepLabel').textContent='الخطوة '+currentStep+' من 3';
+  document.getElementById('prevBtn').classList.toggle('opacity-50',currentStep===1);
+  document.getElementById('prevBtn').classList.toggle('cursor-not-allowed',currentStep===1);
+  if(currentStep===3)document.getElementById('nextBtn').innerHTML='تفعيل الوكيل <span class="material-symbols-outlined text-[16px]">rocket_launch</span>';
+  else document.getElementById('nextBtn').innerHTML='متابعة <span class="material-symbols-outlined text-[16px]">arrow_back</span>';
+  document.getElementById('reviewPlatforms').textContent=selectedPlatforms.map(function(p){return{whatsapp:'واتساب',instagram:'إنستغرام',facebook:'فيسبوك'}[p]||p}).join(', ');
+  document.getElementById('reviewTone').textContent={professional:'مهنية',friendly:'ودية',balanced:'متوازنة'}[selectedTone]||selectedTone;
+  document.getElementById('reviewLanguages').textContent=selectedLanguages.map(function(l){return{ar:'العربية',darija:'الدارجة',fr:'الفرنسية',en:'الإنجليزية'}[l]||l}).join(', ');
+}
+document.querySelectorAll('.platform-card').forEach(function(card){
+  card.addEventListener('click',function(){
+    this.classList.toggle('platform-selected');
+    var icon=this.querySelector('.absolute');
+    if(this.classList.contains('platform-selected')){icon.classList.remove('opacity-0');icon.classList.add('opacity-100')}else{icon.classList.add('opacity-0');icon.classList.remove('opacity-100')}
+    selectedPlatforms=Array.from(document.querySelectorAll('.platform-card.platform-selected')).map(function(e){return e.dataset.platform})
+  })
+});
+document.querySelectorAll('.tone-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.tone-btn').forEach(function(b){b.classList.remove('tone-selected')});
+    this.classList.add('tone-selected');selectedTone=this.dataset.tone
+  })
+});
+document.querySelectorAll('input[data-lang]').forEach(function(cb){
+  cb.addEventListener('change',function(){
+    selectedLanguages=Array.from(document.querySelectorAll('input[data-lang]:checked')).map(function(e){return e.dataset.lang});
+  })
+});
+
+document.getElementById('nextBtn').addEventListener('click',async function(){
+  if(currentStep===3){
+    var btn=this;
+    btn.innerHTML='<span class="material-symbols-outlined animate-spin">sync</span>';btn.disabled=true;
+    try {
+      var user=await RahSahlAuth.session().then(function(s){return s?s.user:null});
+      if(!user){window.location.href='../login.html';return}
+      var c=RahSahlAuth.init();
+      // 1) Save bot_settings — map form fields to actual DB columns
+      var langToDialect={ar:'Arabic',darija:'Algerian Darija',fr:'French',en:'English'};
+      var botPayload={
+        response_style:selectedTone,
+        target_dialect:langToDialect[selectedLanguages[0]]||'Algerian Darija',
+        is_active:true,
+        updated_at:new Date().toISOString()
+      };
+      var sRes=await c.from('bot_settings').upsert(Object.assign({shop_id:user.id},botPayload),{onConflict:'shop_id'});
+      if(sRes.error)throw sRes.error;
+      // 2) Mark onboarded_at
+      var uRes=await c.from('clients_shops').update({onboarded_at:new Date().toISOString()}).eq('id',user.id);
+      if(uRes.error)throw uRes.error;
+      btn.innerHTML='<span class="material-symbols-outlined text-[18px]">check</span> تم التفعيل!';
+      setTimeout(function(){window.location.href='../dashboard/'},800);
+    } catch(e){
+      btn.innerHTML='فشل: '+(e.message||'خطأ')+' <span class="material-symbols-outlined text-[16px]">error</span>';
+      btn.disabled=false;
+      setTimeout(function(){updateStep()},2500);
+    }
+    return;
+  }
+  currentStep++;updateStep()
+});
+document.getElementById('prevBtn').addEventListener('click',function(){if(currentStep>1){currentStep--;updateStep()}});
+document.getElementById('skipBtn').addEventListener('click',function(){window.location.href='../dashboard/'});
+(function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('rahsahl-dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('rahsahl-dark',d.classList.contains('dark')?'true':'false')})})();
+</script>
+</body></html>

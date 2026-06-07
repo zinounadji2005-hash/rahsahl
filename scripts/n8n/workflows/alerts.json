@@ -1,0 +1,252 @@
+{
+  "name": "Alerts v1 — Health Monitor",
+  "nodes": [
+    {
+      "id": "al-sched",
+      "name": "Every 5 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        150
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "al-wh",
+      "name": "Test Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        450
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "v1/alerts-test",
+        "responseMode": "onReceived",
+        "responseData": "allEntries",
+        "options": {}
+      }
+    },
+    {
+      "id": "al-stats",
+      "name": "Get Success Rate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        150
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/v_success_rate?order=hour.desc&limit=3',\n  headers: { 'apikey': 'SUPABASE_SERVICE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { type: 'success_rate', data: r } };"
+      }
+    },
+    {
+      "id": "al-lat",
+      "name": "Get Latency",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/v_avg_latency_per_stage',\n  headers: { 'apikey': 'SUPABASE_SERVICE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { type: 'latency', data: r } };"
+      }
+    },
+    {
+      "id": "al-dlq",
+      "name": "Get DLQ",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        450
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/v_dlq_summary',\n  headers: { 'apikey': 'SUPABASE_SERVICE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { type: 'dlq', data: r } };"
+      }
+    },
+    {
+      "id": "al-analyze",
+      "name": "Analyze",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const items = $input.all();\n\nlet stats = [], latency = [], dlq = [];\nfor (const item of items) {\n  const d = item.json;\n  if (d && d.type === 'success_rate') stats = d.data || [];\n  else if (d && d.type === 'latency') latency = d.data || [];\n  else if (d && d.type === 'dlq') dlq = d.data || [];\n}\n\nconst statsArr   = Array.isArray(stats)   ? stats   : [stats];\nconst latencyArr = Array.isArray(latency) ? latency : [latency];\nconst dlqArr     = Array.isArray(dlq)     ? dlq     : [dlq];\n\nconst totalSamples = statsArr.reduce((a, b) => a + (b.total_count || 0), 0);\nconst totalSuccess = statsArr.reduce((a, b) => a + (b.success_count || 0), 0);\nconst successPct   = totalSamples > 0 ? (totalSuccess / totalSamples) * 100 : 100;\nconst maxP95       = latencyArr.reduce((m, x) => Math.max(m, x.p95_ms || 0), 0);\nconst pending      = dlqArr.find(d => d.status === 'pending');\nconst dlqCount     = pending ? pending.message_count : 0;\n\nconst alerts = [];\nif (successPct < 90 && totalSamples >= 5) {\n  alerts.push({ level: 'high', title: '⚠️ Success rate dropped',\n    detail: 'Success rate: ' + successPct.toFixed(1) + '% (' + totalSuccess + '/' + totalSamples + ' in last 3h)' });\n}\nif (maxP95 > 10000) {\n  alerts.push({ level: 'high', title: '🐌 High latency',\n    detail: 'P95 latency: ' + maxP95 + 'ms (target: <10000ms)' });\n}\nif (dlqCount > 10) {\n  alerts.push({ level: 'critical', title: '🗑️ DLQ filling up',\n    detail: dlqCount + ' failed messages awaiting review' });\n}\n\nconst message = alerts.length === 0\n  ? '✅ All systems healthy'\n  : alerts.map(a => a.title + '\\n  ' + a.detail).join('\\n\\n');\n\nreturn [{ json: { alerts, message, has_alerts: alerts.length > 0, stats: { successPct, totalSamples, maxP95, dlqCount } } }];"
+      }
+    },
+    {
+      "id": "al-if",
+      "name": "Should Alert?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "has-alerts",
+              "leftValue": "={{ $json.has_alerts }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "al-tg",
+      "name": "Send Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        150
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "// Placeholder: log to workflow_logs instead of real Telegram\nconst v = $json;\nconst SUPA_KEY = 'SUPABASE_SERVICE_KEY';\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': SUPA_KEY,\n    'Authorization': 'Bearer ' + SUPA_KEY,\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: 'alert-' + Date.now(),\n    stage:        'alert_sent',\n    status:       'info',\n    payload:      { message: v.message, alerts: v.alerts, stats: v.stats }\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
+      }
+    }
+  ],
+  "connections": {
+    "Every 5 minutes": {
+      "main": [
+        [
+          {
+            "node": "Get Success Rate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Latency",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Success Rate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Latency",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Success Rate": {
+      "main": [
+        [
+          {
+            "node": "Analyze",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Latency": {
+      "main": [
+        [
+          {
+            "node": "Analyze",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get DLQ": {
+      "main": [
+        [
+          {
+            "node": "Analyze",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze": {
+      "main": [
+        [
+          {
+            "node": "Should Alert?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Alert?": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>الإعدادات — RahSahl</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <script>
+    tailwind.config={darkMode:'class',theme:{extend:{colors:{navy:'#0b1420',sky:'#0ea5e9',amber:'#f59e0b',teal:'#14b8a6'},fontFamily:{ar:['IBM Plex Sans Arabic','sans-serif'],en:['Inter','sans-serif']},animation:{blob:'blob 7s infinite','fade-up':'fadeUp 0.6s ease-out forwards'},keyframes:{blob:{'0%,100%':{transform:'translate(0,0) scale(1)'},'33%':{transform:'translate(30px,-50px) scale(1.1)'},'66%':{transform:'translate(-20px,20px) scale(0.9)'}},fadeUp:{'0%':{opacity:'0',transform:'translateY(30px)'},'100%':{opacity:'1',transform:'translateY(0)'}}}}}}}
+  </script>
+  <style>
+    *{scroll-behavior:smooth}
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:3px}
+    ::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+    :root{--bg:#f5f0eb;--text:#334155;--heading:#0b1420;--muted:#64748b;--muted-400:#94a3b8;--card:#fff;--card-border:#e2e8f0;--card-hover-border:#cbd5e1;--section-alt:#fff;--nav-bg:rgba(255,255,255,0.85);--nav-border:#e2e8f0;--input-bg:#fff;--input-border:#e2e8f0;--soft-sky:#e0f2fe;--soft-teal:#ccfbf1;--soft-amber:#fef3c7;--chart-grid:#e2e8f0;--social-bg:rgba(0,0,0,0.05);--soft-slate:#f8fafc;--border-light:#e2e8f0;--hover-bg:rgba(14,165,233,0.04)}
+    html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--muted-400:#6b7a8a;--card:#18202d;--card-border:#2d3543;--card-hover-border:#3e4850;--section-alt:#0b1420;--nav-bg:rgba(11,20,32,0.85);--nav-border:#2d3543;--input-bg:#141c29;--input-border:#3e4850;--soft-sky:rgba(14,165,233,0.12);--soft-teal:rgba(20,184,166,0.12);--soft-amber:rgba(245,158,11,0.12);--chart-grid:#2d3543;--social-bg:rgba(255,255,255,0.08);--soft-slate:#141c29;--border-light:#2d3543;--hover-bg:rgba(14,165,233,0.08)}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);transition:background 0.3s,color 0.3s}
+    h1,h2,h3,h4{font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--heading)}
+    .card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;transition:all 0.3s ease}
+    .card:hover{box-shadow:0 12px 40px rgba(0,0,0,0.06);border-color:var(--card-hover-border);transform:translateY(-2px)}
+    .btn-primary{background:linear-gradient(135deg,#0ea5e9,#14b8a6);color:#fff;transition:all 0.3s;position:relative;overflow:hidden}
+    .btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#14b8a6,#0ea5e9);opacity:0;transition:opacity 0.3s}
+    .btn-primary:hover::after{opacity:1}
+    .btn-primary:hover{box-shadow:0 8px 25px rgba(14,165,233,0.35);transform:translateY(-2px)}
+    .btn-primary:active{transform:translateY(0)}
+    .btn-primary > *{position:relative;z-index:1}
+    .btn-outline{border:1px solid var(--card-border);color:var(--text);transition:all 0.2s;border-radius:12px}
+    .btn-outline:hover{border-color:#0ea5e9;color:#0ea5e9;background:var(--hover-bg);transform:translateY(-1px)}
+    .btn-secondary{background:var(--soft-slate);color:var(--text);border:1px solid var(--card-border);transition:all 0.2s;border-radius:12px;display:inline-flex;align-items:center;gap:6px;padding:8px 18px;font-size:13px;font-weight:600}
+    .btn-secondary:hover{background:var(--hover-bg);color:#0ea5e9;border-color:#0ea5e9;transform:translateY(-1px)}
+    .gradient-text{background:linear-gradient(135deg,#0ea5e9,#14b8a6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.3;animation:blob 7s infinite;pointer-events:none;z-index:0}
+    .grid-dots{position:fixed;inset:0;opacity:0.015;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230ea5e9' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+    .aos{opacity:0;transform:translateY(30px);transition:all 0.6s ease-out}
+    .aos.show{opacity:1;transform:translateY(0)}
+    .text-muted{color:var(--muted)}.text-heading{color:var(--heading)}.bg-section{background:var(--section-alt)}.border-light{border-color:var(--border-light)}.bg-soft-slate{background:var(--soft-slate)}
+    html.dark .text-navy{color:var(--heading)!important}
+    html.dark .text-slate-500,.text-slate-500{color:var(--muted)}
+    html.dark .text-slate-400,.text-slate-400{color:var(--muted-400)}
+    html.dark .text-slate-600,.text-slate-600{color:var(--text)}
+    html.dark .text-slate-700{color:var(--heading)}
+    html.dark .bg-white{background:var(--card)!important}
+    html.dark input,html.dark select,html.dark textarea{background:var(--input-bg);border-color:var(--input-border);color:var(--text)}
+    html.dark .bg-sky-50,.bg-sky-50{background:var(--soft-sky)}
+    html.dark .text-sky-600,.text-sky-600{color:#0ea5e9}
+    html.dark .bg-teal-50,.bg-teal-50{background:var(--soft-teal)}
+    html.dark .text-teal-600,.text-teal-600{color:#14b8a6}
+    html.dark .bg-purple-50,.bg-purple-50{background:rgba(168,85,247,0.12)}
+    html.dark .text-purple-600,.text-purple-600{color:#c084fc}
+    html.dark .bg-blue-50,.bg-blue-50{background:var(--soft-sky)}
+    html.dark .text-blue-600,.text-blue-600{color:#38bdf8}
+    html.dark .border-slate-100{display:none}
+    html.dark .bg-green-50{background:rgba(20,184,166,0.12)}
+    html.dark .text-green-600{color:#2dd4bf}
+    html.dark .bg-red-50{background:rgba(239,68,68,0.12)}
+    html.dark .text-red-600{color:#f87171}
+    html.dark .bg-black\/40{background:rgba(0,0,0,0.7)}
+    html.dark .gradient-text{background:linear-gradient(135deg,#38bdf8,#2dd4bf);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    html.dark .blob{opacity:0.1!important}
+    input,select,textarea{width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text);font-size:14px;outline:none;transition:border-color 0.2s,box-shadow 0.2s}
+    input:focus,select:focus,textarea:focus{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,0.12)}
+    .skeleton{background:linear-gradient(90deg,var(--soft-slate) 25%,var(--card-border) 50%,var(--soft-slate) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:12px}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;display:inline-block}
+    .modal-overlay{animation:fadeIn 0.25s ease-out forwards}
+    .modal-content{animation:scaleIn 0.3s ease-out forwards}
+    @keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
+    @keyframes scaleIn{0%{opacity:0;transform:scale(0.92)}100%{opacity:1;transform:scale(1)}}
+    .toast-enter{animation:slideUp 0.35s ease-out forwards}
+    @keyframes slideUp{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+
+  <div class="grid-dots"></div>
+  <div class="blob w-[500px] h-[500px] bg-sky-300 top-[-15%] left-[-10%]"></div>
+  <div class="blob w-[400px] h-[400px] bg-teal-300 bottom-[-10%] right-[-5%]" style="animation-delay:2s"></div>
+
+  <nav class="sidenav" id="sidenav"></nav>
+  <main class="main-content" id="main"></main>
+
+  <script src="js/supabase.js"></script>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script>
+  (async function () {
+    var ctx = await window.RahSahl.authGuard.guard();
+    if (!ctx) return;
+    window.RahSahl.sidebar.boot();
+    document.getElementById('sidenav').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function showToast(message, type) {
+      var toast = document.createElement('div');
+      toast.className = 'toast-enter fixed top-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl shadow-lg text-white text-[14px] font-semibold flex items-center gap-2 ' + (type === 'error' ? 'bg-red-500' : 'btn-primary');
+      toast.innerHTML = '<span class="material-symbols-outlined text-[18px]">' + (type === 'error' ? 'error' : 'check_circle') + '</span>' + esc(message);
+      document.body.appendChild(toast);
+      setTimeout(function () { toast.remove(); }, 3000);
+    }
+
+    // Load current settings + shop
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('الإعدادات', '...', ctx)
+      + '<div class="card p-12"><div class="skeleton h-64"></div></div>';
+
+    var results = await Promise.allSettled([
+      window.RahSahl.api.getBotSettings(),
+      window.RahSahl.api.getShop()
+    ]);
+
+    var settings = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value.data : null;
+    var shop = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value.data : null;
+
+    if (results[0].value && results[0].value.error) {
+      showToast('فشل تحميل الإعدادات: ' + results[0].value.error.message, 'error');
+    }
+
+    var s = settings || {
+      bot_name: 'مساعدك الذكي',
+      tone: 'friendly',
+      language: 'ar',
+      products: [],
+      delivery_zones: [],
+      payment_methods: []
+    };
+
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
+      'الإعدادات', 'خصّص وكيلك الذكي', ctx
+    ) + ''
+      + '<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">'
+
+      + '  <section class="card p-6 aos">'
+      + '    <div class="flex items-center gap-3 mb-5">'
+      + '      <div class="bg-sky-50 p-2.5 rounded-xl">'
+      + '        <span class="material-symbols-outlined text-sky-600">storefront</span>'
+      + '      </div>'
+      + '      <h2 class="font-ar text-[18px] font-bold text-heading">بيانات المتجر</h2>'
+      + '    </div>'
+      + '    <form id="shopForm" class="space-y-4">'
+      + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">اسم المتجر</label>'
+      + '        <input id="shopName" type="text" value="' + esc(shop ? shop.shop_name : '') + '" required/></div>'
+      + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">اسم المالك</label>'
+      + '        <input id="ownerName" type="text" value="' + esc(shop ? shop.owner_name : '') + '" required/></div>'
+      + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">هاتف المالك</label>'
+      + '        <input id="phoneNumber" type="tel" dir="ltr" value="' + esc(shop ? shop.phone_number : '') + '" required/></div>'
+      + '      <button type="submit" class="btn-primary w-full">حفظ بيانات المتجر</button>'
+      + '    </form>'
+      + '  </section>'
+
+      + '  <section class="card p-6 aos aos-delay-1">'
+      + '    <div class="flex items-center gap-3 mb-5">'
+      + '      <div class="bg-teal-50 p-2.5 rounded-xl">'
+      + '        <span class="material-symbols-outlined text-teal-600">smart_toy</span>'
+      + '      </div>'
+      + '      <h2 class="font-ar text-[18px] font-bold text-heading">شخصية الوكيل</h2>'
+      + '    </div>'
+      + '    <form id="botForm" class="space-y-4">'
+      + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">أسلوب الرد</label>'
+      + '        <select id="responseStyle">'
+      + '          <option value="friendly"' + (s.response_style === 'friendly' ? ' selected' : '') + '>ودود</option>'
+      + '          <option value="professional"' + (s.response_style === 'professional' ? ' selected' : '') + '>احترافي</option>'
+      + '          <option value="casual"' + (s.response_style === 'casual' ? ' selected' : '') + '>عفوي (دارجة)</option>'
+      + '        </select></div>'
+      + '      <div><label class="block text-[13px] font-semibold text-heading mb-1.5">اللهجة/اللغة</label>'
+      + '        <select id="targetDialect">'
+      + '          <option value="Arabic"' + (s.target_dialect === 'Arabic' ? ' selected' : '') + '>العربية الفصحى</option>'
+      + '          <option value="Algerian Darija"' + (s.target_dialect === 'Algerian Darija' ? ' selected' : '') + '>الدارجة الجزائرية</option>'
+      + '          <option value="French"' + (s.target_dialect === 'French' ? ' selected' : '') + '>الفرنسية</option>'
+      + '          <option value="English"' + (s.target_dialect === 'English' ? ' selected' : '') + '>الإنجليزية</option>'
+      + '        </select></div>'
+      + '      <button type="submit" class="btn-primary w-full">حفظ شخصية الوكيل</button>'
+      + '    </form>'
+      + '  </section>'
+
+      + '  <section class="card p-6 lg:col-span-2 aos aos-delay-2">'
+      + '    <div class="flex items-center gap-3 mb-5">'
+      + '      <div class="bg-purple-50 p-2.5 rounded-xl">'
+      + '        <span class="material-symbols-outlined text-purple-600">vpn_key</span>'
+      + '      </div>'
+      + '      <h2 class="font-ar text-[18px] font-bold text-heading">مفتاح الـ API</h2>'
+      + '    </div>'
+      + '    <p class="text-[13px] text-muted mb-4">يستخدم هذا المفتاح للربط مع n8n والأنظمة الخارجية. حافظ على سريته.</p>'
+      + '    <div class="flex items-center gap-2 mb-2">'
+      + '      <input id="apiKey" type="text" readonly value="' + esc(shop ? (shop.api_secret_prefix || 'لم يُولّد بعد') : '') + '" dir="ltr" class="flex-1" style="font-family:monospace"/>'
+      + '      <button type="button" id="copyKey" class="btn-outline px-3 py-2 flex items-center rounded-xl">'
+      + '        <span class="material-symbols-outlined text-[18px]">content_copy</span>'
+      + '      </button>'
+      + '    </div>'
+      + '    <p class="text-[11px] mb-4" style="color:var(--muted-400)">هذا بادئة المفتاح للعرض فقط. المفتاح الكامل يظهر مرة واحدة عند التوليد.</p>'
+      + '    <button type="button" id="regenerateKey" class="btn-secondary">'
+      + '      <span class="material-symbols-outlined text-[18px]">refresh</span>'
+      + '      إعادة توليد المفتاح'
+      + '    </button>'
+      + '    <div id="newKeyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" style="background:rgba(0,0,0,0.5);backdrop-filter:blur(4px)">'
+      + '      <div class="card p-6 max-w-lg w-full modal-content">'
+      + '        <div class="flex items-center gap-2 mb-3" style="color:#f59e0b">'
+      + '          <span class="material-symbols-outlined">warning</span>'
+      + '          <h3 class="font-bold text-[16px] text-heading">احفظ المفتاح الآن!</h3>'
+      + '        </div>'
+      + '        <p class="text-[13px] text-muted mb-3">سيظهر هذا المفتاح مرة واحدة فقط. احفظه في مكان آمن قبل المتابعة.</p>'
+      + '        <input id="newKeyValue" type="text" readonly dir="ltr" class="w-full mb-3" style="font-family:monospace"/>'
+      + '        <div class="flex gap-2">'
+      + '          <button type="button" id="copyNewKey" class="btn-primary flex-1">نسخ</button>'
+      + '          <button type="button" id="closeNewKey" class="btn-outline">تم</button>'
+      + '        </div>'
+      + '      </div>'
+      + '    </div>'
+      + '  </section>'
+
+      + '  <section class="card p-6 aos aos-delay-3">'
+      + '    <div class="flex items-center gap-3 mb-5">'
+      + '      <div class="bg-blue-50 p-2.5 rounded-xl">'
+      + '        <span class="material-symbols-outlined text-blue-600">link</span>'
+      + '      </div>'
+      + '      <h2 class="font-ar text-[18px] font-bold text-heading">ربط الحسابات</h2>'
+      + '    </div>'
+      + '    <p class="text-[13px] text-muted mb-4">اربط حسابات التواصل الاجتماعي لتفعيل الرد التلقائي. كل حساب يُربط مرة واحدة فقط.</p>'
+      + '    <div class="space-y-4" id="linkedAccounts">'
+      + '      <div class="text-center py-4 text-[13px] text-muted">جاري التحميل...</div>'
+      + '    </div>'
+      + '  </section>'
+
+      + '</div>';
+
+    // AOS trigger
+    setTimeout(function () {
+      document.querySelectorAll('.aos').forEach(function (el) { el.classList.add('show'); });
+    }, 50);
+
+    // Load linked accounts
+    (async function () {
+      var { data: accounts } = await window.RahSahl.api.listLinkedAccounts();
+      var container = document.getElementById('linkedAccounts');
+      var platformNames = { instagram: 'إنستغرام', whatsapp: 'واتساب', messenger: 'ماسنجر', telegram: 'تيليغرام' };
+      var platformIcons = { instagram: 'auto_awesome', whatsapp: 'chat', messenger: 'messenger', telegram: 'send' };
+
+      if (accounts && accounts.length > 0) {
+        container.innerHTML = accounts.map(function (a) {
+          return '<div class="flex items-center justify-between py-2" style="border-bottom:1px solid var(--border-light)">'
+            + '<div class="flex items-center gap-2">'
+            + '  <span class="material-symbols-outlined text-sky-600 text-[20px]">' + (platformIcons[a.platform] || 'public') + '</span>'
+            + '  <span class="text-[14px] font-semibold text-heading">' + (platformNames[a.platform] || a.platform) + '</span>'
+            + '  <span class="text-[12px] text-muted">@' + (a.external_handle || a.external_id || '—') + '</span>'
+            + '</div>'
+            + '<span class="badge text-[11px] ' + (a.is_active ? 'bg-teal-100 text-teal-700' : 'bg-red-50 text-red-600') + '">' + (a.is_active ? 'نشط' : 'غير نشط') + '</span>'
+            + '</div>';
+        }).join('');
+      } else {
+        container.innerHTML = '<div class="text-center py-8"><span class="material-symbols-outlined text-[40px] text-muted">link_off</span><p class="text-[13px] text-muted mt-2">لا توجد حسابات مرتبطة. ارجع لصفحة "حساباتي" لمزيد من التفاصيل.</p></div>';
+      }
+    })();
+
+    // Shop form
+    document.getElementById('shopForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> جاري الحفظ...</span>';
+      var updates = {
+        shop_name: document.getElementById('shopName').value.trim(),
+        owner_name: document.getElementById('ownerName').value.trim(),
+        phone_number: document.getElementById('phoneNumber').value.trim()
+      };
+      var res = await window.RahSahl.api.updateShop(updates);
+      btn.disabled = false; btn.innerHTML = 'حفظ بيانات المتجر';
+      if (res.error) showToast('فشل: ' + res.error.message, 'error');
+      else { showToast('تم حفظ بيانات المتجر', 'success'); ctx.shop = Object.assign(ctx.shop || {}, updates); }
+    });
+
+    // Bot form
+    document.getElementById('botForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> جاري الحفظ...</span>';
+      var updates = {
+        response_style: document.getElementById('responseStyle').value,
+        target_dialect: document.getElementById('targetDialect').value
+      };
+      var res = await window.RahSahl.api.updateBotSettings(updates);
+      btn.disabled = false; btn.innerHTML = 'حفظ شخصية الوكيل';
+      if (res.error) showToast('فشل: ' + res.error.message, 'error');
+      else showToast('تم حفظ شخصية الوكيل', 'success');
+    });
+
+    // API key controls
+    document.getElementById('copyKey').addEventListener('click', function () {
+      var input = document.getElementById('apiKey');
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      showToast('تم نسخ البادئة', 'success');
+    });
+    document.getElementById('regenerateKey').addEventListener('click', async function () {
+      if (!confirm('هل أنت متأكد؟ المفتاح القديم سيتوقف عن العمل فوراً.')) return;
+      var res = await window.RahSahl.api.regenerateApiKey();
+      if (res.error) { showToast('فشل: ' + res.error.message, 'error'); return; }
+      var newKey = (res.data && (res.data.api_secret || res.data.secret)) || '';
+      var modal = document.getElementById('newKeyModal');
+      document.getElementById('newKeyValue').value = newKey;
+      modal.classList.remove('hidden');
+    });
+    document.getElementById('copyNewKey').addEventListener('click', function () {
+      var input = document.getElementById('newKeyValue');
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      showToast('تم نسخ المفتاح الجديد', 'success');
+    });
+    document.getElementById('closeNewKey').addEventListener('click', function () {
+      document.getElementById('newKeyModal').classList.add('hidden');
+      showToast('تم توليد مفتاح جديد', 'success');
+    });
+  })();
+  </script>
+
+</body>
+</html>

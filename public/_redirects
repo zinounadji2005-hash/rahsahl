@@ -1,0 +1,8 @@
+# RahSahl — Cloudflare Pages Redirects
+# https://developers.cloudflare.com/pages/configuration/redirects/
+
+# 404 fallback
+/* /404.html 404
+
+# Force trailing slash off for dashboard pages (optional)
+# /dashboard /dashboard/index.html 200

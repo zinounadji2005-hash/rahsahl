@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>إنشاء حساب - راه ساهل</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/auth.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>tailwind.config={darkMode:'class',theme:{extend:{colors:{navy:'#0b1420',sky:'#0ea5e9',amber:'#f59e0b',teal:'#14b8a6'},fontFamily:{ar:['IBM Plex Sans Arabic','sans-serif'],en:['Inter','sans-serif']}}}}</script>
+<style>
+body{font-family:'Inter',sans-serif;background:var(--bg,#f5f0eb);color:var(--text,#334155)}
+h1,h2,h3,h4{font-family:'IBM Plex Sans Arabic',sans-serif}
+.glass-panel{background:var(--card,#fff);border:1px solid var(--card-border,#e2e8f0);border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.04)}
+.btn-primary{background:linear-gradient(135deg,#0ea5e9,#14b8a6);color:#fff;transition:all 0.3s}
+.btn-primary:hover{box-shadow:0 8px 25px rgba(14,165,233,0.3);transform:translateY(-1px)}
+.gradient-text{background:linear-gradient(135deg,#0ea5e9,#14b8a6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.input-focus{border:1px solid var(--card-border,#e2e8f0);transition:all 0.2s;background:var(--input-bg,#fff)}
+.input-focus:focus{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,0.12);outline:none}
+html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--card:#18202d;--card-border:#2d3543;--input-bg:#141c29;--input-border:#3e4850}
+html.dark img[src*="logo.svg"]{filter:brightness(0) invert(1)}
+#darkToggle{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid var(--card-border,#e2e8f0);background:var(--card,#fff);cursor:pointer;transition:all 0.2s;color:var(--muted,#94a3b8);position:absolute;top:20px;left:20px;z-index:50}
+#darkToggle:hover{color:var(--heading,#0b1420);border-color:var(--card-hover-border,var(--card-border))}
+</style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 md:p-10 relative overflow-hidden antialiased selection:bg-sky-200/50" style="background:var(--bg,#f5f0eb);color:var(--text,#334155)">
+<button id="darkToggle" title="الوضع الليلي"><span class="material-symbols-outlined dark:hidden text-[20px]">dark_mode</span><span class="material-symbols-outlined hidden dark:inline text-[20px]">light_mode</span></button>
+<div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+  <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[120px]" style="background:rgba(14,165,233,0.15)"></div>
+  <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full blur-[120px]" style="background:rgba(20,184,166,0.1)"></div>
+</div>
+<div class="w-full max-w-[1000px] flex flex-col lg:flex-row gap-8 items-center">
+  <div class="hidden lg:flex flex-col w-1/2 ps-8">
+    <img alt="RahSahl" class="h-24 object-contain mb-8 w-auto self-start" src="assets/logo.svg"/>
+    <h1 class="font-ar text-[40px] font-bold mb-4" style="color:var(--heading,#0b1420)">أتمتة مبيعاتك <br/><span class="gradient-text">بكل سهولة</span></h1>
+    <p class="text-[18px] mb-8" style="color:var(--muted,#64748b)">انضم إلى راه ساهل وابدأ في أتمتة مبيعاتك عبر واتساب، إنستغرام وفيسبوك.</p>
+    <div class="flex flex-col gap-5">
+      <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sky-500" style="background:var(--card,#fff);box-shadow:0 1px 3px rgba(0,0,0,0.06)"><span class="material-symbols-outlined">rocket_launch</span></div><div><h3 class="text-[15px] font-semibold" style="color:var(--heading,#0b1420)">انطلاقة سريعة</h3><p class="text-[14px]" style="color:var(--muted,#64748b)">إعداد حسابك في دقائق</p></div></div>
+      <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-teal-500" style="background:var(--card,#fff);box-shadow:0 1px 3px rgba(0,0,0,0.06)"><span class="material-symbols-outlined">insights</span></div><div><h3 class="text-[15px] font-semibold" style="color:var(--heading,#0b1420)">تحليلات دقيقة</h3><p class="text-[14px]" style="color:var(--muted,#64748b)">تتبع أداء مبيعاتك لحظة بلحظة</p></div></div>
+    </div>
+  </div>
+  <div class="w-full lg:w-1/2 max-w-md">
+    <div class="lg:hidden flex justify-center mb-8"><img alt="RahSahl" class="h-16 object-contain" src="assets/logo.svg"/></div>
+    <div class="glass-panel p-6 md:p-8 relative z-10">
+      <div class="mb-6 text-center"><h2 class="font-ar text-[26px] font-bold mb-2" style="color:var(--heading,#0b1420)">إنشاء حساب جديد</h2><p class="text-[15px]" style="color:var(--muted,#64748b)">ابدأ تجربتك المجانية اليوم</p></div>
+      <div id="auth-error" class="hidden bg-red-50 border border-red-200 text-red-600 text-[14px] px-4 py-2.5 rounded-lg mb-4"></div>
+      <form class="space-y-4" id="signup-form">
+        <div><label class="block text-[14px] font-semibold mb-1.5" for="fullName" style="color:var(--heading,#475569)">الاسم الكامل</label><div class="relative"><span class="absolute inset-y-0 right-0 flex items-center pr-3" style="color:var(--muted,#94a3b8)"><span class="material-symbols-outlined text-[20px]">person</span></span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-10 pl-3" id="fullName" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" placeholder="محمد أحمد" type="text"/></div></div>
+        <div><label class="block text-[14px] font-semibold mb-1.5" for="shopName" style="color:var(--heading,#475569)">اسم المتجر</label><div class="relative"><span class="absolute inset-y-0 right-0 flex items-center pr-3" style="color:var(--muted,#94a3b8)"><span class="material-symbols-outlined text-[20px]">storefront</span></span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-10 pl-3" id="shopName" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" placeholder="متجري" type="text"/></div></div>
+        <div><label class="block text-[14px] font-semibold mb-1.5" for="email" style="color:var(--heading,#475569)">البريد الإلكتروني</label><div class="relative"><span class="absolute inset-y-0 right-0 flex items-center pr-3" style="color:var(--muted,#94a3b8)"><span class="material-symbols-outlined text-[20px]">mail</span></span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-10 pl-3" id="email" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" dir="ltr" placeholder="name@example.com" type="email"/></div></div>
+        <div><label class="block text-[14px] font-semibold mb-1.5" for="phone" style="color:var(--heading,#475569)">رقم الهاتف (للواتساب)</label><div class="relative"><span class="absolute inset-y-0 right-0 flex items-center pr-3" style="color:var(--muted,#94a3b8)"><span class="material-symbols-outlined text-[20px]">call</span></span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-10 pl-3 text-left" id="phone" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" dir="ltr" placeholder="+213 5XX XX XX XX" type="tel"/></div></div>
+        <div><label class="block text-[14px] font-semibold mb-1.5" for="password" style="color:var(--heading,#475569)">كلمة المرور</label><div class="relative"><span class="absolute inset-y-0 right-0 flex items-center pr-3" style="color:var(--muted,#94a3b8)"><span class="material-symbols-outlined text-[20px]">lock</span></span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-10 pl-3" id="password" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" placeholder="••••••••" type="password"/></div></div>
+        <button class="w-full btn-primary text-[15px] font-semibold rounded-xl py-3 mt-2 flex justify-center items-center gap-2" type="submit"><span>بدء التجربة المجانية</span><span class="material-symbols-outlined text-[18px] rtl:rotate-180">arrow_forward</span></button>
+      </form>
+
+      <p class="mt-6 text-center text-[14px]" style="color:var(--muted,#64748b)">لديك حساب بالفعل؟ <a class="text-[15px] font-semibold text-sky-600 hover:text-sky-700 transition-colors" href="login.html">تسجيل الدخول</a></p>
+    </div>
+  </div>
+</div>
+<script>
+document.getElementById('signup-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var fullName=document.getElementById('fullName').value.trim(),shopName=document.getElementById('shopName').value.trim(),email=document.getElementById('email').value.trim(),phone=document.getElementById('phone').value.trim(),password=document.getElementById('password').value,errEl=document.getElementById('auth-error');
+  if(!fullName||!email||!password){errEl.textContent='يرجى ملء جميع الحقول';errEl.classList.remove('hidden');return}
+  if(password.length<6){errEl.textContent='كلمة المرور يجب أن تكون 6 أحرف على الأقل';errEl.classList.remove('hidden');return}
+  var btn=this.querySelector('button[type="submit"]');btn.disabled=true;btn.innerHTML='<span class="material-symbols-outlined animate-spin">sync</span>';
+  RahSahlAuth.signup(email,password,fullName,phone,shopName).then(function(r){
+    if(r.error)throw r.error;
+    errEl.classList.add('hidden');btn.innerHTML='تم إنشاء الحساب! جارِ تحويلك...';
+    RahSahlAuth.session().then(function(s){window.location.href=s?'onboarding/':'login.html'})
+  }).catch(function(e){
+    errEl.textContent=e.message;errEl.classList.remove('hidden');
+    btn.disabled=false;btn.innerHTML='بدء التجربة المجانية<span class="material-symbols-outlined text-[18px] rtl:rotate-180">arrow_forward</span>'
+  })
+});
+
+RahSahlAuth.session().then(function(s){if(s)window.location.href='dashboard/'});
+(function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('rahsahl-dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('rahsahl-dark',d.classList.contains('dark')?'true':'false')})})();
+</script>
+</body></html>

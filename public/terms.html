@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>شروط الخدمة - راه ساهل</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>tailwind.config={darkMode:'class',theme:{extend:{colors:{navy:'#0b1420',sky:'#0ea5e9'},fontFamily:{ar:['IBM Plex Sans Arabic','sans-serif'],en:['Inter','sans-serif']}}}}</script>
+<style>body{font-family:'Inter',sans-serif;background:var(--bg,#f5f0eb);color:var(--text,#334155)}h1,h2,h3{font-family:'IBM Plex Sans Arabic',sans-serif}.card{background:var(--card,#fff);border:1px solid var(--card-border,#e2e8f0);border-radius:16px}#darkToggle{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--card-border,#e2e8f0);background:var(--card,#fff);cursor:pointer;transition:all 0.2s;color:var(--muted,#94a3b8)}#darkToggle:hover{color:var(--heading,#0b1420)}html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--card:#18202d;--card-border:#2d3543;--section-alt:#0b1420}html.dark .text-navy{color:var(--heading,#f1f5f9)!important}html.dark .text-slate-500{color:var(--muted,#88929b)!important}html.dark .text-slate-400{color:var(--muted,#88929b)!important}html.dark .border-slate-200{border-color:var(--card-border,#2d3543)!important}html.dark .bg-white{background:var(--card,#18202d)!important}html.dark nav a img{filter:brightness(0) invert(1)}</style>
+</head>
+<body class="antialiased selection:bg-sky-200/50" style="background:var(--bg,#f5f0eb);color:var(--text,#334155)">
+<nav class="bg-white border-b border-slate-200"><div class="max-w-4xl mx-auto flex items-center justify-between h-16 px-4"><a class="flex items-center gap-3" href="index.html"><img alt="RahSahl" class="h-9 w-auto" src="logo.svg"/></a><div class="flex items-center gap-3"><button id="darkToggle" title="الوضع الليلي"><span class="material-symbols-outlined dark:hidden text-[18px]">dark_mode</span><span class="material-symbols-outlined hidden dark:inline text-[18px]">light_mode</span></button><a class="text-[14px] font-semibold text-sky-600 hover:text-sky-700 transition-colors" href="index.html">الرجوع للرئيسية</a></div></div></nav>
+<main class="max-w-4xl mx-auto px-4 py-12">
+  <div class="card p-8 md:p-12"><h1 class="font-ar text-[32px] font-bold mb-6" style="color:var(--heading,#0b1420)">شروط الخدمة</h1>
+    <p class="text-[15px] mb-6 leading-relaxed" style="color:var(--muted,#64748b)">آخر تحديث: يناير 2026</p>
+    <div class="space-y-6 text-[15px] leading-relaxed" style="color:var(--muted,#64748b)">
+      <p>باستخدامك لخدمة راه ساهل، فإنك توافق على هذه الشروط. يرجى قراءتها بعناية.</p>
+      <h3 class="font-ar text-[20px] font-bold" style="color:var(--heading,#0b1420)">الخدمة</h3>
+      <p>راه ساهل هي منصة أتمتة مبيعات عبر الذكاء الاصطناعي. نوفر وكيلاً ذكياً يرد على العملاء عبر واتساب، إنستغرام وفيسبوك.</p>
+      <h3 class="font-ar text-[20px] font-bold" style="color:var(--heading,#0b1420)">نظام النقاط</h3>
+      <p>يتم استهلاك نقطة واحدة لكل رد صحيح أو إجراء ناجح. النقاط المشتراة لا تنتهي صلاحيتها. لا يتم استرداد النقاط المستخدمة.</p>
+      <h3 class="font-ar text-[20px] font-bold" style="color:var(--heading,#0b1420)">الاستخدام المسموح</h3>
+      <p>توافق على استخدام الخدمة للأغراض المشروعة فقط. لا يجوز استخدامها لإرسال رسائل غير مرغوب فيها أو مخالفة للقوانين.</p>
+      <h3 class="font-ar text-[20px] font-bold" style="color:var(--heading,#0b1420)">إخلاء المسؤولية</h3>
+      <p>نحن لا نضمن دقة الردود بنسبة 100%. يوصى بمراجعة الردود الهامة يدوياً. يتم تقديم الخدمة "كما هي".</p>
+    </div>
+  </div>
+</main>
+<footer class="border-t border-slate-200 py-6 text-center text-[13px]" style="color:var(--muted,#94a3b8)">© 2026 RahSahl</footer>
+<script>(function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('dark',d.classList.contains('dark'))})})();</script>
+</body></html>

@@ -1,0 +1,23 @@
+# Environment variables (NEVER commit secrets)
+.env
+.env.local
+.env.production
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+.output/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Supabase local
+.supabase/

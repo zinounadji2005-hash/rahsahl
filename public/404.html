@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>404 - الصفحة غير موجودة | RahSahl</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>tailwind.config={darkMode:'class',theme:{extend:{colors:{navy:'#0b1420',sky:'#0ea5e9',teal:'#14b8a6'},fontFamily:{ar:['IBM Plex Sans Arabic','sans-serif'],en:['Inter','sans-serif']}}}}</script>
+<style>body{font-family:'Inter',sans-serif;background:var(--bg,#f5f0eb);color:var(--text,#334155)}h1{font-family:'IBM Plex Sans Arabic',sans-serif}.btn-primary{background:linear-gradient(135deg,#0ea5e9,#14b8a6);color:#fff;transition:all 0.3s}.btn-primary:hover{box-shadow:0 8px 25px rgba(14,165,233,0.3);transform:translateY(-2px)}#darkToggle{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--card-border,#e2e8f0);background:var(--card,#fff);cursor:pointer;transition:all 0.2s;color:var(--muted,#94a3b8);position:fixed;top:20px;left:20px;z-index:50}#darkToggle:hover{color:var(--heading,#0b1420)}html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--card:#18202d;--card-border:#2d3543}html.dark .text-navy{color:var(--heading,#f1f5f9)!important}html.dark .text-slate-500{color:var(--muted,#88929b)!important}</style>
+</head>
+<body class="min-h-screen flex items-center justify-center antialiased selection:bg-sky-200/50" style="background:var(--bg,#f5f0eb);color:var(--text,#334155)">
+<button id="darkToggle" title="الوضع الليلي"><span class="material-symbols-outlined dark:hidden text-[18px]">dark_mode</span><span class="material-symbols-outlined hidden dark:inline text-[18px]">light_mode</span></button>
+<div class="text-center px-4"><img alt="RahSahl" class="h-16 w-auto mx-auto mb-8" src="logo.svg"/><span class="inline-block font-ar text-[120px] md:text-[180px] font-bold gradient-text leading-none mb-4" style="background:linear-gradient(135deg,#0ea5e9,#14b8a6);-webkit-background-clip:text;-webkit-text-fill-color:transparent">404</span><h1 class="font-ar text-[24px] md:text-[32px] font-bold mb-3" style="color:var(--heading,#0b1420)">الصفحة غير موجودة</h1><p class="text-[16px] mb-8" style="color:var(--muted,#64748b)">عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها.</p><a class="btn-primary inline-flex items-center gap-2 text-[15px] font-semibold px-8 py-3.5 rounded-full" href="index.html"><span class="material-symbols-outlined">arrow_forward</span> العودة للرئيسية</a></div>
+<script>(function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('dark',d.classList.contains('dark'))})})();</script>
+</body></html>

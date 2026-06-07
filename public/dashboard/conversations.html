@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>المحادثات — RahSahl</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="css/styles.css" rel="stylesheet"/>
+</head>
+<body>
+<nav class="sidenav" id="sidenav"></nav>
+<main class="main-content" id="main"></main>
+
+<script src="js/supabase.js"></script>
+<script src="js/auth-guard.js"></script>
+<script src="js/api.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+(async function () {
+  var ctx = await window.RahSahl.authGuard.guard();
+  if (!ctx) return;
+  window.RahSahl.sidebar.boot();
+  document.getElementById('sidenav').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function timeAgo(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    var diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return 'الآن';
+    if (diff < 3600) return 'منذ ' + Math.floor(diff / 60) + ' د';
+    if (diff < 86400) return 'منذ ' + Math.floor(diff / 3600) + ' س';
+    if (diff < 604800) return 'منذ ' + Math.floor(diff / 86400) + ' يوم';
+    return d.toLocaleDateString('ar-DZ');
+  }
+
+  function channelIcon(ch) {
+    return { whatsapp: 'chat', instagram: 'photo_camera', facebook: 'thumb_up', messenger: 'forum' }[ch] || 'chat';
+  }
+
+  function channelColor(ch) {
+    return {
+      whatsapp: { bg: 'bg-emerald-100', text: 'text-emerald-600' },
+      instagram: { bg: 'bg-pink-100', text: 'text-pink-600' },
+      facebook: { bg: 'bg-blue-100', text: 'text-blue-600' },
+      messenger: { bg: 'bg-purple-100', text: 'text-purple-600' }
+    }[ch] || { bg: 'bg-slate-100', text: 'text-slate-600' };
+  }
+
+  // Load all conversations grouped by sender
+  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '...', ctx)
+    + '<div class="card p-12"><div class="skeleton h-32"></div></div>';
+
+  var res = await window.RahSahl.api.listConversations({ limit: 200 });
+  if (res.error) {
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '', ctx)
+      + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">فشل تحميل المحادثات: ' + esc(res.error.message) + '</p></div>';
+    return;
+  }
+
+  var conversations = res.data || [];
+  // Group by sender
+  var grouped = {};
+  conversations.forEach(function (c) {
+    var key = c.sender_id || 'unknown';
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(c);
+  });
+
+  var senders = Object.keys(grouped).map(function (k) {
+    var msgs = grouped[k].sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+    return {
+      sender_id: k,
+      messages: msgs,
+      last_message: msgs[msgs.length - 1],
+      count: msgs.length,
+      channels: Array.from(new Set(msgs.map(function (m) { return m.channel; })))
+    };
+  }).sort(function (a, b) {
+    return new Date(b.last_message.created_at) - new Date(a.last_message.created_at);
+  });
+
+  if (senders.length === 0) {
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '', ctx)
+      + '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[14px]">لا توجد محادثات بعد. ابدأ بإرسال رسالة!</p></div>';
+    return;
+  }
+
+  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
+    'المحادثات', senders.length + ' عميل نشط', ctx
+  ) + ''
+    + '<div class="card p-3">'
+    + '  <div class="flex flex-col gap-2">' + senders.map(function (s) {
+        var c = channelColor(s.last_message.channel);
+        var ic = channelIcon(s.last_message.channel);
+        return ''
+          + '<details class="rounded-xl border border-slate-200">'
+          + '  <summary class="flex items-center gap-3 p-3 cursor-pointer hover:bg-slate-50">'
+          + '    <div class="' + c.bg + ' ' + c.text + ' w-10 h-10 rounded-xl flex items-center justify-center shrink-0">'
+          + '      <span class="material-symbols-outlined text-[20px]">' + ic + '</span>'
+          + '    </div>'
+          + '    <div class="flex-1 min-w-0">'
+          + '      <div class="flex justify-between items-center mb-0.5">'
+          + '        <h4 class="font-semibold text-navy text-[14px]" dir="ltr">' + esc(s.sender_id.substring(0, 20)) + '</h4>'
+          + '        <span class="text-[11px] text-slate-400">' + timeAgo(s.last_message.created_at) + '</span>'
+          + '      </div>'
+          + '      <p class="text-[12px] text-slate-500 truncate">' + esc((s.last_message.message || '').substring(0, 80)) + '</p>'
+          + '    </div>'
+          + '    <span class="pill pill-info shrink-0">' + s.count + ' رسالة</span>'
+          + '  </summary>'
+          + '  <div class="border-t border-slate-200 p-4 bg-slate-50 space-y-2">' + s.messages.map(function (m) {
+              var isUser = m.role === 'user';
+              var c2 = channelColor(m.channel);
+              return ''
+                + '<div class="flex items-start gap-2 ' + (isUser ? '' : 'flex-row-reverse') + '">'
+                + '  <div class="' + c2.bg + ' ' + c2.text + ' w-7 h-7 rounded-lg flex items-center justify-center shrink-0">'
+                + '    <span class="material-symbols-outlined text-[14px]">' + (isUser ? 'person' : 'smart_toy') + '</span>'
+                + '  </div>'
+                + '  <div class="flex-1 ' + (isUser ? 'bg-white' : 'bg-sky-50') + ' rounded-xl p-2.5 max-w-[80%]">'
+                + '    <p class="text-[13px] text-navy leading-relaxed">' + esc(m.message) + '</p>'
+                + '    <p class="text-[10px] text-slate-400 mt-1">' + timeAgo(m.created_at) + ' · ' + esc(m.channel) + '</p>'
+                + '  </div>'
+                + '</div>';
+            }).join('') + '</div>'
+          + '</details>';
+      }).join('') + '</div>'
+    + '</div>';
+})();
+</script>
+</body>
+</html>

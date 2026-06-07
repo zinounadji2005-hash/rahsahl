@@ -1,0 +1,23 @@
+{
+  "name": "antifahim",
+  "version": "1.0.0",
+  "description": "AI-Driven Sales Agent & Automation Engine - Production SaaS",
+  "main": "index.js",
+  "scripts": {
+    "migrate:apply": "node scripts/migrate.js",
+    "migrate:005": "node scripts/run-migration.js supabase/migrations/005_logs_dlq.sql",
+    "migrate:006": "node scripts/run-migration.js supabase/migrations/006_conversations_products.sql",
+    "migrate:007": "node scripts/run-migration.js supabase/migrations/007_metrics_views.sql",
+    "deploy:workflow": "node scripts/deploy-workflow.js",
+    "test:webhook": "node scripts/test-webhook.js",
+    "test:health": "node scripts/test-health.js"
+  },
+  "keywords": ["saas", "ai", "sales-agent", "n8n", "supabase"],
+  "author": "Antifahim Team",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.107.0",
+    "pg": "^8.21.0"
+  }
+}
