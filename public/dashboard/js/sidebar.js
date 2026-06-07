@@ -1,20 +1,15 @@
-// public/dashboard/js/sidebar.js
-// Builds the dashboard sidenav and the page header dynamically so
-// every page renders the same chrome. Exposes renderSidebar() and
-// renderTopbar() that pages call after auth-guard resolves.
-
 (function () {
   'use strict';
 
   var NAV_ITEMS = [
-    { key: 'dashboard',     href: 'index.html',         icon: 'dashboard',            label: 'لوحة التحكم' },
-    { key: 'orders',        href: 'orders.html',        icon: 'shopping_bag',         label: 'الطلبات' },
-    { key: 'conversations', href: 'conversations.html', icon: 'forum',                label: 'المحادثات' },
-    { key: 'products',      href: 'products.html',      icon: 'inventory_2',          label: 'المنتجات' },
-    { key: 'billing',       href: 'billing.html',       icon: 'credit_card',          label: 'الفوترة' },
-    { key: 'accounts',      href: 'accounts.html',      icon: 'link',                 label: 'حساباتي' },
-    { key: 'api-keys',      href: 'api-keys.html',      icon: 'key',                  label: 'مفاتيح API' },
-    { key: 'settings',      href: 'settings.html',      icon: 'settings',             label: 'الإعدادات' }
+    { key: 'dashboard',     href: 'index.html',         icon: 'dashboard',            tKey: 'nav.dashboard' },
+    { key: 'orders',        href: 'orders.html',        icon: 'shopping_bag',         tKey: 'nav.orders' },
+    { key: 'conversations', href: 'conversations.html', icon: 'forum',                tKey: 'nav.conversations' },
+    { key: 'products',      href: 'products.html',      icon: 'inventory_2',          tKey: 'nav.products' },
+    { key: 'billing',       href: 'billing.html',       icon: 'credit_card',          tKey: 'nav.billing' },
+    { key: 'accounts',      href: 'accounts.html',      icon: 'link',                 tKey: 'nav.accounts' },
+    { key: 'api-keys',      href: 'api-keys.html',      icon: 'key',                  tKey: 'nav.api-keys' },
+    { key: 'settings',      href: 'settings.html',      icon: 'settings',             tKey: 'nav.settings' }
   ];
 
   function escapeHtml(s) {
@@ -25,11 +20,33 @@
       .replace(/"/g, '&quot;');
   }
 
+  function t(key) {
+    var L = window.RahSahl && window.RahSahl.lang;
+    return L ? L.t(key) : key;
+  }
+
   function activeKeyFromPath() {
     var p = window.location.pathname.split('/').pop() || 'index.html';
     p = p.replace(/\.html.*$/, '');
     if (!p || p === 'index') return 'dashboard';
     return p;
+  }
+
+  function renderLangSwitcher() {
+    var L = window.RahSahl && window.RahSahl.lang;
+    if (!L) return '';
+    var current = L.current();
+    var items = L.LOCALE_KEYS.map(function (code) {
+      var l = L.locales()[code];
+      var sel = code === current ? ' selected' : '';
+      return '<option value="' + code + '"' + sel + '>' + escapeHtml(l.label) + '</option>';
+    }).join('');
+    return '<div class="px-2 pt-2">'
+      + '<label class="text-[11px] font-semibold block mb-1" style="color:var(--muted)">' + t('nav.lang') + '</label>'
+      + '<select id="langSwitcher" class="w-full text-[13px] rounded-lg px-2 py-1.5 border" style="background:var(--card-bg);color:var(--text);border-color:var(--card-border);direction:ltr">'
+      + items
+      + '</select>'
+      + '</div>';
   }
 
   function renderSidebar(ctx) {
@@ -38,14 +55,14 @@
       var cls = 'nav-item' + (it.key === active ? ' active' : '');
       return '<a class="' + cls + '" href="' + it.href + '">' +
              '<span class="material-symbols-outlined">' + it.icon + '</span>' +
-             '<span>' + escapeHtml(it.label) + '</span>' +
+             '<span>' + escapeHtml(t(it.tKey)) + '</span>' +
              '</a>';
     }).join('\n');
 
-    var shopName = ctx && ctx.shop ? ctx.shop.shop_name : 'متجرك';
+    var shopName = ctx && ctx.shop ? ctx.shop.shop_name : t('nav.free');
     var tier = ctx && ctx.shop ? ctx.shop.subscription_tier : 'free';
     var tierBadge = tier === 'free'
-      ? '<span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">FREE</span>'
+      ? '<span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">' + t('nav.free') + '</span>'
       : '<span class="text-[10px] font-semibold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded">' + escapeHtml(tier.toUpperCase()) + '</span>';
 
     return ''
@@ -60,20 +77,21 @@
       + '      ' + tierBadge
       + '    </div>'
       + '  </div>'
-      + '  <button id="darkToggle" title="الوضع الليلي">'
+      + '  <button id="darkToggle" title="' + t('nav.lang') + '">'
       + '    <span class="material-symbols-outlined dark:hidden text-[18px]">dark_mode</span>'
       + '    <span class="material-symbols-outlined hidden dark:inline text-[18px]">light_mode</span>'
       + '  </button>'
       + '</div>'
       + '<div class="flex-1 overflow-y-auto px-2 py-1">' + items + '</div>'
+      + renderLangSwitcher()
       + '<div class="mt-auto px-2 pt-3 border-t" style="border-color:var(--card-border)">'
       + '  <a class="nav-item" id="btn-logout" href="javascript:void(0)">'
       + '    <span class="material-symbols-outlined">logout</span>'
-      + '    <span>تسجيل الخروج</span>'
+      + '    <span>' + escapeHtml(t('nav.logout')) + '</span>'
       + '  </a>'
       + '  <a class="nav-item" href="../index.html">'
       + '    <span class="material-symbols-outlined">arrow_forward</span>'
-      + '    <span>الموقع الرئيسي</span>'
+      + '    <span>' + escapeHtml(t('nav.main-site')) + '</span>'
       + '  </a>'
       + '</div>';
   }
@@ -89,17 +107,17 @@
       + '  <div class="flex items-center gap-3">'
       + '    <div class="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl" style="background:var(--soft-slate)">'
       + '      <span class="material-symbols-outlined text-[18px]" style="color:var(--muted)">person</span>'
-      + '      <span class="text-[13px] font-semibold">' + escapeHtml(ownerName || 'تاجر') + '</span>'
+      + '      <span class="text-[13px] font-semibold">' + escapeHtml(ownerName || t('nav.dashboard')) + '</span>'
       + '    </div>'
       + '  </div>'
       + '</header>';
   }
 
   function bindGlobalChrome() {
-    var t = document.getElementById('darkToggle');
+    var tBtn = document.getElementById('darkToggle');
     var d = document.documentElement;
     if (localStorage.getItem('rahsahl-dark') === 'true') d.classList.add('dark');
-    if (t) t.addEventListener('click', function () {
+    if (tBtn) tBtn.addEventListener('click', function () {
       d.classList.toggle('dark');
       localStorage.setItem('rahsahl-dark', d.classList.contains('dark') ? 'true' : 'false');
     });
@@ -112,10 +130,34 @@
         window.location.href = '../login.html';
       });
     }
+
+    var langSel = document.getElementById('langSwitcher');
+    if (langSel) {
+      langSel.addEventListener('change', function () {
+        var L = window.RahSahl && window.RahSahl.lang;
+        if (L) L.setLang(this.value);
+      });
+    }
   }
 
   function boot() {
     bindGlobalChrome();
+    // Re-render sidebar on language change
+    window.addEventListener('langchange', function () {
+      var L = window.RahSahl && window.RahSahl.lang;
+      if (!L) return;
+      var side = document.getElementById('sidebar');
+      var top = document.getElementById('topbar');
+      var sidebarCtx = window.RahSahl.sidebarCtx;
+      if (side) side.innerHTML = renderSidebar(sidebarCtx);
+      if (top) {
+        var title = top.getAttribute('data-title') || '';
+        var sub = top.getAttribute('data-subtitle') || '';
+        top.outerHTML = renderTopbar(title, sub, sidebarCtx);
+      }
+      // Re-bind after re-render
+      bindGlobalChrome();
+    });
   }
 
   window.RahSahl = window.RahSahl || {};

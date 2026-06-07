@@ -91,7 +91,7 @@
               <span class="material-symbols-outlined text-sky-600" style="font-variation-settings:'FILL' 1">accounts</span>
             </div>
             <div>
-              <p class="text-[13px] text-muted">إجمالي الحسابات</p>
+              <p id="lblTotalAccounts" class="text-[13px] text-muted"></p>
               <p class="font-bold text-[22px] text-heading" id="totalAccounts">—</p>
             </div>
           </div>
@@ -102,7 +102,7 @@
               <span class="material-symbols-outlined text-teal-600" style="font-variation-settings:'FILL' 1">check_circle</span>
             </div>
             <div>
-              <p class="text-[13px] text-muted">نشط</p>
+              <p id="lblActiveAccounts" class="text-[13px] text-muted"></p>
               <p class="font-bold text-[22px] text-heading" id="activeAccounts">—</p>
             </div>
           </div>
@@ -113,7 +113,7 @@
               <span class="material-symbols-outlined text-amber-600" style="font-variation-settings:'FILL' 1">today</span>
             </div>
             <div>
-              <p class="text-[13px] text-muted">آخر تحديث</p>
+              <p id="lblLastSync" class="text-[13px] text-muted"></p>
               <p class="font-bold text-[14px] text-heading" id="lastSync">—</p>
             </div>
           </div>
@@ -125,10 +125,10 @@
         <div class="flex flex-wrap items-center gap-3">
           <div class="relative flex-1 min-w-[200px]">
             <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-muted text-[20px]">search</span>
-            <input id="searchInput" class="form-input pl-3 pr-10" placeholder="ابحث باسم مستخدم أو ID...">
+            <input id="searchInput" class="form-input pl-3 pr-10" placeholder="">
           </div>
           <select id="filterPlatform" class="form-input w-auto min-w-[140px]">
-            <option value="all">كل المنصات</option>
+            <option id="optAllPlatforms" value="all"></option>
             <option value="netflix">Netflix</option>
             <option value="crunchyroll">Crunchyroll</option>
             <option value="spotify">Spotify</option>
@@ -137,14 +137,14 @@
             <option value="microsoft">Microsoft 365</option>
           </select>
           <select id="filterStatus" class="form-input w-auto min-w-[120px]">
-            <option value="all">كل الحالات</option>
-            <option value="active">نشط</option>
-            <option value="expiring">سينتهي قريباً</option>
-            <option value="expired">منتهي</option>
-            <option value="suspended">موقوف</option>
+            <option id="optAllStatuses" value="all"></option>
+            <option id="optStatusActive" value="active"></option>
+            <option id="optStatusExpiring" value="expiring"></option>
+            <option id="optStatusExpired" value="expired"></option>
+            <option id="optStatusSuspended" value="suspended"></option>
           </select>
           <button class="btn-primary px-5 py-2 rounded-xl text-[14px] font-semibold flex items-center gap-1.5" id="btnAddAccount">
-            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1">add</span> إضافة حساب
+            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1">add</span>
           </button>
         </div>
       </div>
@@ -163,16 +163,16 @@
   <div id="addModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4" style="background:rgba(0,0,0,0.5);backdrop-filter:blur(4px)">
     <div class="card p-6 w-full max-w-md" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between mb-5">
-        <h3 class="font-ar text-[20px] font-bold text-heading">إضافة حساب جديد</h3>
+        <h3 id="accModalTitle" class="font-ar text-[20px] font-bold text-heading"></h3>
         <button id="closeModal" class="btn-ghost w-9 h-9 flex items-center justify-center rounded-xl">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
       <form id="addForm" class="space-y-4">
         <div>
-          <label class="text-[13px] font-semibold text-heading block mb-1">المنصة</label>
+          <label id="lblPlatform" class="text-[13px] font-semibold text-heading block mb-1"></label>
           <select id="fieldPlatform" class="form-input" required>
-            <option value="">اختر منصة...</option>
+            <option id="optChoosePlatform" value=""></option>
             <option value="netflix">Netflix</option>
             <option value="crunchyroll">Crunchyroll</option>
             <option value="spotify">Spotify</option>
@@ -182,11 +182,11 @@
           </select>
         </div>
         <div>
-          <label class="text-[13px] font-semibold text-heading block mb-1">اسم المستخدم أو البريد</label>
-          <input id="fieldUsername" class="form-input" placeholder="مثال: user@example.com" required>
+          <label id="lblUsername" class="text-[13px] font-semibold text-heading block mb-1"></label>
+          <input id="fieldUsername" class="form-input" required>
         </div>
         <div>
-          <label class="text-[13px] font-semibold text-heading block mb-1">كلمة المرور</label>
+          <label id="lblPassword" class="text-[13px] font-semibold text-heading block mb-1"></label>
           <div class="relative">
             <input id="fieldPassword" type="password" class="form-input pl-10" placeholder="••••••••" required>
             <button type="button" id="togglePw" class="absolute left-3 top-1/2 -translate-y-1/2 text-muted hover:text-heading transition-colors">
@@ -196,17 +196,17 @@
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-[13px] font-semibold text-heading block mb-1">تاريخ الانتهاء</label>
+            <label id="lblExpiry" class="text-[13px] font-semibold text-heading block mb-1"></label>
             <input id="fieldExpiry" type="date" class="form-input">
           </div>
           <div>
-            <label class="text-[13px] font-semibold text-heading block mb-1">الملاحظات</label>
-            <input id="fieldNotes" class="form-input" placeholder="اختياري">
+            <label id="lblNotes" class="text-[13px] font-semibold text-heading block mb-1"></label>
+            <input id="fieldNotes" class="form-input">
           </div>
         </div>
         <div class="flex gap-3 pt-2">
-          <button type="submit" class="btn-primary flex-1 py-2.5 rounded-xl font-semibold text-[14px]">حفظ الحساب</button>
-          <button type="button" id="cancelModal" class="btn-outline px-6 py-2.5 rounded-xl text-[14px]">إلغاء</button>
+          <button id="submitAccountBtn" type="submit" class="btn-primary flex-1 py-2.5 rounded-xl font-semibold text-[14px]"></button>
+          <button type="button" id="cancelModal" class="btn-outline px-6 py-2.5 rounded-xl text-[14px]"></button>
         </div>
       </form>
     </div>
@@ -215,9 +215,13 @@
   <script src="js/supabase.js"></script>
   <script src="js/auth-guard.js"></script>
   <script src="js/api.js"></script>
+  <script src="js/lang.js"></script>
   <script src="js/sidebar.js"></script>
   <script>
   (async function () {
+    var L = window.RahSahl && window.RahSahl.lang;
+    function __(k) { return L ? L.t(k) : k; }
+
     var ctx = await window.RahSahl.authGuard.guard();
     if (!ctx) return;
 
@@ -225,10 +229,49 @@
     var sid = window.RahSahl.sidebar;
     sid.boot();
 
-    document.getElementById('sidebar').innerHTML = sid.renderSidebar(ctx);
-    document.getElementById('topbar').innerHTML = sid.renderTopbar('الحسابات', 'إدارة وتنظيم حسابات العملاء', ctx);
-
     var allAccounts = [];
+
+    function render() {
+      document.getElementById('sidebar').innerHTML = sid.renderSidebar(ctx);
+      var top = document.getElementById('topbar');
+      top.setAttribute('data-title', 'acc.title');
+      top.setAttribute('data-subtitle', 'acc.subtitle');
+      top.innerHTML = sid.renderTopbar(__('acc.title'), __('acc.subtitle'), ctx);
+      updateStats(allAccounts);
+      setText('lblTotalAccounts', 'acc.total');
+      setText('lblActiveAccounts', 'acc.active');
+      setText('lblLastSync', 'acc.last-sync');
+      setPlaceholder('searchInput', 'acc.search');
+      setText('optAllPlatforms', 'acc.all-platforms');
+      setText('optAllStatuses', 'acc.all-statuses');
+      setText('optChoosePlatform', 'acc.platform');
+      setText('btnAddAccount', 'acc.add');
+      setText('accModalTitle', 'acc.add-title');
+      setText('lblPlatform', 'acc.platform');
+      setText('lblUsername', 'acc.username');
+      setText('lblPassword', 'acc.password');
+      setText('lblExpiry', 'acc.expiry');
+      setText('lblNotes', 'acc.notes');
+      setText('cancelModal', 'acc.cancel');
+      setText('submitAccountBtn', 'acc.save');
+      setText('fieldNotes', 'acc.notes');
+      setPlaceholder('fieldUsername', 'acc.placeholder-un');
+      setPlaceholder('fieldNotes', 'acc.optional');
+      setText('optStatusActive', 'acc.active');
+      setText('optStatusExpiring', 'acc.expiring');
+      setText('optStatusExpired', 'acc.expired');
+      setText('optStatusSuspended', 'acc.suspended');
+    }
+
+    function setText(id, key) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = __(key);
+    }
+
+    function setPlaceholder(id, key) {
+      var el = document.getElementById(id);
+      if (el) el.placeholder = __(key);
+    }
 
     function animateCounter(el, target) {
       if (!el) return;
@@ -258,16 +301,15 @@
       document.getElementById('lastSync').textContent = new Date().toLocaleDateString('ar-DZ', { hour: '2-digit', minute: '2-digit' });
     }
 
-    var platformNames = { netflix: 'Netflix', crunchyroll: 'Crunchyroll', spotify: 'Spotify', tidal: 'Tidal', canva: 'Canva', microsoft: 'Microsoft 365' };
     var platformColors = { netflix: ['bg-red-50','text-red-600'], crunchyroll: ['bg-orange-50','text-orange-600'], spotify: ['bg-green-50','text-green-600'], tidal: ['bg-sky-100','text-sky-700'], canva: ['bg-purple-50','text-purple-600'], microsoft: ['bg-blue-50','text-blue-600'] };
-    var statusLabels = { active: 'نشط', expiring: 'سينتهي قريباً', expired: 'منتهي', suspended: 'موقوف' };
     var statusColors = { active: 'bg-teal-100 text-teal-700', expiring: 'bg-amber-100 text-amber-700', expired: 'bg-red-100 text-red-600', suspended: 'bg-soft-slate text-muted' };
 
     function deriveStatus(a) {
       if (!a.is_active) return 'suspended';
-      if (a.expiry_date) {
+      if (a.expiry_date || a.token_expires_at) {
+        var d = a.expiry_date || a.token_expires_at;
         var now = new Date();
-        var exp = new Date(a.expiry_date);
+        var exp = new Date(d);
         if (exp < now) return 'expired';
         var week = 7 * 24 * 60 * 60 * 1000;
         if (exp - now < week) return 'expiring';
@@ -278,7 +320,7 @@
     function renderAccounts(accounts) {
       var grid = document.getElementById('accountsGrid');
       if (!accounts.length) {
-        grid.innerHTML = '<div class="col-span-full card p-12 text-center"><span class="material-symbols-outlined text-[56px] text-muted" style="font-variation-settings:\'FILL\' 1">account_box</span><p class="text-muted text-[16px] mt-3">لا توجد حسابات بعد</p><button class="btn-primary mt-4 px-6 py-2.5 rounded-xl text-[14px]" onclick="document.getElementById(\'btnAddAccount\').click()">أضف أول حساب</button></div>';
+        grid.innerHTML = '<div class="col-span-full card p-12 text-center"><span class="material-symbols-outlined text-[56px] text-muted" style="font-variation-settings:\'FILL\' 1">account_box</span><p class="text-muted text-[16px] mt-3">' + __('acc.empty') + '</p><button class="btn-primary mt-4 px-6 py-2.5 rounded-xl text-[14px]" onclick="document.getElementById(\'btnAddAccount\').click()">' + __('acc.add-first') + '</button></div>';
         return;
       }
       grid.innerHTML = accounts.map(function (a) {
@@ -291,12 +333,12 @@
         var sc = statusColors[status] || 'bg-soft-slate text-muted';
         return '<div class="card p-5 account-card">'
           + '<div class="flex items-center justify-between mb-3">'
-          + '<span class="platform-badge ' + pc[0] + ' ' + pc[1] + '">' + (platformNames[platform] || platform) + '</span>'
-          + '<span class="badge text-[11px] ' + sc + '">' + (statusLabels[status] || status) + '</span></div>'
+          + '<span class="platform-badge ' + pc[0] + ' ' + pc[1] + '">' + (platform.charAt(0).toUpperCase() + platform.slice(1)) + '</span>'
+          + '<span class="badge text-[11px] ' + sc + '">' + __('acc.' + status) + '</span></div>'
           + '<p class="font-semibold text-heading text-[14px] truncate" dir="ltr" style="text-align:right">' + username + '</p>'
           + '<p class="text-[13px] text-muted mt-1.5">' + notes + '</p>'
           + '<div class="flex items-center justify-between mt-4 pt-3" style="border-top:1px solid var(--border-light)">'
-          + '<span class="text-[12px] text-muted">' + (expiry ? new Date(expiry).toLocaleDateString('ar-DZ') : 'بدون تاريخ') + '</span>'
+          + '<span class="text-[12px] text-muted">' + (expiry ? new Date(expiry).toLocaleDateString('ar-DZ') : __('acc.no-expiry')) + '</span>'
           + '<div class="flex gap-0.5">'
           + '<button class="btn-ghost w-8 h-8 flex items-center justify-center rounded-lg edit-btn" data-id="' + a.id + '"><span class="material-symbols-outlined text-[18px]">edit</span></button>'
           + '<button class="btn-ghost w-8 h-8 flex items-center justify-center rounded-lg text-red-400 delete-btn" data-id="' + a.id + '"><span class="material-symbols-outlined text-[18px]">delete</span></button>'
@@ -304,6 +346,7 @@
       }).join('');
     }
 
+    render();
     await loadAccounts();
 
     // Search & filter
@@ -349,13 +392,18 @@
         notes: document.getElementById('fieldNotes').value || null,
       };
       var btn = e.target.querySelector('button[type="submit"]');
-      btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+      btn.disabled = true; btn.textContent = __('acc.saving');
       var ret = await api.createAccount(payload);
-      btn.disabled = false; btn.textContent = 'حفظ الحساب';
-      if (ret.error) { alert('فشل الحفظ: ' + ret.error.message); return; }
+      btn.disabled = false; btn.textContent = __('acc.save');
+      if (ret.error) { alert(__('general.error') + ': ' + ret.error.message); return; }
       modal.classList.add('hidden');
       e.target.reset();
       await loadAccounts();
+    });
+
+    // Re-render on language change
+    window.addEventListener('langchange', function () {
+      render();
     });
   })();
   </script>

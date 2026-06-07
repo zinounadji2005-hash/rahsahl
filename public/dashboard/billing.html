@@ -85,27 +85,7 @@
     <main class="flex-1 p-6 md:p-8 overflow-y-auto">
       <div id="topbar"></div>
 
-      <!-- Balance Card -->
-      <div class="card p-6 mb-6">
-        <div class="flex items-center justify-between flex-wrap gap-4">
-          <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-sky-200/20" style="background:linear-gradient(135deg,#0ea5e9,#14b8a6)">
-              <span class="material-symbols-outlined text-white text-[28px]" style="font-variation-settings:'FILL' 1">monetization_on</span>
-            </div>
-            <div>
-              <p class="text-[13px] text-muted">الرصيد الحالي</p>
-              <p class="font-ar text-[32px] font-bold text-heading"><span id="currentBalance">—</span> <span class="text-[16px] font-normal text-muted">نقطة</span></p>
-            </div>
-          </div>
-          <div class="flex gap-6 text-center">
-            <div><p class="text-[11px] text-muted">تم شراؤها</p><p class="font-bold text-[18px] text-heading" id="totalPurchased">—</p></div>
-            <div class="w-px self-stretch" style="background:var(--card-border)"></div>
-            <div><p class="text-[11px] text-muted">مستعملة</p><p class="font-bold text-[18px] text-heading" id="totalSpent">—</p></div>
-            <div class="w-px self-stretch" style="background:var(--card-border)"></div>
-            <div><p class="text-[11px] text-muted">بونص</p><p class="font-bold text-[18px] gradient-text" id="totalBonus">—</p></div>
-          </div>
-        </div>
-      </div>
+      <div id="balanceData"></div>
 
       <!-- Coin Packs -->
       <div class="card p-6 mb-6">
@@ -114,8 +94,8 @@
             <span class="material-symbols-outlined text-sky-600" style="font-variation-settings:'FILL' 1">local_offer</span>
           </div>
           <div>
-            <h2 class="font-ar text-[20px] font-bold text-heading">اشحن رصيدك</h2>
-            <p class="text-[14px] text-muted">اختر الباقة المناسبة لاحتياجك.</p>
+            <h2 id="lblRecharge" class="font-ar text-[20px] font-bold text-heading"></h2>
+            <p id="lblRechargeDesc" class="text-[14px] text-muted"></p>
           </div>
         </div>
         <div id="packsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
@@ -128,8 +108,8 @@
             <span class="material-symbols-outlined text-teal-600" style="font-variation-settings:'FILL' 1">tune</span>
           </div>
           <div>
-            <h2 class="font-ar text-[20px] font-bold text-heading">باقة مخصصة</h2>
-            <p class="text-[14px] text-muted">اختر عدد النقاط (1,000 — 1,000,000)</p>
+            <h2 id="lblCustom" class="font-ar text-[20px] font-bold text-heading"></h2>
+            <p id="lblCustomDesc" class="text-[14px] text-muted"></p>
           </div>
         </div>
         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
@@ -142,11 +122,11 @@
             </div>
           </div>
           <div class="text-center sm:text-left shrink-0">
-            <p class="text-[13px] text-muted">السعر</p>
+            <p id="lblPrice" class="text-[13px] text-muted"></p>
             <p class="font-bold text-[22px] text-heading"><span id="customPriceDisplay">—</span> <span class="text-[14px] font-normal text-muted">د.ج</span></p>
-            <p class="text-[12px] text-muted"><span id="customPerCoin">—</span> د.ج/نقطة</p>
+            <p class="text-[12px] text-muted"><span id="customPerCoin">—</span> <span id="lblPerCoinUnit" class="text-muted">د.ج/نقطة</span></p>
           </div>
-          <button id="btnCustomPurchase" class="btn-primary px-6 py-2.5 rounded-xl font-semibold text-[14px] disabled:opacity-50">شراء مخصص</button>
+          <button id="btnCustomPurchase" class="btn-primary px-6 py-2.5 rounded-xl font-semibold text-[14px] disabled:opacity-50"></button>
         </div>
       </div>
 
@@ -157,11 +137,11 @@
             <div class="bg-amber-50 p-2.5 rounded-xl">
               <span class="material-symbols-outlined text-amber-600" style="font-variation-settings:'FILL' 1">receipt_long</span>
             </div>
-            <h2 class="font-ar text-[20px] font-bold text-heading">سجل المعاملات</h2>
+            <h2 id="lblTxHistory" class="font-ar text-[20px] font-bold text-heading"></h2>
           </div>
           <div class="flex gap-1.5">
-            <button id="tabTx" class="tab-btn active">الحركات</button>
-            <button id="tabPayments" class="tab-btn">المدفوعات</button>
+            <button id="tabTx" class="tab-btn active"></button>
+            <button id="tabPayments" class="tab-btn"></button>
           </div>
         </div>
         <div id="txTable"><div class="skeleton h-32"></div></div>
@@ -172,9 +152,13 @@
   <script src="js/supabase.js"></script>
   <script src="js/auth-guard.js"></script>
   <script src="js/api.js"></script>
+  <script src="js/lang.js"></script>
   <script src="js/sidebar.js"></script>
   <script>
   (async function () {
+    var L = window.RahSahl && window.RahSahl.lang;
+    function __(k) { return L ? L.t(k) : k; }
+
     var ctx = await window.RahSahl.authGuard.guard();
     if (!ctx) return;
 
@@ -182,56 +166,92 @@
     var sid = window.RahSahl.sidebar;
     sid.boot();
 
-    document.getElementById('sidebar').innerHTML = sid.renderSidebar(ctx);
-    document.getElementById('topbar').innerHTML = sid.renderTopbar('الفوترة', 'إدارة الرصيد والمشتريات', ctx);
+    var balanceData = null;
+    var packsData = null;
 
-    // Counter animation
+    function render() {
+      document.getElementById('sidebar').innerHTML = sid.renderSidebar(ctx);
+      var top = document.getElementById('topbar');
+      top.setAttribute('data-title', 'bill.title');
+      top.setAttribute('data-subtitle', 'bill.subtitle');
+      top.innerHTML = sid.renderTopbar(__(titles.title), __(titles.subtitle), ctx);
+      renderBalance();
+      renderPacks();
+      setText('lblRecharge', 'bill.recharge');
+      setText('lblRechargeDesc', 'bill.pack-desc');
+      setText('lblCustom', 'bill.custom');
+      setText('lblCustomDesc', 'bill.custom-desc');
+      setText('lblPrice', 'bill.price');
+      setText('lblTxHistory', 'bill.history');
+      setText('tabTx', 'bill.tx');
+      setText('tabPayments', 'bill.payments');
+      setText('btnCustomPurchase', 'bill.buy-custom');
+    }
+
+    function setText(id, key) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = __(key);
+    }
+
+    var titles = { title: 'bill.title', subtitle: 'bill.subtitle' };
+
+    function renderBalance() {
+      var bd = document.getElementById('balanceData');
+      if (!bd) return;
+      if (!balanceData) { bd.innerHTML = ''; return; }
+      var bal = balanceData;
+      bd.innerHTML = '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">'
+        + '<div class="card p-5 flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-soft-sky flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-sky-600" style="font-variation-settings:\'FILL\' 1">account_balance_wallet</span></div><div><p class="text-muted text-[13px]">' + __('bill.balance') + '</p><p class="text-[26px] font-bold text-heading"><span id="currentBalance">0</span> <span class="text-[14px] font-normal text-muted">' + __('bill.coin') + '</span></p></div></div>'
+        + '<div class="card p-5 flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-soft-teal flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-teal-600" style="font-variation-settings:\'FILL\' 1">add_shopping_cart</span></div><div><p class="text-muted text-[13px]">' + __('bill.purchased') + '</p><p class="text-[26px] font-bold text-heading"><span id="totalPurchased">0</span></p></div></div>'
+        + '<div class="card p-5 flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-soft-amber flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-amber-600" style="font-variation-settings:\'FILL\' 1">trending_down</span></div><div><p class="text-muted text-[13px]">' + __('bill.spent') + '</p><p class="text-[26px] font-bold text-heading"><span id="totalSpent">0</span></p></div></div>'
+        + '<div class="card p-5 flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-purple-600" style="font-variation-settings:\'FILL\' 1">card_giftcard</span></div><div><p class="text-muted text-[13px]">' + __('bill.bonus') + '</p><p class="text-[26px] font-bold text-heading"><span id="totalBonus">0</span></p></div></div>'
+        + '</div>';
+      animateCounter(document.getElementById('currentBalance'), bal.balance ?? 0);
+      animateCounter(document.getElementById('totalPurchased'), bal.total_purchased ?? 0);
+      animateCounter(document.getElementById('totalSpent'), bal.total_spent ?? 0);
+      animateCounter(document.getElementById('totalBonus'), bal.total_bonus ?? 0);
+    }
+
+    function renderPacks() {
+      var pg = document.getElementById('packsGrid');
+      if (!pg) return;
+      if (packsData && packsData.length) {
+        pg.innerHTML = packsData.filter(function (p) { return p.tier !== 'custom'; }).map(function (p) {
+          var isRec = p.tier === 'growth' || p.tier === 'business';
+          return '<div class="card p-5 pack-card ' + (isRec ? 'recommended' : '') + '" onclick="purchasePack(\'' + p.tier + '\')">'
+            + '<div class="flex items-center justify-between mb-3">'
+            + '<span class="font-ar font-bold text-[18px] text-heading">' + (p.display_name_ar || p.tier) + '</span>'
+            + (isRec ? '<span class="badge text-white text-[11px]" style="background:linear-gradient(135deg,#0ea5e9,#14b8a6)">' + __('bill.most-popular') + '</span>' : '')
+            + '</div>'
+            + '<p class="text-[32px] font-bold text-heading">' + (p.coins ?? 0).toLocaleString('ar-DZ') + ' <span class="text-[14px] font-normal text-muted">' + __('bill.coin') + '</span></p>'
+            + '<p class="text-[18px] font-bold mt-2 gradient-text">' + (p.price_dzd ?? 0).toLocaleString('ar-DZ') + ' <span class="text-[13px] font-normal text-muted">د.ج</span></p>'
+            + '<button class="mt-4 w-full btn-primary py-2.5 rounded-xl font-semibold text-[14px]">' + __('bill.buy-now') + '</button>'
+            + '</div>';
+        }).join('');
+      } else {
+        pg.innerHTML = '<div class="col-span-full py-12 text-center"><span class="material-symbols-outlined text-[40px] text-muted">inventory_2</span><p class="text-muted mt-2">' + __('bill.loading') + '</p></div>';
+      }
+    }
+
     function animateCounter(el, target) {
       if (!el) return;
       var t = parseInt(target) || 0;
       if (t === 0) { el.textContent = '0'; return; }
-      var current = 0;
-      var step = Math.max(1, Math.floor(t / 40));
-      var interval = setInterval(function () {
-        current += step;
-        if (current >= t) { current = t; clearInterval(interval); }
-        el.textContent = current.toLocaleString('ar-DZ');
+      var c = 0, step = Math.max(1, Math.floor(t / 40));
+      var iv = setInterval(function () {
+        c += step;
+        if (c >= t) { c = t; clearInterval(iv); }
+        el.textContent = c.toLocaleString('ar-DZ');
       }, 25);
     }
 
-    // Load balance
-    async function loadBalance() {
-      var balRes = await api.getCoinBalance();
-      var bal = balRes.data;
-      if (bal) {
-        animateCounter(document.getElementById('currentBalance'), bal.balance ?? 0);
-        animateCounter(document.getElementById('totalPurchased'), bal.total_purchased ?? 0);
-        animateCounter(document.getElementById('totalSpent'), bal.total_spent ?? 0);
-        animateCounter(document.getElementById('totalBonus'), bal.total_bonus ?? 0);
-      }
-    }
-    await loadBalance();
+    render();
 
-    // Load packs
+    var balRes = await api.getCoinBalance();
+    if (balRes.data) { balanceData = balRes.data; renderBalance(); }
+
     var packsRes = await api.listCoinPacks();
-    var packs = packsRes.data;
-    var packsGrid = document.getElementById('packsGrid');
-    if (packs && packs.length) {
-      packsGrid.innerHTML = packs.filter(function (p) { return p.tier !== 'custom'; }).map(function (p) {
-        var isRec = p.tier === 'growth' || p.tier === 'business';
-        return '<div class="card p-5 pack-card ' + (isRec ? 'recommended' : '') + '" onclick="purchasePack(\'' + p.tier + '\')">'
-          + '<div class="flex items-center justify-between mb-3">'
-          + '<span class="font-ar font-bold text-[18px] text-heading">' + (p.display_name_ar || p.tier) + '</span>'
-          + (isRec ? '<span class="badge text-white text-[11px]" style="background:linear-gradient(135deg,#0ea5e9,#14b8a6)">الأكثر طلباً</span>' : '')
-          + '</div>'
-          + '<p class="text-[32px] font-bold text-heading">' + (p.coins ?? 0).toLocaleString('ar-DZ') + ' <span class="text-[14px] font-normal text-muted">نقطة</span></p>'
-          + '<p class="text-[18px] font-bold mt-2 gradient-text">' + (p.price_dzd ?? 0).toLocaleString('ar-DZ') + ' <span class="text-[13px] font-normal text-muted">د.ج</span></p>'
-          + '<button class="mt-4 w-full btn-primary py-2.5 rounded-xl font-semibold text-[14px]">اشتر الآن</button>'
-          + '</div>';
-      }).join('');
-    } else {
-      packsGrid.innerHTML = '<div class="col-span-full py-12 text-center"><span class="material-symbols-outlined text-[40px] text-muted">inventory_2</span><p class="text-muted mt-2">جاري تحميل الباقات...</p></div>';
-    }
+    if (packsRes.data) { packsData = packsRes.data; renderPacks(); }
 
     // Custom pack slider
     var range = document.getElementById('customRange');
@@ -254,7 +274,7 @@
       await purchasePack('custom', parseInt(range.value));
     });
 
-    // Tab switching
+    // Tabs
     var txTable = document.getElementById('txTable');
 
     async function loadTx() {
@@ -262,21 +282,19 @@
       var txRes = await api.listTransactions(50);
       var tx = txRes.data;
       if (!tx || !tx.length) {
-        txTable.innerHTML = '<div class="text-center py-12"><span class="material-symbols-outlined text-[40px] text-muted">receipt_long</span><p class="text-muted mt-2">لا توجد حركات بعد</p></div>';
+        txTable.innerHTML = '<div class="text-center py-12"><span class="material-symbols-outlined text-[40px] text-muted">receipt_long</span><p class="text-muted mt-2">' + __('bill.no-tx') + '</p></div>';
         return;
       }
-      var typeLabels = { deduction: 'خصم', purchase: 'شراء', bonus: 'بونص', refund: 'استرجاع', bonus_expired: 'انتهاء', admin_adjust: 'تعديل' };
-      txTable.innerHTML = '<table><thead><tr><th>التاريخ</th><th>النوع</th><th>السبب</th><th style="text-align:left">المبلغ</th><th style="text-align:left">الرصيد</th></tr></thead><tbody>'
-        + tx.map(function (t) {
-          var isDeduct = t.type === 'deduction';
-          var typeLabel = typeLabels[t.type] || t.type;
-          var sign = isDeduct ? '' : '+';
-          var color = isDeduct ? 'text-red-500' : 'text-teal-600';
-          return '<tr class="tx-row"><td class="text-muted text-[13px]">' + new Date(t.created_at).toLocaleDateString('ar-DZ') + '</td>'
+      txTable.innerHTML = '<table><thead><tr><th>' + __('th.date') + '</th><th>' + __('th.type') + '</th><th>' + __('th.reason') + '</th><th style="text-align:left">' + __('th.amount') + '</th><th style="text-align:left">' + __('th.balance') + '</th></tr></thead><tbody>'
+        + tx.map(function (tr) {
+          var isDeduct = tr.type === 'deduction';
+          var typeKey = 'tx.' + tr.type;
+          var typeLabel = __(typeKey) || tr.type;
+          return '<tr class="tx-row"><td class="text-muted text-[13px]">' + new Date(tr.created_at).toLocaleDateString('ar-DZ') + '</td>'
             + '<td><span class="badge text-[11px] ' + (isDeduct ? 'bg-red-50 text-red-500' : 'bg-green-50 text-teal-600') + '">' + typeLabel + '</span></td>'
-            + '<td class="text-muted">' + (t.reason || '<span class="text-muted-400">—</span>') + '</td>'
-            + '<td style="text-align:left" class="font-bold ' + color + '">' + sign + (t.amount ?? 0).toLocaleString('ar-DZ') + '</td>'
-            + '<td style="text-align:left" class="font-bold text-heading">' + (t.balance_after != null ? Number(t.balance_after).toLocaleString('ar-DZ') : '—') + '</td></tr>';
+            + '<td class="text-muted">' + (tr.reason || '<span class="text-muted-400">—</span>') + '</td>'
+            + '<td style="text-align:left" class="font-bold ' + (isDeduct ? 'text-red-500' : 'text-teal-600') + '">' + (isDeduct ? '' : '+') + (tr.amount ?? 0).toLocaleString('ar-DZ') + '</td>'
+            + '<td style="text-align:left" class="font-bold text-heading">' + (tr.balance_after != null ? Number(tr.balance_after).toLocaleString('ar-DZ') : '—') + '</td></tr>';
         }).join('') + '</tbody></table>';
     }
 
@@ -285,45 +303,49 @@
       var pmtsRes = await api.listPayments(50);
       var pmts = pmtsRes.data;
       if (!pmts || !pmts.length) {
-        txTable.innerHTML = '<div class="text-center py-12"><span class="material-symbols-outlined text-[40px] text-muted">credit_card</span><p class="text-muted mt-2">لا توجد مدفوعات بعد</p></div>';
+        txTable.innerHTML = '<div class="text-center py-12"><span class="material-symbols-outlined text-[40px] text-muted">credit_card</span><p class="text-muted mt-2">' + __('bill.no-payments') + '</p></div>';
         return;
       }
-      var statusMap = { pending: 'قيد الانتظار', paid: 'مدفوع', failed: 'فشل', canceled: 'ملغي', expired: 'منتهي' };
+      var statusKeys = { pending: 'pay.pending', paid: 'pay.paid', failed: 'pay.failed', canceled: 'pay.canceled', expired: 'pay.expired' };
       var statusColor = { pending: 'bg-amber-50 text-amber-600', paid: 'bg-green-50 text-teal-600', failed: 'bg-red-50 text-red-500', canceled: 'bg-soft-slate text-muted', expired: 'bg-soft-slate text-muted' };
-      txTable.innerHTML = '<table><thead><tr><th>التاريخ</th><th>الباقة</th><th style="text-align:left">النقاط</th><th style="text-align:left">المبلغ</th><th>الحالة</th></tr></thead><tbody>'
+      txTable.innerHTML = '<table><thead><tr><th>' + __('th.date') + '</th><th>' + __('th.pack') + '</th><th style="text-align:left">' + __('th.coins') + '</th><th style="text-align:left">' + __('th.amount') + '</th><th>' + __('th.status') + '</th></tr></thead><tbody>'
         + pmts.map(function (p) {
           return '<tr class="tx-row"><td class="text-muted text-[13px]">' + new Date(p.created_at).toLocaleDateString('ar-DZ') + '</td>'
             + '<td class="font-semibold text-heading">' + (p.pack_tier || '—') + '</td>'
             + '<td style="text-align:left">' + (p.coins_granted ?? 0).toLocaleString('ar-DZ') + '</td>'
             + '<td style="text-align:left" class="font-bold text-heading">' + (p.amount_dzd ?? 0).toLocaleString('ar-DZ') + ' د.ج</td>'
-            + '<td><span class="badge text-[11px] ' + (statusColor[p.status] || '') + '">' + (statusMap[p.status] || p.status) + '</span></td></tr>';
+            + '<td><span class="badge text-[11px] ' + (statusColor[p.status] || '') + '">' + __(statusKeys[p.status] || '') + '</span></td></tr>';
         }).join('') + '</tbody></table>';
     }
 
     document.getElementById('tabTx').addEventListener('click', function () {
       document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
-      document.getElementById('tabTx').classList.add('active');
+      this.classList.add('active');
       loadTx();
     });
     document.getElementById('tabPayments').addEventListener('click', function () {
       document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
-      document.getElementById('tabPayments').classList.add('active');
+      this.classList.add('active');
       loadPayments();
     });
     loadTx();
 
-    // Purchase
     window.purchasePack = async function (tier, customCoins) {
       var btn = document.querySelector('[onclick*="' + tier + '"] button') || document.getElementById('btnCustomPurchase');
-      if (btn) { btn.disabled = true; btn.textContent = 'جاري...'; }
+      if (btn) { btn.disabled = true; btn.textContent = __('general.saving'); }
       try {
         var res = await api.createCheckout(tier, customCoins);
-        if (res.error) { alert('فشل إنشاء الدفع: ' + res.error.message); return; }
+        if (res.error) { alert(__('general.error') + ': ' + res.error.message); return; }
         if (res.data && res.data.checkout_url) window.location.href = res.data.checkout_url;
-        else alert('لم يتم استلام رابط الدفع');
-      } catch (e) { alert('خطأ: ' + e.message); }
-      finally { if (btn) { btn.disabled = false; btn.textContent = 'اشتر الآن'; } }
+        else alert(__('general.error'));
+      } catch (e) { alert(__('general.error') + ': ' + e.message); }
+      finally { if (btn) { btn.disabled = false; btn.textContent = __('bill.buy-now'); } }
     };
+
+    // Re-render on language switch
+    window.addEventListener('langchange', function () {
+      render();
+    });
   })();
   </script>
 
