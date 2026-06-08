@@ -199,7 +199,7 @@
         channel: payload.platform,
         external_id: payload.username,
         access_token: payload.password,
-        token_expires_at: payload.expiry_date || null,
+        expires_at: payload.expiry_date || null,
         metadata: payload.notes ? { notes: payload.notes } : null
       }).select().maybeSingle();
     },

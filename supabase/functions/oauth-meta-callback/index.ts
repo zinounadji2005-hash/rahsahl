@@ -90,7 +90,7 @@ serve(async (req) => {
           channel: "messenger",
           external_id: page.id,
           access_token: page.access_token,
-          token_expires_at: expiresAt,
+          expires_at: expiresAt,
           is_active: true,
           metadata: { user_access_token: userToken, user_token_expires_at: expiresAt, page_name: page.name },
         }, { onConflict: "shop_id,channel,external_id", ignoreDuplicates: false })
@@ -126,7 +126,7 @@ serve(async (req) => {
             channel: "instagram",
             external_id: ig.id,
             access_token: page.access_token,
-            token_expires_at: expiresAt,
+            expires_at: expiresAt,
             is_active: true,
             metadata: { user_access_token: userToken, user_token_expires_at: expiresAt, page_name: page.name, ig_username: ig.username },
           }, { onConflict: "shop_id,channel,external_id", ignoreDuplicates: false })
