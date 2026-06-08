@@ -7,20 +7,31 @@ const SERVICE_KEY = Deno.env.get("SERVICE_KEY") ?? Deno.env.get("SUPABASE_SERVIC
 const META_APP_ID = Deno.env.get("META_APP_ID")!;
 const OAUTH_CALLBACK_URL = Deno.env.get("OAUTH_CALLBACK_URL") ?? "https://rvjsnkolroaakskvvwnv.supabase.co/functions/v1/oauth-meta-callback";
 
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+function json(data: unknown, status = 200): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { ...CORS, "Content-Type": "application/json" },
+  });
+}
+
 serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
+
   try {
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "no auth" }), { status: 401, headers: { "Content-Type": "application/json" } });
-    }
+    if (!authHeader) return json({ error: "no auth" }, 401);
 
     const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       global: { headers: { Authorization: authHeader } },
     });
     const { data: { user }, error: userErr } = await userClient.auth.getUser();
-    if (userErr || !user) {
-      return new Response(JSON.stringify({ error: "invalid auth" }), { status: 401, headers: { "Content-Type": "application/json" } });
-    }
+    if (userErr || !user) return json({ error: "invalid auth" }, 401);
 
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
@@ -34,13 +45,8 @@ serve(async (req) => {
     const scope = "pages_show_list,pages_manage_metadata,pages_messaging,instagram_basic,instagram_manage_messages";
     const url = `https://www.facebook.com/v22.0/dialog/oauth?client_id=${META_APP_ID}&redirect_uri=${encodeURIComponent(OAUTH_CALLBACK_URL)}&state=${state}&scope=${encodeURIComponent(scope)}&response_type=code`;
 
-    return new Response(JSON.stringify({ url }), {
-      headers: { "Content-Type": "application/json" },
-    });
+    return json({ url });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return json({ error: err instanceof Error ? err.message : String(err) }, 500);
   }
 });

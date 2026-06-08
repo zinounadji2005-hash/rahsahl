@@ -10,11 +10,19 @@ const SUCCESS_REDIRECT = Deno.env.get("SUCCESS_REDIRECT") ?? "https://rahsahl.pa
 
 const GRAPH = "https://graph.facebook.com/v22.0";
 
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
 function errRedirect(reason: string): Response {
   return Response.redirect(`${SUCCESS_REDIRECT}?oauth=error&reason=${encodeURIComponent(reason)}`, 302);
 }
 
 serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
+
   try {
     const url = new URL(req.url);
     const code = url.searchParams.get("code");
@@ -26,7 +34,6 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
-    // Validate state
     const { data: stateRow, error: stateErr } = await supabase
       .from("oauth_states")
       .select("user_id")
@@ -35,12 +42,10 @@ serve(async (req) => {
 
     if (stateErr || !stateRow) return errRedirect("invalid_state");
 
-    // Consume state
     await supabase.from("oauth_states").delete().eq("state", state);
 
     const userId = stateRow.user_id;
 
-    // 1 — Exchange code for short-lived access token
     const tokenBody = new URLSearchParams();
     tokenBody.set("client_id", META_APP_ID);
     tokenBody.set("client_secret", META_APP_SECRET);
@@ -55,7 +60,6 @@ serve(async (req) => {
     const tokenData = await tokenResp.json();
     if (!tokenData.access_token) return errRedirect("token_exchange_failed");
 
-    // 2 — Exchange short-lived for long-lived (60 day)
     const longUrl = new URL(`${GRAPH}/oauth/access_token`);
     longUrl.searchParams.set("grant_type", "fb_exchange_token");
     longUrl.searchParams.set("client_id", META_APP_ID);
@@ -70,7 +74,6 @@ serve(async (req) => {
     const expiresIn = longData.expires_in ?? 5184000;
     const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
 
-    // 3 — Get Facebook Pages for this user
     const pagesResp = await fetch(`${GRAPH}/me/accounts?access_token=${userToken}&fields=id,name,access_token,picture`);
     const pagesData = await pagesResp.json();
     const pages = pagesData.data ?? [];
@@ -80,7 +83,6 @@ serve(async (req) => {
     let connected = 0;
 
     for (const page of pages) {
-      // Upsert platform_credentials for Messenger
       const { data: msgCred } = await supabase
         .from("platform_credentials")
         .upsert({
@@ -110,7 +112,6 @@ serve(async (req) => {
         connected++;
       }
 
-      // Try to get linked Instagram Business account
       const igResp = await fetch(
         `${GRAPH}/${page.id}/instagram_accounts?access_token=${page.access_token}&fields=id,username,name`,
       );
