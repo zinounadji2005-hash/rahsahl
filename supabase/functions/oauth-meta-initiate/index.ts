@@ -47,6 +47,7 @@ serve(async (req) => {
 
     return json({ url });
   } catch (err) {
-    return json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    const msg = (err && typeof err.message === 'string') ? err.message : JSON.stringify(err);
+    return json({ error: msg }, 500);
   }
 });

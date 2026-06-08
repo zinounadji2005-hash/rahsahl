@@ -152,6 +152,7 @@ serve(async (req) => {
 
     return Response.redirect(`${SUCCESS_REDIRECT}?oauth=success&connected=${connected}`, 302);
   } catch (err) {
-    return errRedirect(err instanceof Error ? err.message : String(err));
+    const msg = (err && typeof err.message === 'string') ? err.message : JSON.stringify(err);
+    return errRedirect(msg);
   }
 });
