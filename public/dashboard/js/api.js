@@ -225,6 +225,24 @@
     },
     verifyHmac: function (payload) {
       return callFunction('verify-hmac', payload);
+    },
+
+    // -------- Meta OAuth --------
+    getOAuthUrl: function () {
+      return callFunction('oauth-meta-initiate', {});
+    },
+    disconnectPlatform: function (channel) {
+      var id = activeShopId();
+      if (!id) return Promise.resolve({ error: { message: 'no shop_id' }, data: null });
+      var pc = client().from('platform_credentials')
+        .update({ is_active: false })
+        .eq('shop_id', id)
+        .eq('channel', channel);
+      var lsa = client().from('linked_social_accounts')
+        .update({ is_active: false })
+        .eq('shop_id', id)
+        .eq('platform', channel);
+      return Promise.all([pc, lsa]).then(function (res) { return res[0]; });
     }
   };
 

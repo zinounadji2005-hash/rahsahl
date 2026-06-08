@@ -236,10 +236,12 @@
           + '      </div>'
           + '      <h2 class="font-ar text-[18px] font-bold text-heading">' + __('set.link-accounts') + '</h2>'
           + '    </div>'
-          + '    <p class="text-[13px] text-muted mb-4">' + __('set.link-desc') + '</p>'
-          + '    <div class="space-y-4" id="linkedAccounts">'
-          + '      <div class="text-center py-4 text-[13px] text-muted">' + __('set.loading') + '</div>'
-          + '    </div>'
++ '    <p class="text-[13px] text-muted mb-4">' + __('set.link-desc') + '</p>'
++ '    <button id="btnConnectMeta" class="btn-primary w-full justify-center mb-4 text-[14px]" onclick="connectMeta()">'
++ '      <span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('oauth.connect') + '</button>'
++ '    <div class="space-y-3" id="linkedAccounts">'
++ '      <div class="text-center py-4 text-[13px] text-muted">' + __('set.loading') + '</div>'
++ '    </div>'
           + '  </section>'
 
           + '</div>';
@@ -260,19 +262,65 @@
 
         if (accounts && accounts.length > 0) {
           container.innerHTML = accounts.map(function (a) {
-            return '<div class="flex items-center justify-between py-2" style="border-bottom:1px solid var(--border-light)">'
-              + '<div class="flex items-center gap-2">'
-              + '  <span class="material-symbols-outlined text-sky-600 text-[20px]">' + (platformIcons[a.platform] || 'public') + '</span>'
-              + '  <span class="text-[14px] font-semibold text-heading">' + (a.platform.charAt(0).toUpperCase() + a.platform.slice(1)) + '</span>'
-              + '  <span class="text-[12px] text-muted">@' + (a.external_handle || a.external_id || '—') + '</span>'
+            return '<div class="flex items-center justify-between py-2.5 px-3 rounded-xl" style="border:1px solid var(--border-light)">'
+              + '<div class="flex items-center gap-2.5 min-w-0">'
+              + '  <span class="material-symbols-outlined text-sky-600 text-[20px] shrink-0">' + (platformIcons[a.platform] || 'public') + '</span>'
+              + '  <div class="min-w-0">'
+              + '    <p class="text-[14px] font-semibold text-heading truncate">' + (a.platform.charAt(0).toUpperCase() + a.platform.slice(1)) + '</p>'
+              + '    <p class="text-[12px] text-muted truncate">@' + (a.external_handle || a.external_id || '—') + '</p>'
+              + '  </div>'
               + '</div>'
-              + '<span class="badge text-[11px] ' + (a.is_active ? 'bg-teal-100 text-teal-700' : 'bg-red-50 text-red-600') + '">' + (a.is_active ? __('acc.active') : __('acc.suspended')) + '</span>'
+              + '<div class="flex items-center gap-2 shrink-0">'
+              + '  <span class="badge text-[11px] ' + (a.is_active ? 'bg-teal-100 text-teal-700' : 'bg-red-50 text-red-600') + '">' + (a.is_active ? __('acc.active') : __('acc.suspended')) + '</span>'
+              + (a.is_active ? '<button class="btn-ghost text-red-400 text-[13px] px-2 py-1 rounded-lg" onclick="disconnectPlatform(\'' + a.platform + '\')">' + __('oauth.disconnect') + '</button>' : '')
+              + '</div>'
               + '</div>';
           }).join('');
         } else {
-          container.innerHTML = '<div class="text-center py-8"><span class="material-symbols-outlined text-[40px] text-muted">link_off</span><p class="text-[13px] text-muted mt-2">' + __('set.no-linked') + '</p></div>';
+          container.innerHTML = '<div class="text-center py-6"><span class="material-symbols-outlined text-[36px] text-muted">link_off</span><p class="text-[13px] text-muted mt-2">' + __('set.no-linked') + '</p></div>';
         }
       }
+
+      async function connectMeta() {
+        var btn = document.getElementById('btnConnectMeta');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> ' + __('oauth.connecting') + '</span>'; }
+        try {
+          var res = await window.RahSahl.api.getOAuthUrl();
+          if (res.data && res.data.url) {
+            window.location.href = res.data.url;
+          } else {
+            showToast(__('general.error') + ': ' + (res.error?.message || ''), 'error');
+            if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('oauth.connect'); }
+          }
+        } catch (e) {
+          showToast(__('general.error') + ': ' + e.message, 'error');
+          if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('oauth.connect'); }
+        }
+      }
+
+      async function disconnectPlatform(channel) {
+        if (!confirm(__('general.confirm'))) return;
+        var res = await window.RahSahl.api.disconnectPlatform(channel);
+        if (res.error) { showToast(__('general.error') + ': ' + res.error.message, 'error'); return; }
+        showToast(__('oauth.disconnected'), 'success');
+        renderLinkedAccounts();
+      }
+
+      // Handle OAuth result from Facebook redirect
+      (function checkOAuthResult() {
+        var params = new URLSearchParams(window.location.search);
+        var oauthStatus = params.get('oauth');
+        if (!oauthStatus) return;
+        window.history.replaceState({}, '', window.location.pathname);
+        if (oauthStatus === 'success') {
+          var count = params.get('connected') || '0';
+          showToast(__('oauth.success', { count: count }), 'success');
+          renderLinkedAccounts();
+        } else if (oauthStatus === 'error') {
+          var reason = params.get('reason') || '';
+          showToast(__('oauth.error', { reason: decodeURIComponent(reason) }), 'error');
+        }
+      })();
 
       // Load data
       var results = await Promise.allSettled([

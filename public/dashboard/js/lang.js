@@ -272,6 +272,15 @@
     'general.hour':       { ar: 'س', fr: 'h', en: 'h' },
     'general.day':        { ar: 'يوم', fr: 'j', en: 'd' },
     'general.orders':     { ar: 'الطلبات', fr: 'Commandes', en: 'Orders' },
+
+    // ---- OAuth ----
+    'oauth.connect':      { ar: 'ربط مع Facebook', fr: 'Connecter avec Facebook', en: 'Connect with Facebook' },
+    'oauth.disconnect':   { ar: 'إلغاء الربط', fr: 'Déconnecter', en: 'Disconnect' },
+    'oauth.success':      { ar: 'تم ربط {count} حساب بنجاح', fr: '{count} compte(s) connecté(s)', en: '{count} account(s) connected' },
+    'oauth.error':        { ar: 'فشل الربط: {reason}', fr: 'Échec: {reason}', en: 'Failed: {reason}' },
+    'oauth.no-pages':     { ar: 'لا توجد صفحات فيسبوك. أنشئ صفحة أولاً.', fr: 'Aucune page Facebook.', en: 'No Facebook Pages found.' },
+    'oauth.disconnected': { ar: 'تم إلغاء ربط الحساب', fr: 'Compte déconnecté', en: 'Account disconnected' },
+    'oauth.connecting':   { ar: 'جاري الربط...', fr: 'Connexion...', en: 'Connecting...' },
   };
 
   var currentLang = localStorage.getItem(STORAGE_KEY) || 'ar';
