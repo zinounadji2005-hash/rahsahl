@@ -6,7 +6,7 @@ const SERVICE_KEY = Deno.env.get("SERVICE_KEY") ?? Deno.env.get("SUPABASE_SERVIC
 const META_APP_ID = Deno.env.get("META_APP_ID")!;
 const META_APP_SECRET = Deno.env.get("META_APP_SECRET")!;
 const OAUTH_CALLBACK_URL = Deno.env.get("OAUTH_CALLBACK_URL")!;
-const SUCCESS_REDIRECT = Deno.env.get("SUCCESS_REDIRECT") ?? "https://rahsahl.pages.dev/dashboard/settings.html";
+const SUCCESS_REDIRECT = Deno.env.get("SUCCESS_REDIRECT") ?? "https://rahsahl.pages.dev/dashboard/settings";
 
 const GRAPH = "https://graph.facebook.com/v22.0";
 

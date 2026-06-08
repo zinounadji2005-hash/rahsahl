@@ -306,6 +306,10 @@
         renderLinkedAccounts();
       }
 
+      // Expose to global scope for onclick="" in innerHTML
+      window.connectMeta = connectMeta;
+      window.disconnectPlatform = disconnectPlatform;
+
       // Handle OAuth result from Facebook redirect
       (function checkOAuthResult() {
         var params = new URLSearchParams(window.location.search);

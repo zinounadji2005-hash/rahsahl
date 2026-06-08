@@ -5,7 +5,7 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SERVICE_KEY = Deno.env.get("SERVICE_KEY") ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const META_APP_ID = Deno.env.get("META_APP_ID")!;
-const OAUTH_CALLBACK_URL = Deno.env.get("OAUTH_CALLBACK_URL")!;
+const OAUTH_CALLBACK_URL = Deno.env.get("OAUTH_CALLBACK_URL") ?? "https://rvjsnkolroaakskvvwnv.supabase.co/functions/v1/oauth-meta-callback";
 
 serve(async (req) => {
   try {
