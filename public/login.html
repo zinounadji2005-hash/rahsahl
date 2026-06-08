@@ -69,7 +69,10 @@ document.getElementById('login-form').addEventListener('submit',function(e){
   if(!email||!password){document.getElementById('auth-error').textContent='يرجى إدخال البريد الإلكتروني وكلمة المرور';document.getElementById('auth-error').classList.remove('hidden');return}
   var btn=this.querySelector('button[type="submit"]');btn.disabled=true;btn.innerHTML='<span class="material-symbols-outlined animate-spin">sync</span>';
   RahSahlAuth.login(email,password).then(function(r){
-    if(r.data.user)window.location.href='dashboard/'
+    if(r.data.user){
+      sessionStorage.removeItem('rahsahl-guard-redirects');
+      window.location.href = nextUrl || 'dashboard/';
+    }
   }).catch(function(e){
     document.getElementById('auth-error').textContent=e.message==='Invalid login credentials'?'بريد إلكتروني أو كلمة مرور غير صحيحة':e.message;
     document.getElementById('auth-error').classList.remove('hidden');
@@ -80,7 +83,7 @@ document.getElementById('login-form').addEventListener('submit',function(e){
 // Honor ?next= for post-login redirect
 var nextUrl = new URLSearchParams(window.location.search).get('next');
 
-RahSahlAuth.session().then(function(s){if(s)window.location.href = nextUrl || 'dashboard/'});
+RahSahlAuth.requireAuth().then(function(r){if(r)window.location.href = nextUrl || 'dashboard/'});
 (function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('rahsahl-dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('rahsahl-dark',d.classList.contains('dark')?'true':'false')})})();
 </script>
 </body></html>

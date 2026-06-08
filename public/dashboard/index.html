@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Ù„ÙˆØ­Ø© Ø§Ù„ØªØ­ÙƒÙ… â€” RahSahl</title>
+<title>لوحة التحكم — RahSahl</title>
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -105,10 +105,10 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
     if (!iso) return '';
     var d = new Date(iso);
     var diff = (Date.now() - d.getTime()) / 1000;
-    if (diff < 60) return 'Ø§Ù„Ø¢Ù†';
-    if (diff < 3600) return 'Ù…Ù†Ø° ' + Math.floor(diff / 60) + ' Ø¯';
-    if (diff < 86400) return 'Ù…Ù†Ø° ' + Math.floor(diff / 3600) + ' Ø³';
-    if (diff < 604800) return 'Ù…Ù†Ø° ' + Math.floor(diff / 86400) + ' ÙŠÙˆÙ…';
+    if (diff < 60) return 'الآن';
+    if (diff < 3600) return 'منذ ' + Math.floor(diff / 60) + ' د';
+    if (diff < 86400) return 'منذ ' + Math.floor(diff / 3600) + ' س';
+    if (diff < 604800) return 'منذ ' + Math.floor(diff / 86400) + ' يوم';
     return d.toLocaleDateString('ar-DZ');
   }
 
@@ -138,26 +138,26 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
       : null;
 
     document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-      'Ù…Ø±Ø­Ø¨Ø§Ù‹ØŒ ' + (d.shop ? d.shop.owner_name : 'ØªØ§Ø¬Ø±') + ' ðŸ‘‹',
-      'Ø¥Ù„ÙŠÙƒ Ù…Ù„Ø®Øµ Ø£Ø¯Ø§Ø¡ Ù…ØªØ¬Ø±Ùƒ Ø§Ù„ÙŠÙˆÙ….',
+      'مرحباً، ' + (d.shop ? d.shop.owner_name : 'تاجر') + ' 👋',
+      'إليك ملخص أداء متجرك اليوم.',
       ctx
     ) + ''
       + '<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">'
-      + kpi('Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ø·Ù„Ø¨Ø§Øª', fmtNumber(totalOrders), 'shopping_bag', 'sky',
-            pendingCount + ' Ù‚ÙŠØ¯ Ø§Ù„Ù…Ø¹Ø§Ù„Ø¬Ø©', 'text-amber-600')
-      + kpi('Ø§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…Ø£ÙƒÙ‘Ø¯Ø©', fmtNumber(confirmedCount), 'check_circle', 'teal',
-            pendingPct + 'Ùª Ù…Ø¹Ù„Ù‚Ø©', 'text-slate-500')
-      + kpi('Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª (24Ø³)', fmtNumber(last24hConvs), 'forum', 'sky',
-            d.recentConvs.length + ' Ø­Ø¯ÙŠØ«Ø§Ù‹', 'text-slate-500')
-      + kpi('Ù…Ø¹Ø¯Ù„ Ø§Ù„Ù†Ø¬Ø§Ø­', sr == null ? 'â€”' : sr + 'Ùª', 'auto_awesome', 'teal',
-            sr == null ? 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨ÙŠØ§Ù†Ø§Øª' : 'Ø§Ø³ØªØ¯Ù„Ø§Ù„ LLM', sr == null ? 'text-slate-500' : 'text-emerald-600')
+      + kpi('إجمالي الطلبات', fmtNumber(totalOrders), 'shopping_bag', 'sky',
+            pendingCount + ' قيد المعالجة', 'text-amber-600')
+      + kpi('الطلبات المأكّدة', fmtNumber(confirmedCount), 'check_circle', 'teal',
+            pendingPct + '٪ معلقة', 'text-slate-500')
+      + kpi('المحادثات (24س)', fmtNumber(last24hConvs), 'forum', 'sky',
+            d.recentConvs.length + ' حديثاً', 'text-slate-500')
+      + kpi('معدل النجاح', sr == null ? '—' : sr + '٪', 'auto_awesome', 'teal',
+            sr == null ? 'لا توجد بيانات' : 'استدلال LLM', sr == null ? 'text-slate-500' : 'text-emerald-600')
       + '</section>'
 
       + '<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">'
       + '  <section class="card p-6 lg:col-span-2">'
       + '    <div class="flex justify-between items-center mb-5">'
-      + '      <h2 class="font-ar text-[20px] font-bold">Ø£Ø¯Ø§Ø¡ Ø§Ù„Ù…Ø¨ÙŠØ¹Ø§Øª</h2>'
-      + '      <span class="text-[12px] font-semibold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-lg">Ø¢Ø®Ø± 7 Ø£ÙŠØ§Ù…</span>'
+      + '      <h2 class="font-ar text-[20px] font-bold">أداء المبيعات</h2>'
+      + '      <span class="text-[12px] font-semibold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-lg">آخر 7 أيام</span>'
       + '    </div>'
       + '    <div class="chart-card">'
       + '      <canvas id="salesChart"></canvas>'
@@ -166,17 +166,17 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
 
       + '  <section class="card p-6">'
       + '    <div class="flex justify-between items-center mb-5">'
-      + '      <h2 class="font-ar text-[20px] font-bold">Ø£Ø­Ø¯Ø« Ø§Ù„Ø·Ù„Ø¨Ø§Øª</h2>'
-      + '      <a class="text-[12px] font-semibold text-sky-600 hover:text-sky-700" href="orders.html">Ø¹Ø±Ø¶ Ø§Ù„ÙƒÙ„</a>'
+      + '      <h2 class="font-ar text-[20px] font-bold">أحدث الطلبات</h2>'
+      + '      <a class="text-[12px] font-semibold text-sky-600 hover:text-sky-700" href="orders.html">عرض الكل</a>'
       + '    </div>'
       + (d.recentOrders.length === 0
-          ? '<div class="empty-state"><span class="material-symbols-outlined">inbox</span><p class="mt-2 text-[13px]">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø·Ù„Ø¨Ø§Øª Ø¨Ø¹Ø¯</p></div>'
+          ? '<div class="empty-state"><span class="material-symbols-outlined">inbox</span><p class="mt-2 text-[13px]">لا توجد طلبات بعد</p></div>'
           : '<div class="flex flex-col gap-2">' + d.recentOrders.map(function (o) {
               return ''
                 + '<a class="p-3 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-between gap-2" style="text-decoration:none" href="orders.html">'
                 + '  <div class="min-w-0 flex-1">'
-                + '    <h4 class="text-[14px] font-semibold text-navy truncate">' + esc(o.customer_name || o.sender_id || 'Ø¨Ø¯ÙˆÙ† Ø§Ø³Ù…') + '</h4>'
-                + '    <p class="text-[12px] text-slate-400 truncate">' + esc(o.product_requested || 'â€”') + ' Â· ' + esc(o.location_city || 'â€”') + '</p>'
+                + '    <h4 class="text-[14px] font-semibold text-navy truncate">' + esc(o.customer_name || o.sender_id || 'بدون اسم') + '</h4>'
+                + '    <p class="text-[12px] text-slate-400 truncate">' + esc(o.product_requested || '—') + ' · ' + esc(o.location_city || '—') + '</p>'
                 + '  </div>'
                 + '  <div class="flex flex-col items-end gap-1 shrink-0">'
                 + '    <span class="pill pill-' + o.order_status + '">' + statusLabel(o.order_status) + '</span>'
@@ -188,11 +188,11 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
 
       + '  <section class="card p-6 lg:col-span-3">'
       + '    <div class="flex justify-between items-center mb-5">'
-      + '      <h2 class="font-ar text-[20px] font-bold">Ø¢Ø®Ø± Ù†Ø´Ø§Ø· Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª</h2>'
-      + '      <a class="text-[12px] font-semibold text-sky-600 hover:text-sky-700" href="conversations.html">Ø¹Ø±Ø¶ Ø§Ù„ÙƒÙ„</a>'
+      + '      <h2 class="font-ar text-[20px] font-bold">آخر نشاط المحادثات</h2>'
+      + '      <a class="text-[12px] font-semibold text-sky-600 hover:text-sky-700" href="conversations.html">عرض الكل</a>'
       + '    </div>'
       + (d.recentConvs.length === 0
-          ? '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[13px]">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ø­Ø§Ø¯Ø«Ø§Øª Ø¨Ø¹Ø¯</p></div>'
+          ? '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[13px]">لا توجد محادثات بعد</p></div>'
           : '<div class="flex flex-col gap-2">' + d.recentConvs.map(function (c) {
               var isUser = c.role === 'user';
               return ''
@@ -202,7 +202,7 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
                 + '  </div>'
                 + '  <div class="min-w-0 flex-1">'
                 + '    <div class="flex justify-between items-center mb-1">'
-                + '      <p class="text-[13px] font-semibold text-navy">' + esc(c.sender_id || 'Ù…Ø­Ø§Ø¯Ø«Ø©') + '</p>'
+                + '      <p class="text-[13px] font-semibold text-navy">' + esc(c.sender_id || 'محادثة') + '</p>'
                 + '      <span class="text-[11px] text-slate-400">' + timeAgo(c.created_at) + '</span>'
                 + '    </div>'
                 + '    <p class="text-[13px] text-slate-500 line-clamp-2">' + esc((c.message || '').substring(0, 200)) + '</p>'
@@ -239,7 +239,7 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
   }
 
   function statusLabel(s) {
-    return { pending: 'Ù‚ÙŠØ¯ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø±', confirmed: 'Ù…Ø£ÙƒÙ‘Ø¯', shipped: 'ØªÙ… Ø§Ù„Ø´Ø­Ù†' }[s] || s;
+    return { pending: 'قيد الانتظار', confirmed: 'مأكّد', shipped: 'تم الشحن' }[s] || s;
   }
 
   function esc(s) {
@@ -255,7 +255,7 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
     for (var i = 6; i >= 0; i--) {
       var d = new Date(now.getTime() - i * 86400000);
       var key = d.toISOString().substring(0, 10);
-      labels.push(['Ø§Ù„Ø£Ø­Ø¯', 'Ø§Ù„Ø¥Ø«Ù†ÙŠÙ†', 'Ø§Ù„Ø«Ù„Ø§Ø«Ø§Ø¡', 'Ø§Ù„Ø£Ø±Ø¨Ø¹Ø§Ø¡', 'Ø§Ù„Ø®Ù…ÙŠØ³', 'Ø§Ù„Ø¬Ù…Ø¹Ø©', 'Ø§Ù„Ø³Ø¨Øª'][d.getDay()]);
+      labels.push(['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'][d.getDay()]);
       var found = (rows || []).find(function (r) { return r.day && r.day.substring(0, 10) === key; });
       data.push(found ? (found.orders_count || 0) : 0);
     }
@@ -266,7 +266,7 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
       data: {
         labels: labels,
         datasets: [{
-          label: 'Ø§Ù„Ø·Ù„Ø¨Ø§Øª',
+          label: 'الطلبات',
           data: data,
           fill: true,
           backgroundColor: 'rgba(14, 165, 233, 0.12)',

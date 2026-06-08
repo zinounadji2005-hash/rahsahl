@@ -77,7 +77,7 @@
       + '      ' + tierBadge
       + '    </div>'
       + '  </div>'
-      + '  <button id="darkToggle" title="' + t('nav.lang') + '">'
+      + '  <button id="darkToggle" title="' + (t('nav.dark-mode') || 'الوضع الليلي') + '">'
       + '    <span class="material-symbols-outlined dark:hidden text-[18px]">dark_mode</span>'
       + '    <span class="material-symbols-outlined hidden dark:inline text-[18px]">light_mode</span>'
       + '  </button>'

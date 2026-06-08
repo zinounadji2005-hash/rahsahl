@@ -41,7 +41,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   if (!ctx) return;
   window.RahSahl.sidebar.boot();
   window.RahSahl.sidebarCtx = ctx;
-  document.getElementById('sidenav').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
+  document.getElementById('sidebar').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
 
   var currentStatus = 'all';
   var searchQuery = '';
@@ -54,17 +54,17 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   function statusLabel(s) {
-    return { pending: 'Ù‚ÙŠØ¯ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø±', confirmed: 'Ù…Ø£ÙƒÙ‘Ø¯', shipped: 'ØªÙ… Ø§Ù„Ø´Ø­Ù†' }[s] || s;
+    return { pending: 'قيد الانتظار', confirmed: 'مأكّد', shipped: 'تم الشحن' }[s] || s;
   }
 
   function timeAgo(iso) {
     if (!iso) return '';
     var d = new Date(iso);
     var diff = (Date.now() - d.getTime()) / 1000;
-    if (diff < 60) return 'Ø§Ù„Ø¢Ù†';
-    if (diff < 3600) return 'Ù…Ù†Ø° ' + Math.floor(diff / 60) + ' Ø¯';
-    if (diff < 86400) return 'Ù…Ù†Ø° ' + Math.floor(diff / 3600) + ' Ø³';
-    if (diff < 604800) return 'Ù…Ù†Ø° ' + Math.floor(diff / 86400) + ' ÙŠÙˆÙ…';
+    if (diff < 60) return 'الآن';
+    if (diff < 3600) return 'منذ ' + Math.floor(diff / 60) + ' د';
+    if (diff < 86400) return 'منذ ' + Math.floor(diff / 3600) + ' س';
+    if (diff < 604800) return 'منذ ' + Math.floor(diff / 86400) + ' يوم';
     return d.toLocaleDateString('ar-DZ');
   }
 
@@ -86,23 +86,23 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     var rows = filtered.length === 0
       ? '<tr><td colspan="7" class="text-center py-12 text-slate-500">'
         + '<span class="material-symbols-outlined text-[40px] opacity-40">inbox</span>'
-        + '<p class="mt-2 text-[14px]">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø·Ù„Ø¨Ø§Øª ØªØ·Ø§Ø¨Ù‚ Ø§Ù„ÙÙ„Ø§ØªØ±</p></td></tr>'
+        + '<p class="mt-2 text-[14px]">لا توجد طلبات تطابق الفلاتر</p></td></tr>'
       : filtered.map(function (o) {
           return ''
             + '<tr>'
-            + '  <td><div class="font-semibold text-navy">' + esc(o.customer_name || 'â€”') + '</div>'
-            + '    <div class="text-[12px] text-slate-400" dir="ltr">' + esc(o.phone || o.sender_id || 'â€”') + '</div></td>'
-            + '  <td><div class="text-navy">' + esc(o.product_requested || 'â€”') + '</div>'
-            + '    <div class="text-[12px] text-slate-400">Ø§Ù„ÙƒÙ…ÙŠØ©: ' + esc(o.quantity || 1) + '</div></td>'
-            + '  <td>' + esc(o.location_city || 'â€”') + '</td>'
+            + '  <td><div class="font-semibold text-navy">' + esc(o.customer_name || '—') + '</div>'
+            + '    <div class="text-[12px] text-slate-400" dir="ltr">' + esc(o.phone || o.sender_id || '—') + '</div></td>'
+            + '  <td><div class="text-navy">' + esc(o.product_requested || '—') + '</div>'
+            + '    <div class="text-[12px] text-slate-400">الكمية: ' + esc(o.quantity || 1) + '</div></td>'
+            + '  <td>' + esc(o.location_city || '—') + '</td>'
             + '  <td><span class="pill pill-' + o.order_status + '">' + statusLabel(o.order_status) + '</span></td>'
             + '  <td class="text-[12px] text-slate-500">' + timeAgo(o.created_at) + '</td>'
             + '  <td>'
             + (o.order_status === 'pending'
-                ? '<button data-id="' + o.id + '" data-action="confirmed" class="btn-primary text-[12px] py-1.5 px-3 js-status">ØªØ£ÙƒÙŠØ¯</button>'
+                ? '<button data-id="' + o.id + '" data-action="confirmed" class="btn-primary text-[12px] py-1.5 px-3 js-status">تأكيد</button>'
                 : o.order_status === 'confirmed'
-                  ? '<button data-id="' + o.id + '" data-action="shipped" class="btn-primary text-[12px] py-1.5 px-3 js-status">Ø´Ø­Ù†</button>'
-                  : '<span class="text-[12px] text-slate-400">â€”</span>')
+                  ? '<button data-id="' + o.id + '" data-action="shipped" class="btn-primary text-[12px] py-1.5 px-3 js-status">شحن</button>'
+                  : '<span class="text-[12px] text-slate-400">—</span>')
             + '  </td>'
             + '</tr>';
         }).join('');
@@ -112,14 +112,14 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     ) + ''
       + '<div class="flex flex-col md:flex-row gap-3 mb-6">'
       + '  <div class="flex gap-2 flex-wrap">'
-      + statusChip('all', 'Ø§Ù„ÙƒÙ„', currentOrders.length)
-      + statusChip('pending', 'Ù‚ÙŠØ¯ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø±', currentOrders.filter(function (o) { return o.order_status === 'pending'; }).length)
-      + statusChip('confirmed', 'Ù…Ø£ÙƒÙ‘Ø¯Ø©', currentOrders.filter(function (o) { return o.order_status === 'confirmed'; }).length)
-      + statusChip('shipped', 'ØªÙ… Ø§Ù„Ø´Ø­Ù†', currentOrders.filter(function (o) { return o.order_status === 'shipped'; }).length)
+      + statusChip('all', 'الكل', currentOrders.length)
+      + statusChip('pending', 'قيد الانتظار', currentOrders.filter(function (o) { return o.order_status === 'pending'; }).length)
+      + statusChip('confirmed', 'مأكّدة', currentOrders.filter(function (o) { return o.order_status === 'confirmed'; }).length)
+      + statusChip('shipped', 'تم الشحن', currentOrders.filter(function (o) { return o.order_status === 'shipped'; }).length)
       + '  </div>'
       + '  <div class="md:mr-auto relative">'
       + '    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-slate-400">search</span>'
-      + '    <input id="searchInput" type="search" placeholder="Ø§Ø¨Ø­Ø« Ø¨Ø§Ù„Ø§Ø³Ù…ØŒ Ø§Ù„Ù…Ù†ØªØ¬ØŒ Ø§Ù„Ù…Ø¯ÙŠÙ†Ø©..." '
+      + '    <input id="searchInput" type="search" placeholder="ابحث بالاسم، المنتج، المدينة..." '
       + '           class="pr-10 w-full md:w-72" value="' + esc(searchQuery) + '"/>'
       + '  </div>'
       + '</div>'
@@ -127,7 +127,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
       + '<div class="card overflow-hidden">'
       + '  <div class="table-wrap">'
       + '    <table class="data-table">'
-      + '      <thead><tr><th>Ø§Ù„Ø¹Ù…ÙŠÙ„</th><th>Ø§Ù„Ù…Ù†ØªØ¬</th><th>Ø§Ù„Ù…Ø¯ÙŠÙ†Ø©</th><th>Ø§Ù„Ø­Ø§Ù„Ø©</th><th>Ø§Ù„ØªØ§Ø±ÙŠØ®</th><th>Ø¥Ø¬Ø±Ø§Ø¡</th></tr></thead>'
+      + '      <thead><tr><th>العميل</th><th>المنتج</th><th>المدينة</th><th>الحالة</th><th>التاريخ</th><th>إجراء</th></tr></thead>'
       + '      <tbody>' + rows + '</tbody>'
       + '    </table>'
       + '  </div>'
@@ -141,7 +141,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
         btn.disabled = true;
         var res = await window.RahSahl.api.updateOrderStatus(id, action);
         if (res.error) {
-          alert('ÙØ´Ù„ ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø­Ø§Ù„Ø©: ' + res.error.message);
+          alert('فشل تحديث الحالة: ' + res.error.message);
           btn.disabled = false;
           return;
         }
@@ -175,7 +175,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   var res = await window.RahSahl.api.listOrders({ limit: 200 });
   if (res.error) {
     document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('الطلبات', '', ctx)
-      + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">ÙØ´Ù„ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø·Ù„Ø¨Ø§Øª: ' + esc(res.error.message) + '</p></div>';
+      + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">فشل تحميل الطلبات: ' + esc(res.error.message) + '</p></div>';
     return;
   }
   currentOrders = res.data || [];

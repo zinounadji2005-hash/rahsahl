@@ -5,7 +5,16 @@
 (function () {
   'use strict';
 
+  var REDIRECT_KEY = 'rahsahl-guard-redirects';
+  var MAX_REDIRECTS = 2;
+
   function redirectToLogin() {
+    var count = parseInt(sessionStorage.getItem(REDIRECT_KEY) || '0', 10);
+    if (count >= MAX_REDIRECTS) {
+      sessionStorage.removeItem(REDIRECT_KEY);
+      return;
+    }
+    sessionStorage.setItem(REDIRECT_KEY, String(count + 1));
     var path = window.location.pathname;
     var dashboardIdx = path.indexOf('/dashboard/');
     var base = dashboardIdx >= 0 ? path.substring(0, dashboardIdx) : path.substring(0, path.lastIndexOf('/'));
@@ -29,11 +38,14 @@
     var userRes = await supabase.auth.getUser();
     var user = userRes && userRes.data && userRes.data.user;
     if (!user) {
+      await supabase.auth.signOut().catch(function () {});
+      sessionStorage.removeItem(REDIRECT_KEY);
       redirectToLogin();
       return null;
     }
 
-    // Resolve the shop row for the signed-in user.
+    sessionStorage.removeItem(REDIRECT_KEY);
+
     var shopRes = await supabase
       .from('clients_shops')
       .select('id, shop_name, owner_name, phone_number, subscription_tier, is_active, onboarded_at, api_secret_prefix, api_secret_last_used, created_at')
@@ -51,7 +63,6 @@
       shop: shopRes.data || null
     };
 
-    // Expose ctx globally so api.js can derive shop_id without threading it.
     window.__rahsahlCtx = ctx;
     return ctx;
   }
