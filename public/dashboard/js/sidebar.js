@@ -153,7 +153,7 @@
       if (top) {
         var title = top.getAttribute('data-title') || '';
         var sub = top.getAttribute('data-subtitle') || '';
-        top.outerHTML = renderTopbar(title, sub, sidebarCtx);
+        top.innerHTML = renderTopbar(title, sub, sidebarCtx);
       }
       // Re-bind after re-render
       bindGlobalChrome();
