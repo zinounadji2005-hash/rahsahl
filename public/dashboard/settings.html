@@ -286,12 +286,14 @@
         if (btn) { btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> ' + __('oauth.connecting') + '</span>'; }
         try {
           var res = await window.RahSahl.api.getOAuthUrl();
+          console.log('OAuth res:', JSON.stringify(res, function(k, v) { if (v instanceof Response) return '(Response ' + v.status + ')'; return v; }));
           if (res.data && res.data.url) {
             window.location.href = res.data.url;
           } else if (res.error) {
-            var errDetail = res.error.context || res.error.message || '';
-            if (typeof errDetail === 'object') errDetail = errDetail.error || JSON.stringify(errDetail);
-            showToast(__('general.error') + ' (' + (res.error.status || '?') + '): ' + errDetail, 'error');
+            var httpStatus = res.error.context ? res.error.context.status || '?' : '?';
+            var errBody = '';
+            try { if (res.error.context) errBody = await res.error.context.text().catch(function() { return ''; }); } catch (_) {}
+            showToast(__('general.error') + ' (' + httpStatus + '): ' + (errBody || res.error.message || '?'), 'error');
             if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('oauth.connect'); }
           } else {
             showToast(__('general.error'), 'error');
