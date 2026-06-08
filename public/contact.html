@@ -11,7 +11,7 @@
 <style>body{font-family:'Inter',sans-serif;background:var(--bg,#f5f0eb);color:var(--text,#334155)}h1,h2,h3{font-family:'IBM Plex Sans Arabic',sans-serif}.card{background:var(--card,#fff);border:1px solid var(--card-border,#e2e8f0);border-radius:16px}.btn-primary{background:linear-gradient(135deg,#0ea5e9,#14b8a6);color:#fff;transition:all 0.3s}.btn-primary:hover{box-shadow:0 8px 25px rgba(14,165,233,0.3)}.input-focus{border:1px solid var(--card-border,#e2e8f0);transition:all 0.2s;background:var(--input-bg,#fff)}.input-focus:focus{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,0.12);outline:none}#darkToggle{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--card-border,#e2e8f0);background:var(--card,#fff);cursor:pointer;transition:all 0.2s;color:var(--muted,#94a3b8)}#darkToggle:hover{color:var(--heading,#0b1420)}html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--card:#18202d;--card-border:#2d3543;--input-bg:#141c29;--section-alt:#0b1420}html.dark .text-navy{color:var(--heading,#f1f5f9)!important}html.dark .text-slate-500{color:var(--muted,#88929b)!important}html.dark .text-slate-400{color:var(--muted,#88929b)!important}html.dark .text-slate-600{color:var(--heading,#cbd5e1)!important}html.dark .border-slate-200{border-color:var(--card-border,#2d3543)!important}html.dark .bg-white{background:var(--card,#18202d)!important}html.dark .bg-slate-50{background:var(--section-alt,#0b1420)!important}html.dark .bg-sky-100{background:rgba(14,165,233,0.15)!important}html.dark .bg-teal-100{background:rgba(20,184,166,0.12)!important}html.dark nav a img{filter:brightness(0) invert(1)}</style>
 </head>
 <body class="antialiased selection:bg-sky-200/50" style="background:var(--bg,#f5f0eb);color:var(--text,#334155)">
-<nav class="bg-white border-b border-slate-200"><div class="max-w-4xl mx-auto flex items-center justify-between h-16 px-4"><a class="flex items-center gap-3" href="index.html"><img alt="RahSahl" class="h-9 w-auto" src="logo.svg"/></a><div class="flex items-center gap-3"><button id="darkToggle" title="الوضع الليلي"><span class="material-symbols-outlined dark:hidden text-[18px]">dark_mode</span><span class="material-symbols-outlined hidden dark:inline text-[18px]">light_mode</span></button><a class="text-[14px] font-semibold text-sky-600 hover:text-sky-700 transition-colors" href="index.html">الرجوع للرئيسية</a></div></div></nav>
+<nav class="bg-white border-b border-slate-200"><div class="max-w-4xl mx-auto flex items-center justify-between h-16 px-4"><a class="flex items-center gap-3" href="index.html"><img alt="RahSahl" class="h-9 w-auto" src="assets/logo.svg"/></a><div class="flex items-center gap-3"><button id="darkToggle" title="الوضع الليلي"><span class="material-symbols-outlined dark:hidden text-[18px]">dark_mode</span><span class="material-symbols-outlined hidden dark:inline text-[18px]">light_mode</span></button><a class="text-[14px] font-semibold text-sky-600 hover:text-sky-700 transition-colors" href="index.html">الرجوع للرئيسية</a></div></div></nav>
 <main class="max-w-4xl mx-auto px-4 py-12">
   <div class="card p-8 md:p-12"><h1 class="font-ar text-[32px] font-bold mb-2" style="color:var(--heading,#0b1420)">اتصل بنا</h1>
     <p class="text-[15px] mb-8" style="color:var(--muted,#64748b)">نحن هنا لمساعدتك. تواصل معنا بأي من الطرق التالية.</p>
@@ -27,5 +27,25 @@
   </div>
 </main>
 <footer class="border-t border-slate-200 py-6 text-center text-[13px]" style="color:var(--muted,#94a3b8)">© 2026 RahSahl</footer>
-<script>(function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('dark',d.classList.contains('dark'))})})();</script>
+<script>
+(function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('rahsahl-dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('rahsahl-dark',d.classList.contains('dark'))})})();
+
+document.querySelector('form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var btn=this.querySelector('button[type="submit"]');
+  btn.disabled=true;btn.innerHTML='جاري الإرسال...';
+  var data={name:this.querySelector('input[type="text"]').value,email:this.querySelector('input[type="email"]').value,message:this.querySelector('textarea').value};
+  fetch('https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/contact_messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':'sb_publishable_3Hc5H4lJdemDnuSv3bG-Cw_TXViKcuT','Authorization':'Bearer sb_publishable_3Hc5H4lJdemDnuSv3bG-Cw_TXViKcuT'},
+    body:JSON.stringify({name:data.name,email:data.email,message:data.message,created_at:new Date().toISOString()})
+  }).then(function(r){
+    btn.innerHTML='تم الإرسال ✓';
+    setTimeout(function(){btn.disabled=false;btn.innerHTML='إرسال الرسالة';document.querySelector('form').reset()},2000);
+  }).catch(function(){
+    alert('فشل الإرسال. حاول مرة أخرى.');
+    btn.disabled=false;btn.innerHTML='إرسال الرسالة';
+  });
+});
+</script>
 </body></html>

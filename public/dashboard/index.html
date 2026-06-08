@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>لوحة التحكم — RahSahl</title>
+<title>__('dash.title') — RahSahl</title>
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -40,6 +40,8 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
 <script src="js/sidebar.js"></script>
 <script>
 (async function () {
+  var __ = window.__;
+
   var ctx = await window.RahSahl.authGuard.guard();
   if (!ctx) return;
 
@@ -49,8 +51,8 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
   // Render chrome
   document.getElementById('sidebar').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
   document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-    'مرحباً، ' + (ctx.shop ? ctx.shop.owner_name : 'تاجر') + ' 👋',
-    'إليك ملخص أداء متجرك اليوم.',
+    __('dash.greeting') + '، ' + (ctx.shop ? ctx.shop.owner_name : __('dash.merchant')) + ' 👋',
+    __('dash.subtitle'),
     ctx
   ) + renderSkeleton();
 
@@ -73,14 +75,16 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
   var recentConvs = results[3].status === 'fulfilled' ? (results[3].value.data || []) : [];
   var successRate = results[4].status === 'fulfilled' ? (results[4].value.data || []) : [];
 
-  renderDashboard({
+  var dashboardData = {
     shop: ctx.shop,
     recentOrders: recentOrders,
     allOrders: allOrders,
     dailyStats: dailyStats,
     recentConvs: recentConvs,
     successRate: successRate
-  });
+  };
+
+  renderDashboard(dashboardData);
 
   function renderSkeleton() {
     return ''
@@ -105,10 +109,10 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
     if (!iso) return '';
     var d = new Date(iso);
     var diff = (Date.now() - d.getTime()) / 1000;
-    if (diff < 60) return 'الآن';
-    if (diff < 3600) return 'منذ ' + Math.floor(diff / 60) + ' د';
-    if (diff < 86400) return 'منذ ' + Math.floor(diff / 3600) + ' س';
-    if (diff < 604800) return 'منذ ' + Math.floor(diff / 86400) + ' يوم';
+    if (diff < 60) return __('general.now');
+    if (diff < 3600) return __('general.ago') + ' ' + Math.floor(diff / 60) + ' ' + __('general.min');
+    if (diff < 86400) return __('general.ago') + ' ' + Math.floor(diff / 3600) + ' ' + __('general.hour');
+    if (diff < 604800) return __('general.ago') + ' ' + Math.floor(diff / 86400) + ' ' + __('general.day');
     return d.toLocaleDateString('ar-DZ');
   }
 
@@ -138,26 +142,26 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
       : null;
 
     document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-      'مرحباً، ' + (d.shop ? d.shop.owner_name : 'تاجر') + ' 👋',
-      'إليك ملخص أداء متجرك اليوم.',
+      __('dash.greeting') + '، ' + (d.shop ? d.shop.owner_name : __('dash.merchant')) + ' 👋',
+      __('dash.subtitle'),
       ctx
     ) + ''
       + '<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">'
-      + kpi('إجمالي الطلبات', fmtNumber(totalOrders), 'shopping_bag', 'sky',
-            pendingCount + ' قيد المعالجة', 'text-amber-600')
-      + kpi('الطلبات المأكّدة', fmtNumber(confirmedCount), 'check_circle', 'teal',
-            pendingPct + '٪ معلقة', 'text-slate-500')
-      + kpi('المحادثات (24س)', fmtNumber(last24hConvs), 'forum', 'sky',
-            d.recentConvs.length + ' حديثاً', 'text-slate-500')
-      + kpi('معدل النجاح', sr == null ? '—' : sr + '٪', 'auto_awesome', 'teal',
-            sr == null ? 'لا توجد بيانات' : 'استدلال LLM', sr == null ? 'text-slate-500' : 'text-emerald-600')
+      + kpi(__('dash.total-orders'), fmtNumber(totalOrders), 'shopping_bag', 'sky',
+            pendingCount + ' ' + __('dash.processing'), 'text-amber-600')
+      + kpi(__('dash.confirmed-orders'), fmtNumber(confirmedCount), 'check_circle', 'teal',
+            pendingPct + '٪ ' + __('dash.pending-pct'), 'text-slate-500')
+      + kpi(__('dash.convs-24h'), fmtNumber(last24hConvs), 'forum', 'sky',
+            d.recentConvs.length + ' ' + __('dash.recent'), 'text-slate-500')
+      + kpi(__('dash.success-rate'), sr == null ? '—' : sr + '٪', 'auto_awesome', 'teal',
+            sr == null ? __('dash.no-data') : __('dash.llm-inference'), sr == null ? 'text-slate-500' : 'text-emerald-600')
       + '</section>'
 
       + '<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">'
       + '  <section class="card p-6 lg:col-span-2">'
       + '    <div class="flex justify-between items-center mb-5">'
-      + '      <h2 class="font-ar text-[20px] font-bold">أداء المبيعات</h2>'
-      + '      <span class="text-[12px] font-semibold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-lg">آخر 7 أيام</span>'
+      + '      <h2 class="font-ar text-[20px] font-bold">' + __('dash.sales-perf') + '</h2>'
+      + '      <span class="text-[12px] font-semibold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-lg">' + __('dash.last-7-days') + '</span>'
       + '    </div>'
       + '    <div class="chart-card">'
       + '      <canvas id="salesChart"></canvas>'
@@ -166,16 +170,16 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
 
       + '  <section class="card p-6">'
       + '    <div class="flex justify-between items-center mb-5">'
-      + '      <h2 class="font-ar text-[20px] font-bold">أحدث الطلبات</h2>'
-      + '      <a class="text-[12px] font-semibold text-sky-600 hover:text-sky-700" href="orders.html">عرض الكل</a>'
+      + '      <h2 class="font-ar text-[20px] font-bold">' + __('dash.latest-orders') + '</h2>'
+      + '      <a class="text-[12px] font-semibold text-sky-600 hover:text-sky-700" href="orders.html">' + __('dash.view-all') + '</a>'
       + '    </div>'
       + (d.recentOrders.length === 0
-          ? '<div class="empty-state"><span class="material-symbols-outlined">inbox</span><p class="mt-2 text-[13px]">لا توجد طلبات بعد</p></div>'
+          ? '<div class="empty-state"><span class="material-symbols-outlined">inbox</span><p class="mt-2 text-[13px]">' + __('dash.no-orders') + '</p></div>'
           : '<div class="flex flex-col gap-2">' + d.recentOrders.map(function (o) {
               return ''
                 + '<a class="p-3 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-between gap-2" style="text-decoration:none" href="orders.html">'
                 + '  <div class="min-w-0 flex-1">'
-                + '    <h4 class="text-[14px] font-semibold text-navy truncate">' + esc(o.customer_name || o.sender_id || 'بدون اسم') + '</h4>'
+                + '    <h4 class="text-[14px] font-semibold text-navy truncate">' + esc(o.customer_name || o.sender_id || __('dash.no-name')) + '</h4>'
                 + '    <p class="text-[12px] text-slate-400 truncate">' + esc(o.product_requested || '—') + ' · ' + esc(o.location_city || '—') + '</p>'
                 + '  </div>'
                 + '  <div class="flex flex-col items-end gap-1 shrink-0">'
@@ -188,11 +192,11 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
 
       + '  <section class="card p-6 lg:col-span-3">'
       + '    <div class="flex justify-between items-center mb-5">'
-      + '      <h2 class="font-ar text-[20px] font-bold">آخر نشاط المحادثات</h2>'
-      + '      <a class="text-[12px] font-semibold text-sky-600 hover:text-sky-700" href="conversations.html">عرض الكل</a>'
+      + '      <h2 class="font-ar text-[20px] font-bold">' + __('dash.latest-convs') + '</h2>'
+      + '      <a class="text-[12px] font-semibold text-sky-600 hover:text-sky-700" href="conversations.html">' + __('dash.view-all') + '</a>'
       + '    </div>'
       + (d.recentConvs.length === 0
-          ? '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[13px]">لا توجد محادثات بعد</p></div>'
+          ? '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[13px]">' + __('dash.no-convs') + '</p></div>'
           : '<div class="flex flex-col gap-2">' + d.recentConvs.map(function (c) {
               var isUser = c.role === 'user';
               return ''
@@ -202,7 +206,7 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
                 + '  </div>'
                 + '  <div class="min-w-0 flex-1">'
                 + '    <div class="flex justify-between items-center mb-1">'
-                + '      <p class="text-[13px] font-semibold text-navy">' + esc(c.sender_id || 'محادثة') + '</p>'
+                + '      <p class="text-[13px] font-semibold text-navy">' + esc(c.sender_id || __('dash.conversation')) + '</p>'
                 + '      <span class="text-[11px] text-slate-400">' + timeAgo(c.created_at) + '</span>'
                 + '    </div>'
                 + '    <p class="text-[13px] text-slate-500 line-clamp-2">' + esc((c.message || '').substring(0, 200)) + '</p>'
@@ -239,7 +243,7 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
   }
 
   function statusLabel(s) {
-    return { pending: 'قيد الانتظار', confirmed: 'مأكّد', shipped: 'تم الشحن' }[s] || s;
+    return __('ord.' + s) || s;
   }
 
   function esc(s) {
@@ -255,18 +259,19 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
     for (var i = 6; i >= 0; i--) {
       var d = new Date(now.getTime() - i * 86400000);
       var key = d.toISOString().substring(0, 10);
-      labels.push(['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'][d.getDay()]);
+      labels.push([__('dash.sun'), __('dash.mon'), __('dash.tue'), __('dash.wed'), __('dash.thu'), __('dash.fri'), __('dash.sat')][d.getDay()]);
       var found = (rows || []).find(function (r) { return r.day && r.day.substring(0, 10) === key; });
       data.push(found ? (found.orders_count || 0) : 0);
     }
     var ctx2 = document.getElementById('salesChart');
     if (!ctx2) return;
-    new Chart(ctx2, {
+    if (window.__salesChart) window.__salesChart.destroy();
+    window.__salesChart = new Chart(ctx2, {
       type: 'line',
       data: {
         labels: labels,
         datasets: [{
-          label: 'الطلبات',
+          label: __('dash.orders'),
           data: data,
           fill: true,
           backgroundColor: 'rgba(14, 165, 233, 0.12)',
@@ -288,6 +293,8 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
       }
     });
   }
+
+  window.addEventListener('langchange', function () { renderDashboard(dashboardData); });
 })();
 </script>
 </body>

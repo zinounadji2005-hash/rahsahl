@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>الطلبات — RahSahl</title>
+<title>__('ord.title') — RahSahl</title>
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -54,17 +54,17 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   function statusLabel(s) {
-    return { pending: 'قيد الانتظار', confirmed: 'مأكّد', shipped: 'تم الشحن' }[s] || s;
+    return __('ord.' + s) || s;
   }
 
   function timeAgo(iso) {
     if (!iso) return '';
     var d = new Date(iso);
     var diff = (Date.now() - d.getTime()) / 1000;
-    if (diff < 60) return 'الآن';
-    if (diff < 3600) return 'منذ ' + Math.floor(diff / 60) + ' د';
-    if (diff < 86400) return 'منذ ' + Math.floor(diff / 3600) + ' س';
-    if (diff < 604800) return 'منذ ' + Math.floor(diff / 86400) + ' يوم';
+    if (diff < 60) return __('general.now');
+    if (diff < 3600) return __('general.ago') + ' ' + Math.floor(diff / 60) + ' ' + __('general.min');
+    if (diff < 86400) return __('general.ago') + ' ' + Math.floor(diff / 3600) + ' ' + __('general.hour');
+    if (diff < 604800) return __('general.ago') + ' ' + Math.floor(diff / 86400) + ' ' + __('general.day');
     return d.toLocaleDateString('ar-DZ');
   }
 
@@ -86,40 +86,40 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     var rows = filtered.length === 0
       ? '<tr><td colspan="7" class="text-center py-12 text-slate-500">'
         + '<span class="material-symbols-outlined text-[40px] opacity-40">inbox</span>'
-        + '<p class="mt-2 text-[14px]">لا توجد طلبات تطابق الفلاتر</p></td></tr>'
+        + '<p class="mt-2 text-[14px]">' + __('ord.no-filter') + '</p></td></tr>'
       : filtered.map(function (o) {
           return ''
             + '<tr>'
             + '  <td><div class="font-semibold text-navy">' + esc(o.customer_name || '—') + '</div>'
             + '    <div class="text-[12px] text-slate-400" dir="ltr">' + esc(o.phone || o.sender_id || '—') + '</div></td>'
             + '  <td><div class="text-navy">' + esc(o.product_requested || '—') + '</div>'
-            + '    <div class="text-[12px] text-slate-400">الكمية: ' + esc(o.quantity || 1) + '</div></td>'
+            + '    <div class="text-[12px] text-slate-400">' + __('ord.quantity') + ': ' + esc(o.quantity || 1) + '</div></td>'
             + '  <td>' + esc(o.location_city || '—') + '</td>'
             + '  <td><span class="pill pill-' + o.order_status + '">' + statusLabel(o.order_status) + '</span></td>'
             + '  <td class="text-[12px] text-slate-500">' + timeAgo(o.created_at) + '</td>'
             + '  <td>'
             + (o.order_status === 'pending'
-                ? '<button data-id="' + o.id + '" data-action="confirmed" class="btn-primary text-[12px] py-1.5 px-3 js-status">تأكيد</button>'
+                ? '<button data-id="' + o.id + '" data-action="confirmed" class="btn-primary text-[12px] py-1.5 px-3 js-status">' + __('ord.confirm-btn') + '</button>'
                 : o.order_status === 'confirmed'
-                  ? '<button data-id="' + o.id + '" data-action="shipped" class="btn-primary text-[12px] py-1.5 px-3 js-status">شحن</button>'
+                  ? '<button data-id="' + o.id + '" data-action="shipped" class="btn-primary text-[12px] py-1.5 px-3 js-status">' + __('ord.ship-btn') + '</button>'
                   : '<span class="text-[12px] text-slate-400">—</span>')
             + '  </td>'
             + '</tr>';
         }).join('');
 
     document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-      'الطلبات', 'إدارة طلباتك وتتبع حالتها.', ctx
+      __('ord.title'), __('ord.subtitle'), ctx
     ) + ''
       + '<div class="flex flex-col md:flex-row gap-3 mb-6">'
       + '  <div class="flex gap-2 flex-wrap">'
-      + statusChip('all', 'الكل', currentOrders.length)
-      + statusChip('pending', 'قيد الانتظار', currentOrders.filter(function (o) { return o.order_status === 'pending'; }).length)
-      + statusChip('confirmed', 'مأكّدة', currentOrders.filter(function (o) { return o.order_status === 'confirmed'; }).length)
-      + statusChip('shipped', 'تم الشحن', currentOrders.filter(function (o) { return o.order_status === 'shipped'; }).length)
+      + statusChip('all', __('ord.all'), currentOrders.length)
+      + statusChip('pending', __('ord.pending'), currentOrders.filter(function (o) { return o.order_status === 'pending'; }).length)
+      + statusChip('confirmed', __('ord.confirmed'), currentOrders.filter(function (o) { return o.order_status === 'confirmed'; }).length)
+      + statusChip('shipped', __('ord.shipped'), currentOrders.filter(function (o) { return o.order_status === 'shipped'; }).length)
       + '  </div>'
       + '  <div class="md:mr-auto relative">'
       + '    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-slate-400">search</span>'
-      + '    <input id="searchInput" type="search" placeholder="ابحث بالاسم، المنتج، المدينة..." '
+      + '    <input id="searchInput" type="search" placeholder="' + __('ord.search') + '" '
       + '           class="pr-10 w-full md:w-72" value="' + esc(searchQuery) + '"/>'
       + '  </div>'
       + '</div>'
@@ -127,7 +127,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
       + '<div class="card overflow-hidden">'
       + '  <div class="table-wrap">'
       + '    <table class="data-table">'
-      + '      <thead><tr><th>العميل</th><th>المنتج</th><th>المدينة</th><th>الحالة</th><th>التاريخ</th><th>إجراء</th></tr></thead>'
+      + '      <thead><tr><th>' + __('ord.customer') + '</th><th>' + __('ord.product') + '</th><th>' + __('ord.city') + '</th><th>' + __('ord.status') + '</th><th>' + __('ord.date') + '</th><th>' + __('ord.action') + '</th></tr></thead>'
       + '      <tbody>' + rows + '</tbody>'
       + '    </table>'
       + '  </div>'
@@ -141,7 +141,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
         btn.disabled = true;
         var res = await window.RahSahl.api.updateOrderStatus(id, action);
         if (res.error) {
-          alert('فشل تحديث الحالة: ' + res.error.message);
+          alert(__('ord.update-fail') + ': ' + res.error.message);
           btn.disabled = false;
           return;
         }
@@ -153,13 +153,12 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     });
 
     var search = document.getElementById('searchInput');
-    search.addEventListener('input', function (e) {
+    search.oninput = function (e) {
       searchQuery = e.target.value;
       renderPage();
-      // Restore focus + cursor position
       var s = document.getElementById('searchInput');
       s.focus(); s.setSelectionRange(s.value.length, s.value.length);
-    });
+    };
   }
 
   function statusChip(key, label, count) {
@@ -169,13 +168,13 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   // Initial load
-  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('الطلبات', '...', ctx)
+  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(__('ord.title'), '...', ctx)
     + '<div class="card p-12"><div class="skeleton h-32"></div></div>';
 
   var res = await window.RahSahl.api.listOrders({ limit: 200 });
   if (res.error) {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('الطلبات', '', ctx)
-      + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">فشل تحميل الطلبات: ' + esc(res.error.message) + '</p></div>';
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(__('ord.title'), '', ctx)
+      + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">' + __('ord.load-fail') + ': ' + esc(res.error.message) + '</p></div>';
     return;
   }
   currentOrders = res.data || [];
@@ -189,6 +188,8 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     renderPage();
   });
 })();
+
+window.addEventListener('langchange', function () { renderPage(); });
 </script>
 </body>
 </html>

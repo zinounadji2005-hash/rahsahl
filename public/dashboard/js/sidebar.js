@@ -68,7 +68,7 @@
     return ''
       + '<div class="px-5 mb-7 flex items-center gap-3">'
       + '  <div class="flex items-center gap-3">'
-      + '    <img src="../assets/logo.svg" alt="RahSahl" class="w-10 h-10 rounded-xl">'
+      + '    <img src="../assets/logo.svg" alt="RahSahl" class="w-14 h-14">'
       + '  </div>'
       + '  <div class="flex-1 min-w-0">'
       + '    <h2 class="font-ar text-[18px] font-bold text-sky-600 truncate">RahSahl</h2>'

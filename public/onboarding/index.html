@@ -66,7 +66,7 @@ html.dark .bg-white{background:var(--card,#18202d)!important}
     <p class="text-[15px] text-slate-500 mb-6">اختر نبرة الرد واللغات التي يتحدث بها وكيلك.</p>
     <div class="space-y-6">
       <div><label class="block text-[15px] font-semibold text-slate-600 mb-4">نبرة الرد</label><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="tone-btn tone-selected p-5 rounded-xl text-center" data-tone="professional"><span class="material-symbols-outlined text-3xl text-sky-500 mb-2">badge</span><h4 class="text-[15px] font-semibold text-navy">مهنية</h4><p class="text-[13px] text-slate-500 mt-1">ردود رسمية محترفة</p></div><div class="tone-btn p-5 rounded-xl text-center" data-tone="friendly"><span class="material-symbols-outlined text-3xl text-amber-500 mb-2">tag_faces</span><h4 class="text-[15px] font-semibold text-navy">ودية</h4><p class="text-[13px] text-slate-500 mt-1">ردود عفوية قريبة</p></div><div class="tone-btn p-5 rounded-xl text-center" data-tone="balanced"><span class="material-symbols-outlined text-3xl text-teal-500 mb-2">balance</span><h4 class="text-[15px] font-semibold text-navy">متوازنة</h4><p class="text-[13px] text-slate-500 mt-1">خليط من المهنية والود</p></div></div></div>
-      <div><label class="block text-[15px] font-semibold text-slate-600 mb-4">اللغات</label><div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-sky-300 transition-colors"><input data-lang="ar" checked class="w-4 h-4 accent-sky-500" type="checkbox"/><span class="text-[14px] text-slate-600">العربية</span></label><label class="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-sky-300 transition-colors"><input data-lang="darija" checked class="w-4 h-4 accent-sky-500" type="checkbox"/><span class="text-[14px] text-slate-600">الدارجة الجزائرية</span></label><label class="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-sky-300 transition-colors"><input data-lang="fr" class="w-4 h-4 accent-sky-500" type="checkbox"/><span class="text-[14px] text-slate-600">الفرنسية</span></label><label class="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-sky-300 transition-colors"><input data-lang="en" class="w-4 h-4 accent-sky-500" type="checkbox"/><span class="text-[14px] text-slate-600">الإنجليزية</span></label></div></div>
+      <div><label class="block text-[15px] font-semibold text-slate-600 mb-4">اللغات</label><div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-sky-300 transition-colors"><input data-lang="ar" checked class="w-4 h-4 accent-sky-500" type="checkbox"/><span class="text-[14px] text-slate-600">العربية</span></label><label class="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-sky-300 transition-colors"><input data-lang="fr" class="w-4 h-4 accent-sky-500" type="checkbox"/><span class="text-[14px] text-slate-600">الفرنسية</span></label><label class="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-sky-300 transition-colors"><input data-lang="en" class="w-4 h-4 accent-sky-500" type="checkbox"/><span class="text-[14px] text-slate-600">الإنجليزية</span></label></div></div>
     </div>
   </div>
   <div class="step" id="step3">
@@ -87,7 +87,7 @@ html.dark .bg-white{background:var(--card,#18202d)!important}
 <script>
 RahSahlAuth.requireAuth('../login.html');
 var currentStep=1,selectedPlatforms=['whatsapp'],selectedTone='professional';
-var selectedLanguages=['ar','darija'];
+var selectedLanguages=['ar'];
 
 function updateStep(){
   document.querySelectorAll('.step').forEach(function(e){e.classList.remove('active')});
@@ -100,7 +100,7 @@ function updateStep(){
   else document.getElementById('nextBtn').innerHTML='متابعة <span class="material-symbols-outlined text-[16px]">arrow_back</span>';
   document.getElementById('reviewPlatforms').textContent=selectedPlatforms.map(function(p){return{whatsapp:'واتساب',instagram:'إنستغرام',facebook:'فيسبوك'}[p]||p}).join(', ');
   document.getElementById('reviewTone').textContent={professional:'مهنية',friendly:'ودية',balanced:'متوازنة'}[selectedTone]||selectedTone;
-  document.getElementById('reviewLanguages').textContent=selectedLanguages.map(function(l){return{ar:'العربية',darija:'الدارجة',fr:'الفرنسية',en:'الإنجليزية'}[l]||l}).join(', ');
+  document.getElementById('reviewLanguages').textContent=selectedLanguages.map(function(l){return{ar:'العربية',fr:'الفرنسية',en:'الإنجليزية'}[l]||l}).join(', ');
 }
 document.querySelectorAll('.platform-card').forEach(function(card){
   card.addEventListener('click',function(){
@@ -131,10 +131,10 @@ document.getElementById('nextBtn').addEventListener('click',async function(){
       if(!user){window.location.href='../login.html';return}
       var c=RahSahlAuth.init();
       // 1) Save bot_settings — map form fields to actual DB columns
-      var langToDialect={ar:'Arabic',darija:'Algerian Darija',fr:'French',en:'English'};
+      var langToDialect={ar:'Arabic',fr:'French',en:'English'};
       var botPayload={
         response_style:selectedTone,
-        target_dialect:langToDialect[selectedLanguages[0]]||'Algerian Darija',
+        target_dialect:langToDialect[selectedLanguages[0]]||'Arabic',
         is_active:true,
         updated_at:new Date().toISOString()
       };

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>مفاتيح API — RahSahl</title>
+<title>__('api.title') — RahSahl</title>
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -61,18 +61,18 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     if (!iso) return '—';
     var d = new Date(iso);
     var diff = (Date.now() - d.getTime()) / 1000;
-    if (diff < 60) return 'الآن';
-    if (diff < 3600) return 'منذ ' + Math.floor(diff / 60) + ' د';
-    if (diff < 86400) return 'منذ ' + Math.floor(diff / 3600) + ' س';
-    if (diff < 604800) return 'منذ ' + Math.floor(diff / 86400) + ' يوم';
+    if (diff < 60) return __('general.now');
+    if (diff < 3600) return __('general.ago') + ' ' + Math.floor(diff / 60) + ' ' + __('general.min');
+    if (diff < 86400) return __('general.ago') + ' ' + Math.floor(diff / 3600) + ' ' + __('general.hour');
+    if (diff < 604800) return __('general.ago') + ' ' + Math.floor(diff / 86400) + ' ' + __('general.day');
     return d.toLocaleDateString('ar-DZ');
   }
 
   function render(shop, audit) {
-    var prefix = shop ? (shop.api_secret_prefix || 'لم يُولّد بعد') : '—';
-    var lastUsed = shop && shop.api_secret_last_used ? timeAgo(shop.api_secret_last_used) : 'لم يُستخدم بعد';
+    var prefix = shop ? (shop.api_secret_prefix || __('api.not-generated')) : '—';
+    var lastUsed = shop && shop.api_secret_last_used ? timeAgo(shop.api_secret_last_used) : __('api.not-used');
 
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('مفاتيح API', 'إدارة الوصول البرمجي', ctx)
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(__('api.title'), __('api.subtitle'), ctx)
       + ''
       + '<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">'
       + '  <section class="card p-6 lg:col-span-2">'
@@ -81,28 +81,28 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
       + '        <span class="material-symbols-outlined">vpn_key</span>'
       + '      </div>'
       + '      <div>'
-      + '        <h2 class="font-ar text-[18px] font-bold">مفتاح API الحالي</h2>'
-      + '        <p class="text-[12px] text-slate-500">يستخدم للربط مع n8n والأنظمة الخارجية</p>'
+      + '        <h2 class="font-ar text-[18px] font-bold">' + __('api.current-key') + '</h2>'
+      + '        <p class="text-[12px] text-slate-500">' + __('api.desc') + '</p>'
       + '      </div>'
       + '    </div>'
       + '    <div class="space-y-4">'
       + '      <div>'
-      + '        <label class="block text-[13px] font-semibold text-navy mb-1.5">البادئة</label>'
+      + '        <label class="block text-[13px] font-semibold text-navy mb-1.5">' + __('api.prefix') + '</label>'
       + '        <div class="flex items-center gap-2">'
       + '          <input id="apiKey" type="text" readonly value="' + esc(prefix) + '" dir="ltr" class="flex-1" style="font-family:monospace;background:var(--soft-slate)"/>'
       + '          <button type="button" id="copyKey" class="btn-outline px-3">'
       + '            <span class="material-symbols-outlined text-[18px]">content_copy</span>'
       + '          </button>'
       + '        </div>'
-      + '        <p class="text-[11px] text-slate-400 mt-1">البادئة آمنة للعرض. المفتاح الكامل يظهر مرة واحدة عند التوليد.</p>'
+      + '        <p class="text-[11px] text-slate-400 mt-1">' + __('api.prefix-safe') + '</p>'
       + '      </div>'
       + '      <div class="flex items-center justify-between p-3 rounded-xl" style="background:var(--soft-slate)">'
-      + '        <span class="text-[13px] text-slate-500">آخر استخدام</span>'
+      + '        <span class="text-[13px] text-slate-500">' + __('api.last-used') + '</span>'
       + '        <span class="text-[13px] font-semibold text-navy">' + lastUsed + '</span>'
       + '      </div>'
       + '      <button type="button" id="regenerateKey" class="btn-secondary w-full">'
       + '        <span class="material-symbols-outlined text-[18px]">refresh</span>'
-      + '        إعادة توليد المفتاح'
+      + '        ' + __('api.regenerate')
       + '      </button>'
       + '    </div>'
       + '  </section>'
@@ -113,14 +113,14 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
       + '        <span class="material-symbols-outlined">bolt</span>'
       + '      </div>'
       + '      <div>'
-      + '        <h2 class="font-ar text-[18px] font-bold">n8n Webhook</h2>'
-      + '        <p class="text-[12px] text-slate-500">نقطة الاستقبال الرئيسية</p>'
+      + '        <h2 class="font-ar text-[18px] font-bold">' + __('api.webhook') + '</h2>'
+      + '        <p class="text-[12px] text-slate-500">' + __('api.webhook-desc') + '</p>'
       + '      </div>'
       + '    </div>'
       + '    <code class="block p-3 rounded-lg text-[11px] break-all" dir="ltr" style="background:var(--soft-slate);color:var(--text)">http://ec2-34-228-227-112.compute-1.amazonaws.com/webhook/v1/social-inbound</code>'
       + '    <div class="mt-4 p-3 rounded-xl bg-amber-50 border border-amber-100">'
       + '      <p class="text-[12px] text-amber-700 leading-relaxed">'
-      + '        <span class="font-bold">ملاحظة:</span> يجب إرسال HMAC-SHA256 signature في الـ header <code class="text-[10px]">X-RahSahl-Signature</code> لتأمين الطلبات.'
+      + '        <span class="font-bold">' + __('api.webhook-note') + '</span> ' + __('api.webhook-hmac') + ' <code class="text-[10px]">X-RahSahl-Signature</code> ' + __('api.webhook-secure')
       + '      </p>'
       + '    </div>'
       + '  </section>'
@@ -131,19 +131,19 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
       + '        <span class="material-symbols-outlined">history</span>'
       + '      </div>'
       + '      <div>'
-      + '        <h2 class="font-ar text-[18px] font-bold">سجل النشاط</h2>'
-      + '        <p class="text-[12px] text-slate-500">آخر 50 عملية على المفتاح</p>'
+      + '        <h2 class="font-ar text-[18px] font-bold">' + __('api.audit-log') + '</h2>'
+      + '        <p class="text-[12px] text-slate-500">' + __('api.audit-desc') + '</p>'
       + '      </div>'
       + '    </div>'
       + (audit.length === 0
-          ? '<div class="empty-state"><span class="material-symbols-outlined">history</span><p class="mt-2 text-[14px]">لا توجد عمليات مسجلة بعد</p></div>'
+          ? '<div class="empty-state"><span class="material-symbols-outlined">history</span><p class="mt-2 text-[14px]">' + __('api.audit-empty') + '</p></div>'
           : '<div class="table-wrap">'
           + '  <table class="data-table">'
-          + '    <thead><tr><th>العملية</th><th>الحالة</th><th>عنوان IP</th><th>المتصفح</th><th>التاريخ</th></tr></thead>'
+          + '    <thead><tr><th>' + __('api.col-action') + '</th><th>' + __('api.col-status') + '</th><th>' + __('api.col-ip') + '</th><th>' + __('api.col-browser') + '</th><th>' + __('api.col-date') + '</th></tr></thead>'
           + '    <tbody>' + audit.map(function (a) {
                 return '<tr>'
                   + '<td><span class="font-semibold">' + esc(a.action) + '</span></td>'
-                  + '<td><span class="pill ' + (a.success ? 'pill-success' : 'pill-error') + '">' + (a.success ? 'نجحت' : 'فشلت') + '</span></td>'
+                  + '<td><span class="pill ' + (a.success ? 'pill-success' : 'pill-error') + '">' + (a.success ? __('api.success') : __('api.failed')) + '</span></td>'
                   + '<td dir="ltr" class="text-[12px]">' + esc(a.ip_address || '—') + '</td>'
                   + '<td class="text-[12px] text-slate-500 truncate max-w-[200px]">' + esc(a.user_agent || '—') + '</td>'
                   + '<td class="text-[12px] text-slate-500">' + timeAgo(a.created_at) + '</td>'
@@ -156,13 +156,13 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
       + '  <div class="card p-6 max-w-lg w-full">'
       + '    <div class="flex items-center gap-2 mb-3 text-amber-600">'
       + '      <span class="material-symbols-outlined">warning</span>'
-      + '      <h3 class="font-bold text-[16px]">احفظ المفتاح الآن!</h3>'
+      + '      <h3 class="font-bold text-[16px]">' + __('api.save-now') + '</h3>'
       + '    </div>'
-      + '    <p class="text-[13px] text-slate-600 mb-3">سيظهر هذا المفتاح مرة واحدة فقط. احفظه في مكان آمن قبل المتابعة.</p>'
+      + '    <p class="text-[13px] text-slate-600 mb-3">' + __('api.show-once') + '</p>'
       + '    <input id="newKeyValue" type="text" readonly dir="ltr" class="w-full mb-3" style="font-family:monospace"/>'
       + '    <div class="flex gap-2">'
-      + '      <button type="button" id="copyNewKey" class="btn-primary flex-1">نسخ</button>'
-      + '      <button type="button" id="closeNewKey" class="btn-outline">تم</button>'
+      + '      <button type="button" id="copyNewKey" class="btn-primary flex-1">' + __('api.copy') + '</button>'
+      + '      <button type="button" id="closeNewKey" class="btn-outline">' + __('api.done') + '</button>'
       + '    </div>'
       + '  </div>'
       + '</div>';
@@ -171,16 +171,16 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
       var input = document.getElementById('apiKey');
       input.select();
       navigator.clipboard.writeText(input.value);
-      toast('تم نسخ البادئة', 'success');
+      toast(__('api.copied-prefix'), 'success');
     });
 
     document.getElementById('regenerateKey').addEventListener('click', async function () {
-      if (!confirm('هل أنت متأكد؟ المفتاح القديم سيتوقف عن العمل فوراً.')) return;
+      if (!confirm(__('api.regenerate-confirm'))) return;
       var btn = this;
-      btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> جاري التوليد...';
+      btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> ' + __('api.generating');
       var res = await window.RahSahl.api.regenerateApiKey();
-      btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">refresh</span> إعادة توليد المفتاح';
-      if (res.error) { toast('فشل: ' + res.error.message, 'error'); return; }
+      btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">refresh</span> ' + __('api.regenerate');
+      if (res.error) { toast(__('api.failed') + ': ' + res.error.message, 'error'); return; }
       var newKey = (res.data && (res.data.api_secret || res.data.secret)) || '';
       document.getElementById('newKeyValue').value = newKey;
       document.getElementById('newKeyModal').classList.remove('hidden');
@@ -192,16 +192,16 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
       var input = document.getElementById('newKeyValue');
       input.select();
       navigator.clipboard.writeText(input.value);
-      toast('تم نسخ المفتاح الجديد', 'success');
+      toast(__('api.copied-new'), 'success');
     });
     document.getElementById('closeNewKey').addEventListener('click', function () {
       document.getElementById('newKeyModal').classList.add('hidden');
-      toast('تم توليد مفتاح جديد', 'success');
+      toast(__('api.generated'), 'success');
     });
   }
 
   async function load() {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('مفاتيح API', '...', ctx)
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(__('api.title'), '...', ctx)
       + '<div class="card p-12"><div class="skeleton h-32"></div></div>';
 
     var results = await Promise.allSettled([
@@ -215,6 +215,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   load();
+  window.addEventListener('langchange', function () { load(); });
 })();
 </script>
 </body>

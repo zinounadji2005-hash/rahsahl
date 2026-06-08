@@ -41,8 +41,9 @@
     },
     upsertBotSettings: function (patch) {
       var id = activeShopId();
-      if (id) patch.shop_id = id;
-      return client().from('bot_settings').upsert(patch, { onConflict: 'shop_id' });
+      var payload = Object.assign({}, patch);
+      if (id) payload.shop_id = id;
+      return client().from('bot_settings').upsert(payload, { onConflict: 'shop_id' });
     },
     updateBotSettings: function (patch) {
       var id = activeShopId();

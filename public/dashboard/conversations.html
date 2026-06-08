@@ -53,10 +53,10 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     if (!iso) return '';
     var d = new Date(iso);
     var diff = (Date.now() - d.getTime()) / 1000;
-    if (diff < 60) return 'الآن';
-    if (diff < 3600) return 'منذ ' + Math.floor(diff / 60) + ' د';
-    if (diff < 86400) return 'منذ ' + Math.floor(diff / 3600) + ' س';
-    if (diff < 604800) return 'منذ ' + Math.floor(diff / 86400) + ' يوم';
+    if (diff < 60) return __('general.now');
+    if (diff < 3600) return __('general.ago') + ' ' + Math.floor(diff / 60) + ' ' + __('general.min');
+    if (diff < 86400) return __('general.ago') + ' ' + Math.floor(diff / 3600) + ' ' + __('general.hour');
+    if (diff < 604800) return __('general.ago') + ' ' + Math.floor(diff / 86400) + ' ' + __('general.day');
     return d.toLocaleDateString('ar-DZ');
   }
 
@@ -73,14 +73,56 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     }[ch] || { bg: 'bg-slate-100', text: 'text-slate-600' };
   }
 
+  function render() {
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
+      __('conv.title'), senders.length + ' ' + __('conv.active'), ctx
+    ) + ''
+      + '<div class="card p-3">'
+      + '  <div class="flex flex-col gap-2">' + senders.map(function (s) {
+          var c = channelColor(s.last_message.channel || 'direct');
+          var ic = channelIcon(s.last_message.channel || 'direct');
+          return ''
+            + '<details class="rounded-xl border border-slate-200">'
+            + '  <summary class="flex items-center gap-3 p-3 cursor-pointer hover:bg-slate-50">'
+            + '    <div class="' + c.bg + ' ' + c.text + ' w-10 h-10 rounded-xl flex items-center justify-center shrink-0">'
+            + '      <span class="material-symbols-outlined text-[20px]">' + ic + '</span>'
+            + '    </div>'
+            + '    <div class="flex-1 min-w-0">'
+            + '      <div class="flex justify-between items-center mb-0.5">'
+            + '        <h4 class="font-semibold text-navy text-[14px]" dir="ltr">' + esc(s.sender_id.substring(0, 20)) + '</h4>'
+            + '        <span class="text-[11px] text-slate-400">' + timeAgo(s.last_message.created_at) + '</span>'
+            + '      </div>'
+            + '      <p class="text-[12px] text-slate-500 truncate">' + esc((s.last_message.message || '').substring(0, 80)) + '</p>'
+            + '    </div>'
+            + '    <span class="pill pill-info shrink-0">' + s.count + ' ' + __('conv.msg') + '</span>'
+            + '  </summary>'
+            + '  <div class="border-t border-slate-200 p-4 bg-slate-50 space-y-2">' + s.messages.map(function (m) {
+                var isUser = m.role === 'user';
+                var c2 = channelColor(m.channel || 'direct');
+                return ''
+                  + '<div class="flex items-start gap-2 ' + (isUser ? '' : 'flex-row-reverse') + '">'
+                  + '  <div class="' + c2.bg + ' ' + c2.text + ' w-7 h-7 rounded-lg flex items-center justify-center shrink-0">'
+                  + '    <span class="material-symbols-outlined text-[14px]">' + (isUser ? 'person' : 'smart_toy') + '</span>'
+                  + '  </div>'
+                  + '  <div class="flex-1 ' + (isUser ? 'bg-white' : 'bg-sky-50') + ' rounded-xl p-2.5 max-w-[80%]">'
+                  + '    <p class="text-[13px] text-navy leading-relaxed">' + esc(m.message) + '</p>'
+                  + '    <p class="text-[10px] text-slate-400 mt-1">' + timeAgo(m.created_at) + (m.channel ? ' · ' + esc(m.channel) : '') + '</p>'
+                  + '  </div>'
+                  + '</div>';
+              }).join('') + '</div>'
+            + '</details>';
+        }).join('') + '</div>'
+      + '</div>';
+  }
+
   // Load all conversations grouped by sender
-  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '...', ctx)
+  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(__('conv.title'), '...', ctx)
     + '<div class="card p-12"><div class="skeleton h-32"></div></div>';
 
   var res = await window.RahSahl.api.listConversations({ limit: 200 });
   if (res.error) {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '', ctx)
-      + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">فشل تحميل المحادثات: ' + esc(res.error.message) + '</p></div>';
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(__('conv.title'), '', ctx)
+      + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">' + __('conv.load-fail') + ': ' + esc(res.error.message) + '</p></div>';
     return;
   }
 
@@ -107,50 +149,14 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   });
 
   if (senders.length === 0) {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar('المحادثات', '', ctx)
-      + '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[14px]">لا توجد محادثات بعد. ابدأ بإرسال رسالة!</p></div>';
+    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(__('conv.title'), '', ctx)
+      + '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[14px]">' + __('conv.empty') + '</p></div>';
     return;
   }
 
-  document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-    'المحادثات', senders.length + ' عميل نشط', ctx
-  ) + ''
-    + '<div class="card p-3">'
-    + '  <div class="flex flex-col gap-2">' + senders.map(function (s) {
-        var c = channelColor(s.last_message.channel || 'direct');
-        var ic = channelIcon(s.last_message.channel || 'direct');
-        return ''
-          + '<details class="rounded-xl border border-slate-200">'
-          + '  <summary class="flex items-center gap-3 p-3 cursor-pointer hover:bg-slate-50">'
-          + '    <div class="' + c.bg + ' ' + c.text + ' w-10 h-10 rounded-xl flex items-center justify-center shrink-0">'
-          + '      <span class="material-symbols-outlined text-[20px]">' + ic + '</span>'
-          + '    </div>'
-          + '    <div class="flex-1 min-w-0">'
-          + '      <div class="flex justify-between items-center mb-0.5">'
-          + '        <h4 class="font-semibold text-navy text-[14px]" dir="ltr">' + esc(s.sender_id.substring(0, 20)) + '</h4>'
-          + '        <span class="text-[11px] text-slate-400">' + timeAgo(s.last_message.created_at) + '</span>'
-          + '      </div>'
-          + '      <p class="text-[12px] text-slate-500 truncate">' + esc((s.last_message.message || '').substring(0, 80)) + '</p>'
-          + '    </div>'
-          + '    <span class="pill pill-info shrink-0">' + s.count + ' رسالة</span>'
-          + '  </summary>'
-          + '  <div class="border-t border-slate-200 p-4 bg-slate-50 space-y-2">' + s.messages.map(function (m) {
-              var isUser = m.role === 'user';
-              var c2 = channelColor(m.channel || 'direct');
-              return ''
-                + '<div class="flex items-start gap-2 ' + (isUser ? '' : 'flex-row-reverse') + '">'
-                + '  <div class="' + c2.bg + ' ' + c2.text + ' w-7 h-7 rounded-lg flex items-center justify-center shrink-0">'
-                + '    <span class="material-symbols-outlined text-[14px]">' + (isUser ? 'person' : 'smart_toy') + '</span>'
-                + '  </div>'
-                + '  <div class="flex-1 ' + (isUser ? 'bg-white' : 'bg-sky-50') + ' rounded-xl p-2.5 max-w-[80%]">'
-                + '    <p class="text-[13px] text-navy leading-relaxed">' + esc(m.message) + '</p>'
-                + '                        <p class="text-[10px] text-slate-400 mt-1">' + timeAgo(m.created_at) + (m.channel ? ' · ' + esc(m.channel) : '') + '</p>'
-                + '  </div>'
-                + '</div>';
-            }).join('') + '</div>'
-          + '</details>';
-      }).join('') + '</div>'
-    + '</div>';
+  render();
+
+  window.addEventListener('langchange', function () { render(); });
 })();
 </script>
 </body>
