@@ -16,8 +16,14 @@
   }
 
   // -------- Edge function helper --------
-  function callFunction(name, body) {
-    return client().functions.invoke(name, { body: body || {} });
+  async function callFunction(name, body) {
+    var headers = {};
+    var sessionRes = await client().auth.getSession();
+    var session = sessionRes && sessionRes.data && sessionRes.data.session;
+    if (session && session.access_token) {
+      headers['Authorization'] = 'Bearer ' + session.access_token;
+    }
+    return client().functions.invoke(name, { body: body || {}, headers: headers });
   }
 
   var api = {

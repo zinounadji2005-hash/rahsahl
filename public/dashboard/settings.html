@@ -288,8 +288,13 @@
           var res = await window.RahSahl.api.getOAuthUrl();
           if (res.data && res.data.url) {
             window.location.href = res.data.url;
+          } else if (res.error) {
+            var errDetail = res.error.context || res.error.message || '';
+            if (typeof errDetail === 'object') errDetail = errDetail.error || JSON.stringify(errDetail);
+            showToast(__('general.error') + ' (' + (res.error.status || '?') + '): ' + errDetail, 'error');
+            if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('oauth.connect'); }
           } else {
-            showToast(__('general.error') + ': ' + (res.error?.message || ''), 'error');
+            showToast(__('general.error'), 'error');
             if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('oauth.connect'); }
           }
         } catch (e) {
