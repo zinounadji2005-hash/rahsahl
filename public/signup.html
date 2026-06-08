@@ -2,8 +2,17 @@
 <html dir="rtl" lang="ar"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>إنشاء حساب - راه ساهل</title>
+<meta name="theme-color" content="#f5f0eb">
+<meta name="description" content="أنشئ حسابك في راه ساهل وابدأ أتمتة مبيعاتك عبر واتساب وإنستغرام وفيسبوك مجاناً">
+<meta property="og:title" content="إنشاء حساب - راه ساهل">
+<meta property="og:description" content="ابدأ أتمتة مبيعاتك مجاناً">
+<link rel="canonical" href="https://rahsahl.com/signup.html">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://rvjsnkolroaakskvvwnv.supabase.co">
+<link rel="preconnect" href="https://cdn.tailwindcss.com">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/auth.js"></script>
@@ -23,6 +32,7 @@ html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--card:#
 html.dark img[src*="logo.svg"]{filter:brightness(0) invert(1)}
 #darkToggle{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid var(--card-border,#e2e8f0);background:var(--card,#fff);cursor:pointer;transition:all 0.2s;color:var(--muted,#94a3b8);position:absolute;top:20px;left:20px;z-index:50}
 #darkToggle:hover{color:var(--heading,#0b1420);border-color:var(--card-hover-border,var(--card-border))}
+.password-strength{height:4px;border-radius:2px;transition:all 0.3s}
 </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-6 md:p-10 relative overflow-hidden antialiased selection:bg-sky-200/50" style="background:var(--bg,#f5f0eb);color:var(--text,#334155)">
@@ -51,7 +61,8 @@ html.dark img[src*="logo.svg"]{filter:brightness(0) invert(1)}
         <div><label class="block text-[14px] font-semibold mb-1.5" for="shopName" style="color:var(--heading,#475569)">اسم المتجر</label><div class="relative"><span class="absolute inset-y-0 right-0 flex items-center pr-3" style="color:var(--muted,#94a3b8)"><span class="material-symbols-outlined text-[20px]">storefront</span></span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-10 pl-3" id="shopName" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" placeholder="متجري" type="text" required/></div></div>
         <div><label class="block text-[14px] font-semibold mb-1.5" for="email" style="color:var(--heading,#475569)">البريد الإلكتروني</label><div class="relative"><span class="absolute inset-y-0 right-0 flex items-center pr-3" style="color:var(--muted,#94a3b8)"><span class="material-symbols-outlined text-[20px]">mail</span></span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-10 pl-3" id="email" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" dir="ltr" placeholder="name@example.com" type="email" required/></div></div>
         <div><label class="block text-[14px] font-semibold mb-1.5" for="phone" style="color:var(--heading,#475569)">رقم الهاتف (للواتساب)</label><div class="relative"><span class="absolute inset-y-0 right-0 flex items-center pr-3" style="color:var(--muted,#94a3b8)"><span class="material-symbols-outlined text-[20px]">call</span></span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-10 pl-3 text-left" id="phone" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" dir="ltr" placeholder="+213 5XX XX XX XX" type="tel" required/></div></div>
-        <div><label class="block text-[14px] font-semibold mb-1.5" for="password" style="color:var(--heading,#475569)">كلمة المرور</label><div class="relative"><span class="absolute inset-y-0 right-0 flex items-center pr-3" style="color:var(--muted,#94a3b8)"><span class="material-symbols-outlined text-[20px]">lock</span></span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-10 pl-3" id="password" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" placeholder="••••••••" type="password"/></div></div>
+        <div><label class="block text-[14px] font-semibold mb-1.5" for="password" style="color:var(--heading,#475569)">كلمة المرور</label><div class="relative"><span class="absolute inset-y-0 right-0 flex items-center pr-3" style="color:var(--muted,#94a3b8)"><span class="material-symbols-outlined text-[20px]">lock</span></span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-10 pl-3" id="password" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" placeholder="••••••••" type="password" minlength="6" required/></div><div class="password-strength" id="pwStrength" style="width:0;background:#e2e8f0;height:3px;border-radius:2px;margin-top:4px"></div><p class="text-[11px] text-slate-400 mt-1" id="pwHint">يجب أن تكون 6 أحرف على الأقل</p></div>
+        <div><label class="block text-[14px] font-semibold mb-1.5" for="confirmPw" style="color:var(--heading,#475569)">تأكيد كلمة المرور</label><div class="relative"><span class="absolute inset-y-0 right-0 flex items-center pr-3" style="color:var(--muted,#94a3b8)"><span class="material-symbols-outlined text-[20px]">lock</span></span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-10 pl-3" id="confirmPw" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" placeholder="••••••••" type="password" minlength="6" required/></div></div>
         <button class="w-full btn-primary text-[15px] font-semibold rounded-xl py-3 mt-2 flex justify-center items-center gap-2" type="submit"><span>بدء التجربة المجانية</span><span class="material-symbols-outlined text-[18px] rtl:rotate-180">arrow_forward</span></button>
       </form>
 
@@ -62,9 +73,10 @@ html.dark img[src*="logo.svg"]{filter:brightness(0) invert(1)}
 <script>
 document.getElementById('signup-form').addEventListener('submit',function(e){
   e.preventDefault();
-  var fullName=document.getElementById('fullName').value.trim(),shopName=document.getElementById('shopName').value.trim(),email=document.getElementById('email').value.trim(),phone=document.getElementById('phone').value.trim(),password=document.getElementById('password').value,errEl=document.getElementById('auth-error');
-  if(!fullName||!email||!password){errEl.textContent='يرجى ملء جميع الحقول';errEl.classList.remove('hidden');return}
+  var fullName=document.getElementById('fullName').value.trim(),shopName=document.getElementById('shopName').value.trim(),email=document.getElementById('email').value.trim(),phone=document.getElementById('phone').value.trim(),password=document.getElementById('password').value,confirmPw=document.getElementById('confirmPw').value,errEl=document.getElementById('auth-error');
+  if(!fullName||!email||!password||!confirmPw){errEl.textContent='يرجى ملء جميع الحقول';errEl.classList.remove('hidden');return}
   if(password.length<6){errEl.textContent='كلمة المرور يجب أن تكون 6 أحرف على الأقل';errEl.classList.remove('hidden');return}
+  if(password!==confirmPw){errEl.textContent='كلمة المرور غير متطابقة';errEl.classList.remove('hidden');return}
   var btn=this.querySelector('button[type="submit"]');btn.disabled=true;btn.innerHTML='<span class="material-symbols-outlined animate-spin">sync</span>';
   RahSahlAuth.signup(email,password,fullName,phone,shopName).then(function(r){
     if(r.error)throw r.error;
@@ -74,6 +86,14 @@ document.getElementById('signup-form').addEventListener('submit',function(e){
     errEl.textContent=e.message;errEl.classList.remove('hidden');
     btn.disabled=false;btn.innerHTML='بدء التجربة المجانية<span class="material-symbols-outlined text-[18px] rtl:rotate-180">arrow_forward</span>'
   })
+});
+
+document.getElementById('password').addEventListener('input',function(){
+  var v=this.value.length,bar=document.getElementById('pwStrength'),hint=document.getElementById('pwHint');
+  if(v===0){bar.style.width='0';bar.style.background='#e2e8f0'}
+  else if(v<6){bar.style.width=(v/6*100)+'%';bar.style.background='#f87171'}
+  else if(v<10){bar.style.width='60%';bar.style.background='#fbbf24';hint.textContent='👍 جيد'}
+  else{bar.style.width='100%';bar.style.background='#34d399';hint.textContent='💪 قوي'}
 });
 
 RahSahlAuth.session().then(function(s){if(s)window.location.href='dashboard/'});

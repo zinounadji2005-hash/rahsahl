@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta name="theme-color" content="#f5f0eb">
   <title>الإعدادات — RahSahl</title>
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -97,11 +98,13 @@
     <script src="js/sidebar.js"></script>
     <script>
     (async function () {
+      try {
       var L = window.RahSahl && window.RahSahl.lang;
       function __(k) { return L ? L.t(k) : k; }
 
       var ctx = await window.RahSahl.authGuard.guard();
       if (!ctx) return;
+      document.title = __('nav.settings') + ' — RahSahl';
       var sid = window.RahSahl.sidebar;
       sid.boot();
       window.RahSahl.sidebarCtx = ctx;
@@ -339,6 +342,7 @@
       window.addEventListener('langchange', function () {
         render();
       });
+    } catch (e) { if (window.RahSahl?.sidebar?.toast) window.RahSahl.sidebar.toast(e.message || 'Error', 'error'); else console.error(e); }
     })();
     </script>
 

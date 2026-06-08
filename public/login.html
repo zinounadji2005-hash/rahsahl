@@ -2,8 +2,16 @@
 <html dir="rtl" lang="ar"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>تسجيل الدخول - راه ساهل</title>
+<meta name="theme-color" content="#f5f0eb">
+<meta name="description" content="تسجيل الدخول إلى لوحة تحكم راه ساهل">
+<meta property="og:title" content="تسجيل الدخول - راه ساهل">
+<link rel="canonical" href="https://rahsahl.com/login.html">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://rvjsnkolroaakskvvwnv.supabase.co">
+<link rel="preconnect" href="https://cdn.tailwindcss.com">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/auth.js"></script>
@@ -53,7 +61,7 @@ html.dark .brand-side img{filter:brightness(0) invert(1)}
       <div id="auth-error" class="hidden bg-red-50 border border-red-200 text-red-600 text-[14px] px-4 py-2.5 rounded-lg mb-4"></div>
       <form class="space-y-5" id="login-form">
         <div><label class="block text-[14px] font-semibold mb-1.5" for="email" style="color:var(--heading,#475569)">البريد الإلكتروني</label><div class="relative"><span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color:var(--muted,#94a3b8)">mail</span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-11 pl-3" id="email" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" dir="ltr" placeholder="name@company.com" required="" type="email"/></div></div>
-        <div><div class="flex justify-between items-center mb-1.5"><label class="block text-[14px] font-semibold" for="password" style="color:var(--heading,#475569)">كلمة المرور</label><a class="text-[13px] text-sky-600 hover:text-sky-700 transition-colors" href="contact.html">نسيت كلمة المرور؟</a></div><div class="relative"><span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color:var(--muted,#94a3b8)">lock</span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-11 pl-3" id="password" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" dir="ltr" placeholder="••••••••" required="" type="password"/></div></div>
+        <div><div class="flex justify-between items-center mb-1.5"><label class="block text-[14px] font-semibold" for="password" style="color:var(--heading,#475569)">كلمة المرور</label><a class="text-[13px] text-sky-600 hover:text-sky-700 transition-colors" href="forgot-password.html">نسيت كلمة المرور؟</a></div><div class="relative"><span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color:var(--muted,#94a3b8)">lock</span><input class="w-full input-focus text-[15px] rounded-xl py-3 pr-11 pl-3" id="password" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" dir="ltr" placeholder="••••••••" required="" type="password"/></div></div>
         <button class="w-full btn-primary text-[15px] font-semibold rounded-xl py-3 flex justify-center items-center gap-2" type="submit"><span>تسجيل الدخول</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span></button>
       </form>
 
@@ -63,8 +71,9 @@ html.dark .brand-side img{filter:brightness(0) invert(1)}
   </div>
 </main>
 <script>
-// Honor ?next= for post-login redirect
-var nextUrl = new URLSearchParams(window.location.search).get('next');
+// Validate nextUrl to prevent open redirect
+var _rawNext = new URLSearchParams(window.location.search).get('next');
+var nextUrl = _rawNext && _rawNext.startsWith('/') && !_rawNext.startsWith('//') && !_rawNext.includes(':') ? _rawNext : null;
 
 document.getElementById('login-form').addEventListener('submit',function(e){
   e.preventDefault();

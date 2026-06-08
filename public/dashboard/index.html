@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>__('dash.title') — RahSahl</title>
+<meta name="theme-color" content="#f5f0eb">
+<title>RahSahl</title>
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -40,13 +41,14 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
 <script src="js/sidebar.js"></script>
 <script>
 (async function () {
-  var __ = window.__;
+  try {
+    var __ = window.__;
 
-  var ctx = await window.RahSahl.authGuard.guard();
-  if (!ctx) return;
+    var ctx = await window.RahSahl.authGuard.guard();
+    if (!ctx) return;
 
-  window.RahSahl.sidebar.boot();
-  window.RahSahl.sidebarCtx = ctx;
+    window.RahSahl.sidebar.boot();
+    window.RahSahl.sidebarCtx = ctx;
 
   // Render chrome
   document.getElementById('sidebar').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
@@ -295,6 +297,7 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
   }
 
   window.addEventListener('langchange', function () { renderDashboard(dashboardData); });
+} catch (e) { console.error(e); if (window.RahSahl?.sidebar?.toast) window.RahSahl.sidebar.toast(e.message || 'Error', 'error'); }
 })();
 </script>
 </body>

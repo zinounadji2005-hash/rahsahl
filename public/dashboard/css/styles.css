@@ -157,6 +157,13 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.2s;
 }
 .btn-danger:hover { background: #fecaca; }
+html.dark .btn-danger { background: rgba(239,68,68,0.2); color: #fca5a5; }
+html.dark .btn-danger:hover { background: rgba(239,68,68,0.3); }
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
 
 .input,
 input[type="text"],

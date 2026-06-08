@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f0eb">
   <title>الحسابات — RahSahl</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -219,16 +220,20 @@
   <script src="js/sidebar.js"></script>
   <script>
   (async function () {
-    var L = window.RahSahl && window.RahSahl.lang;
-    function __(k) { return L ? L.t(k) : k; }
+    try {
+      var L = window.RahSahl && window.RahSahl.lang;
+      function __(k) { return L ? L.t(k) : k; }
 
-    var ctx = await window.RahSahl.authGuard.guard();
+      var ctx = await window.RahSahl.authGuard.guard();
     if (!ctx) return;
+    document.title = __('acc.title') + ' — RahSahl';
 
     var api = window.RahSahl.api;
-    var sid = window.RahSahl.sidebar;
-    sid.boot();
-    window.RahSahl.sidebarCtx = ctx;
+      var sid = window.RahSahl.sidebar;
+      sid.boot();
+      window.RahSahl.sidebarCtx = ctx;
+
+      function toast(msg, type) { sid.toast(msg, type); }
 
     var allAccounts = [];
 
@@ -406,6 +411,7 @@
     window.addEventListener('langchange', function () {
       render();
     });
+  } catch (e) { if (window.RahSahl?.sidebar?.toast) window.RahSahl.sidebar.toast(e.message || 'Error', 'error'); else console.error(e); }
   })();
   </script>
 

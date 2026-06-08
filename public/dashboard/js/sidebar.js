@@ -165,6 +165,23 @@
     renderSidebar: renderSidebar,
     renderTopbar: renderTopbar,
     activeKeyFromPath: activeKeyFromPath,
-    boot: boot
+    boot: boot,
+    toast: function (msg, type, duration) {
+      type = type || 'info'; duration = duration || 4000;
+      if (!document.getElementById('toast-container')) {
+        var c = document.createElement('div');
+        c.id = 'toast-container';
+        c.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none';
+        document.body.appendChild(c);
+      }
+      var colors = { success: '#10b981', error: '#ef4444', info: '#0ea5e9', warning: '#f59e0b' };
+      var bg = colors[type] || colors.info;
+      var t = document.createElement('div');
+      t.textContent = msg;
+      t.style.cssText = 'pointer-events:auto;background:' + bg + ';color:#fff;padding:14px 24px;border-radius:14px;font-size:14px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.15);max-width:450px;text-align:center;transition:all 0.4s cubic-bezier(0.68,-0.55,0.265,1.55);opacity:0;transform:translateY(-20px) scale(0.95);direction:rtl';
+      document.getElementById('toast-container').appendChild(t);
+      requestAnimationFrame(function () { t.style.opacity = '1'; t.style.transform = 'translateY(0) scale(1)' });
+      setTimeout(function () { t.style.opacity = '0'; t.style.transform = 'translateY(-20px) scale(0.95)'; setTimeout(function () { t.remove() }, 400) }, duration);
+    }
   };
 })();

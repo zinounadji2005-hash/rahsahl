@@ -1,0 +1,9 @@
+# RahSahl — robots.txt
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /onboarding/
+Disallow: /forgot-password.html
+Disallow: /reset-password.html
+
+Sitemap: https://rahsahl.com/sitemap.xml

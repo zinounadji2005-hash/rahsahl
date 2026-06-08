@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="theme-color" content="#f5f0eb">
 <title>RahSahl</title>
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -37,6 +38,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
 <script src="js/sidebar.js"></script>
 <script>
 (async function () {
+  try {
   var ctx = await window.RahSahl.authGuard.guard();
   if (!ctx) return;
   document.title = __('prd.title') + ' — RahSahl';
@@ -235,6 +237,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   load();
 
   window.addEventListener('langchange', function () { load(); });
+} catch (e) { console.error(e); if (window.RahSahl?.sidebar?.toast) window.RahSahl.sidebar.toast(e.message || 'Error', 'error'); }
 })();
 </script>
 </body>

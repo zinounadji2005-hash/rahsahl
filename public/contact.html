@@ -2,9 +2,21 @@
 <html dir="rtl" lang="ar"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="theme-color" content="#f5f0eb">
+<meta name="description" content="تواصل مع فريق راه ساهل. نحن هنا لمساعدتك.">
+<meta property="og:title" content="اتصل بنا - راه ساهل">
+<meta property="og:description" content="تواصل مع فريق راه ساهل">
 <title>اتصل بنا - راه ساهل</title>
+<link rel="canonical" href="https://rahsahl.com/contact.html">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://rvjsnkolroaakskvvwnv.supabase.co">
+<link rel="preconnect" href="https://cdn.tailwindcss.com">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/auth.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{navy:'#0b1420',sky:'#0ea5e9',teal:'#14b8a6'},fontFamily:{ar:['IBM Plex Sans Arabic','sans-serif'],en:['Inter','sans-serif']}}}}</script>
@@ -20,9 +32,9 @@
       <div class="p-6 bg-slate-50 rounded-2xl text-center"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4" style="background:rgba(20,184,166,0.12)"><span class="material-symbols-outlined text-teal-500">chat</span></div><h3 class="font-ar text-[16px] font-bold mb-1" style="color:var(--heading,#0b1420)">واتساب</h3><p class="text-[14px]" style="color:var(--muted,#64748b)">+213 5XX XX XX XX</p></div>
       <div class="p-6 bg-slate-50 rounded-2xl text-center"><div class="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center mx-auto mb-4"><span class="material-symbols-outlined text-sky-500">schedule</span></div><h3 class="font-ar text-[16px] font-bold mb-1" style="color:var(--heading,#0b1420)">أوقات العمل</h3><p class="text-[14px]" style="color:var(--muted,#64748b)">9:00 صباحاً - 6:00 مساءً</p></div>
     </div>
-    <form class="space-y-4 max-w-lg mx-auto"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[14px] font-semibold mb-1.5" style="color:var(--heading,#475569)">الاسم</label><input class="w-full input-focus text-[15px] rounded-xl py-3 px-4" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" placeholder="اسمك" type="text"/></div><div><label class="block text-[14px] font-semibold mb-1.5" style="color:var(--heading,#475569)">البريد الإلكتروني</label><input class="w-full input-focus text-[15px] rounded-xl py-3 px-4" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" dir="ltr" placeholder="name@example.com" type="email"/></div></div>
-      <div><label class="block text-[14px] font-semibold mb-1.5" style="color:var(--heading,#475569)">الرسالة</label><textarea class="w-full input-focus text-[15px] rounded-xl py-3 px-4 min-h-[120px]" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" placeholder="كيف يمكننا مساعدتك؟"></textarea></div>
-      <button class="btn-primary w-full text-[15px] font-semibold rounded-xl py-3" type="submit">إرسال الرسالة</button>
+    <form class="space-y-4 max-w-lg mx-auto"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[14px] font-semibold mb-1.5" for="contactName" style="color:var(--heading,#475569)">الاسم</label><input class="w-full input-focus text-[15px] rounded-xl py-3 px-4" id="contactName" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" placeholder="اسمك" type="text" required/></div><div><label class="block text-[14px] font-semibold mb-1.5" for="contactEmail" style="color:var(--heading,#475569)">البريد الإلكتروني</label><input class="w-full input-focus text-[15px] rounded-xl py-3 px-4" id="contactEmail" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" dir="ltr" placeholder="name@example.com" type="email" required/></div></div>
+      <div><label class="block text-[14px] font-semibold mb-1.5" for="contactMsg" style="color:var(--heading,#475569)">الرسالة</label><textarea class="w-full input-focus text-[15px] rounded-xl py-3 px-4 min-h-[120px]" id="contactMsg" style="color:var(--heading,#0b1420);background:var(--input-bg,#fff);border-color:var(--card-border,#e2e8f0)" placeholder="كيف يمكننا مساعدتك؟" required></textarea></div>
+      <button class="btn-primary w-full text-[15px] font-semibold rounded-xl py-3" id="contactBtn" type="submit">إرسال الرسالة</button>
     </form>
   </div>
 </main>
@@ -30,21 +42,24 @@
 <script>
 (function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('rahsahl-dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('rahsahl-dark',d.classList.contains('dark'))})})();
 
+function validateEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
+
 document.querySelector('form').addEventListener('submit',function(e){
   e.preventDefault();
-  var btn=this.querySelector('button[type="submit"]');
-  btn.disabled=true;btn.innerHTML='جاري الإرسال...';
-  var data={name:this.querySelector('input[type="text"]').value,email:this.querySelector('input[type="email"]').value,message:this.querySelector('textarea').value};
-  fetch('https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/contact_messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','apikey':'sb_publishable_3Hc5H4lJdemDnuSv3bG-Cw_TXViKcuT','Authorization':'Bearer sb_publishable_3Hc5H4lJdemDnuSv3bG-Cw_TXViKcuT'},
-    body:JSON.stringify({name:data.name,email:data.email,message:data.message,created_at:new Date().toISOString()})
-  }).then(function(r){
-    btn.innerHTML='تم الإرسال ✓';
-    setTimeout(function(){btn.disabled=false;btn.innerHTML='إرسال الرسالة';document.querySelector('form').reset()},2000);
-  }).catch(function(){
-    alert('فشل الإرسال. حاول مرة أخرى.');
-    btn.disabled=false;btn.innerHTML='إرسال الرسالة';
+  var name=document.getElementById('contactName').value.trim(),email=document.getElementById('contactEmail').value.trim(),msg=document.getElementById('contactMsg').value.trim(),btn=document.getElementById('contactBtn');
+  if(!name||!email||!msg){alert('يرجى ملء جميع الحقول');return}
+  if(!validateEmail(email)){alert('يرجى إدخال بريد إلكتروني صحيح');return}
+  btn.disabled=true;btn.textContent='جاري الإرسال...';
+  var sb=RahSahlAuth.init();
+  if(!sb){alert('خطأ في الاتصال بالخادم');btn.disabled=false;btn.textContent='إرسال الرسالة';return}
+  sb.from('contact_messages').insert({name:name,email:email,message:msg,created_at:new Date().toISOString()}).then(function(r){
+    if(r.error)throw r.error;
+    btn.textContent='تم الإرسال ✓';
+    document.querySelector('form').reset();
+    setTimeout(function(){btn.disabled=false;btn.textContent='إرسال الرسالة'},2500);
+  }).catch(function(err){
+    alert('فشل الإرسال: '+(err.message||'حاول مرة أخرى'));
+    btn.disabled=false;btn.textContent='إرسال الرسالة';
   });
 });
 </script>
