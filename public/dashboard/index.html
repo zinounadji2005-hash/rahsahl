@@ -52,6 +52,7 @@ html.dark .kpi-card .kpi-glow{opacity:0.15!important}
 
   // Render chrome
   document.getElementById('sidebar').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
+  window.RahSahl.sidebar.bindChrome();
   document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
     __('dash.greeting') + '، ' + (ctx.shop ? ctx.shop.owner_name : __('dash.merchant')) + ' 👋',
     __('dash.subtitle'),

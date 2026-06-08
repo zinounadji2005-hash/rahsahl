@@ -45,6 +45,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   window.RahSahl.sidebar.boot();
   window.RahSahl.sidebarCtx = ctx;
   document.getElementById('sidebar').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
+  window.RahSahl.sidebar.bindChrome();
 
   var currentStatus = 'all';
   var searchQuery = '';

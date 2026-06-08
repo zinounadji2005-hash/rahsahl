@@ -141,8 +141,8 @@
   }
 
   function boot() {
-    bindGlobalChrome();
-    // Re-render sidebar on language change
+    // Don't bindGlobalChrome here — DOM doesn't exist yet.
+    // Pages must call bindChrome() after rendering sidebar.
     window.addEventListener('langchange', function () {
       var L = window.RahSahl && window.RahSahl.lang;
       if (!L) return;
@@ -166,6 +166,7 @@
     renderTopbar: renderTopbar,
     activeKeyFromPath: activeKeyFromPath,
     boot: boot,
+    bindChrome: bindGlobalChrome,
     toast: function (msg, type, duration) {
       type = type || 'info'; duration = duration || 4000;
       if (!document.getElementById('toast-container')) {
