@@ -72,20 +72,20 @@
     listConversations: function (opts) {
       opts = opts || {};
       return client().from('conversations')
-        .select('id, sender_id, role, message, channel, created_at')
+        .select('id, sender_id, role, message, created_at')
         .order('created_at', { ascending: false })
         .limit(opts.limit || 50);
     },
     listConversationsBySender: function (senderId, limit) {
       return client().from('conversations')
-        .select('id, sender_id, role, message, channel, created_at')
+        .select('id, sender_id, role, message, created_at')
         .eq('sender_id', senderId)
         .order('created_at', { ascending: true })
         .limit(limit || 200);
     },
     listDistinctSenders: function () {
       return client().from('conversations')
-        .select('sender_id, message, role, channel, created_at')
+        .select('sender_id, message, role, created_at')
         .order('created_at', { ascending: false })
         .limit(500);
     },

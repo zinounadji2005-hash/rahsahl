@@ -100,7 +100,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
       messages: msgs,
       last_message: msgs[msgs.length - 1],
       count: msgs.length,
-      channels: Array.from(new Set(msgs.map(function (m) { return m.channel; })))
+      channels: Array.from(new Set(msgs.map(function (m) { return m.channel || 'direct'; })))
     };
   }).sort(function (a, b) {
     return new Date(b.last_message.created_at) - new Date(a.last_message.created_at);
@@ -117,8 +117,8 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   ) + ''
     + '<div class="card p-3">'
     + '  <div class="flex flex-col gap-2">' + senders.map(function (s) {
-        var c = channelColor(s.last_message.channel);
-        var ic = channelIcon(s.last_message.channel);
+        var c = channelColor(s.last_message.channel || 'direct');
+        var ic = channelIcon(s.last_message.channel || 'direct');
         return ''
           + '<details class="rounded-xl border border-slate-200">'
           + '  <summary class="flex items-center gap-3 p-3 cursor-pointer hover:bg-slate-50">'
@@ -136,7 +136,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
           + '  </summary>'
           + '  <div class="border-t border-slate-200 p-4 bg-slate-50 space-y-2">' + s.messages.map(function (m) {
               var isUser = m.role === 'user';
-              var c2 = channelColor(m.channel);
+              var c2 = channelColor(m.channel || 'direct');
               return ''
                 + '<div class="flex items-start gap-2 ' + (isUser ? '' : 'flex-row-reverse') + '">'
                 + '  <div class="' + c2.bg + ' ' + c2.text + ' w-7 h-7 rounded-lg flex items-center justify-center shrink-0">'
@@ -144,7 +144,7 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
                 + '  </div>'
                 + '  <div class="flex-1 ' + (isUser ? 'bg-white' : 'bg-sky-50') + ' rounded-xl p-2.5 max-w-[80%]">'
                 + '    <p class="text-[13px] text-navy leading-relaxed">' + esc(m.message) + '</p>'
-                + '    <p class="text-[10px] text-slate-400 mt-1">' + timeAgo(m.created_at) + ' · ' + esc(m.channel) + '</p>'
+                + '                        <p class="text-[10px] text-slate-400 mt-1">' + timeAgo(m.created_at) + (m.channel ? ' · ' + esc(m.channel) : '') + '</p>'
                 + '  </div>'
                 + '</div>';
             }).join('') + '</div>'
