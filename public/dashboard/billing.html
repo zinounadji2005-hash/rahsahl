@@ -80,6 +80,8 @@
     .nav-item:hover{background:var(--hover-bg);color:var(--heading)}
     .nav-item.active{color:#0ea5e9;background:rgba(14,165,233,0.08);border-right:3px solid #0ea5e9}
     .nav-item .material-symbols-outlined{font-size:20px}
+    .form-input{width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text);font-size:14px;outline:none;transition:border-color 0.2s,box-shadow 0.2s}
+    .form-input:focus{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,0.12)}
   </style>
 </head>
 <body class="antialiased min-h-screen selection:bg-sky-200/50">
@@ -121,9 +123,10 @@
           </div>
         </div>
         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-          <div class="flex-1 w-full">
+          <div class="flex-1 w-full space-y-3">
+            <input type="number" id="customCoinsInput" class="form-input text-center text-[18px] font-bold" min="1000" max="1000000" value="5000" step="100" dir="ltr">
             <input type="range" id="customRange" class="custom-range" min="1000" max="1000000" value="5000" step="100">
-            <div class="flex justify-between text-[12px] mt-1.5 text-muted">
+            <div class="flex justify-between text-[12px] text-muted">
               <span>1,000</span>
               <span id="customCoinsDisplay" class="font-bold gradient-text">5,000</span>
               <span>1,000,000</span>
@@ -270,11 +273,21 @@
     var packsRes = await api.listCoinPacks();
     if (packsRes.data) { packsData = packsRes.data; renderPacks(); }
 
-    // Custom pack slider
+    // Custom pack slider + input
     var range = document.getElementById('customRange');
+    var coinsInput = document.getElementById('customCoinsInput');
     var coinsDisplay = document.getElementById('customCoinsDisplay');
     var priceDisplay = document.getElementById('customPriceDisplay');
     var perCoinDisplay = document.getElementById('customPerCoin');
+
+    function syncCustom(val) {
+      var n = parseInt(val) || 1000;
+      if (n < 1000) n = 1000;
+      if (n > 1000000) n = 1000000;
+      range.value = n;
+      coinsInput.value = n;
+      updateCustomPrice(n);
+    }
 
     async function updateCustomPrice(val) {
       coinsDisplay.textContent = parseInt(val).toLocaleString('ar-DZ');
@@ -284,7 +297,8 @@
         perCoinDisplay.textContent = res.data.per_coin ?? '—';
       }
     }
-    range.addEventListener('input', function () { updateCustomPrice(range.value); });
+    range.addEventListener('input', function () { syncCustom(range.value); });
+    coinsInput.addEventListener('input', function () { syncCustom(coinsInput.value); });
     updateCustomPrice(range.value);
 
     document.getElementById('btnCustomPurchase').addEventListener('click', async function () {
