@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª â€” RahSahl</title>
+  <title>الإعدادات — RahSahl</title>
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -128,14 +128,16 @@
       ];
       var dialectOptions = [
         { value: 'Arabic', key: 'set.fusha' },
-        { value: 'Algerian Darija', key: 'set.darija' },
         { value: 'French', key: 'set.french' },
         { value: 'English', key: 'set.english' },
       ];
 
       function render() {
         document.getElementById('sidebar').innerHTML = sid.renderSidebar(ctx);
-        document.getElementById('topbar').innerHTML = sid.renderTopbar(__('set.title'), __('set.subtitle'), ctx);
+        var topbar = document.getElementById('topbar');
+        topbar.setAttribute('data-title', 'set.title');
+        topbar.setAttribute('data-subtitle', 'set.subtitle');
+        topbar.innerHTML = sid.renderTopbar(__('set.title'), __('set.subtitle'), ctx);
 
         var s = settingsData || { response_style: null, target_dialect: null };
 
@@ -250,7 +252,7 @@
               + '<div class="flex items-center gap-2">'
               + '  <span class="material-symbols-outlined text-sky-600 text-[20px]">' + (platformIcons[a.platform] || 'public') + '</span>'
               + '  <span class="text-[14px] font-semibold text-heading">' + (a.platform.charAt(0).toUpperCase() + a.platform.slice(1)) + '</span>'
-              + '  <span class="text-[12px] text-muted">@' + (a.external_handle || a.external_id || 'â€”') + '</span>'
+              + '  <span class="text-[12px] text-muted">@' + (a.external_handle || a.external_id || '—') + '</span>'
               + '</div>'
               + '<span class="badge text-[11px] ' + (a.is_active ? 'bg-teal-100 text-teal-700' : 'bg-red-50 text-red-600') + '">' + (a.is_active ? __('acc.active') : __('acc.suspended')) + '</span>'
               + '</div>';

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ø§Ù„Ø­Ø³Ø§Ø¨Ø§Øª â€” RahSahl</title>
+  <title>الحسابات — RahSahl</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -92,7 +92,7 @@
             </div>
             <div>
               <p id="lblTotalAccounts" class="text-[13px] text-muted"></p>
-              <p class="font-bold text-[22px] text-heading" id="totalAccounts">â€”</p>
+              <p class="font-bold text-[22px] text-heading" id="totalAccounts">—</p>
             </div>
           </div>
         </div>
@@ -103,7 +103,7 @@
             </div>
             <div>
               <p id="lblActiveAccounts" class="text-[13px] text-muted"></p>
-              <p class="font-bold text-[22px] text-heading" id="activeAccounts">â€”</p>
+              <p class="font-bold text-[22px] text-heading" id="activeAccounts">—</p>
             </div>
           </div>
         </div>
@@ -114,7 +114,7 @@
             </div>
             <div>
               <p id="lblLastSync" class="text-[13px] text-muted"></p>
-              <p class="font-bold text-[14px] text-heading" id="lastSync">â€”</p>
+              <p class="font-bold text-[14px] text-heading" id="lastSync">—</p>
             </div>
           </div>
         </div>
@@ -188,7 +188,7 @@
         <div>
           <label id="lblPassword" class="text-[13px] font-semibold text-heading block mb-1"></label>
           <div class="relative">
-            <input id="fieldPassword" type="password" class="form-input pl-10" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
+            <input id="fieldPassword" type="password" class="form-input pl-10" placeholder="••••••••" required>
             <button type="button" id="togglePw" class="absolute left-3 top-1/2 -translate-y-1/2 text-muted hover:text-heading transition-colors">
               <span class="material-symbols-outlined text-[20px]">visibility</span>
             </button>
@@ -325,8 +325,8 @@
         return;
       }
       grid.innerHTML = accounts.map(function (a) {
-        var platform = a.platform || a.channel || 'â€”';
-        var username = a.username || a.external_id || 'â€”';
+        var platform = a.platform || a.channel || '—';
+        var username = a.username || a.external_id || '—';
         var status = a.status || deriveStatus(a);
         var notes = a.notes || (a.metadata && a.metadata.notes) || '';
         var expiry = a.expiry_date || a.token_expires_at || null;

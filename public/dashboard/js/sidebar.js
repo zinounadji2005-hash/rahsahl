@@ -67,8 +67,8 @@
 
     return ''
       + '<div class="px-5 mb-7 flex items-center gap-3">'
-      + '  <div class="w-10 h-10 rounded-xl primary-gradient flex items-center justify-center shrink-0">'
-      + '    <span class="material-symbols-outlined text-white" style="font-variation-settings:\'FILL\' 1">bolt</span>'
+      + '  <div class="flex items-center gap-3">'
+      + '    <img src="../assets/logo.svg" alt="RahSahl" class="w-10 h-10 rounded-xl">'
       + '  </div>'
       + '  <div class="flex-1 min-w-0">'
       + '    <h2 class="font-ar text-[18px] font-bold text-sky-600 truncate">RahSahl</h2>'
@@ -151,9 +151,9 @@
       var sidebarCtx = window.RahSahl.sidebarCtx;
       if (side) side.innerHTML = renderSidebar(sidebarCtx);
       if (top) {
-        var title = top.getAttribute('data-title') || '';
-        var sub = top.getAttribute('data-subtitle') || '';
-        top.innerHTML = renderTopbar(title, sub, sidebarCtx);
+        var titleKey = top.getAttribute('data-title') || '';
+        var subKey = top.getAttribute('data-subtitle') || '';
+        top.innerHTML = renderTopbar(t(titleKey), t(subKey), sidebarCtx);
       }
       // Re-bind after re-render
       bindGlobalChrome();

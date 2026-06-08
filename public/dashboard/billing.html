@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ø§Ù„ÙÙˆØªØ±Ø© â€” RahSahl</title>
+  <title>ال�وترة — RahSahl</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -123,8 +123,8 @@
           </div>
           <div class="text-center sm:text-left shrink-0">
             <p id="lblPrice" class="text-[13px] text-muted"></p>
-            <p class="font-bold text-[22px] text-heading"><span id="customPriceDisplay">â€”</span> <span class="text-[14px] font-normal text-muted">Ø¯.Ø¬</span></p>
-            <p class="text-[12px] text-muted"><span id="customPerCoin">â€”</span> <span id="lblPerCoinUnit" class="text-muted">Ø¯.Ø¬/Ù†Ù‚Ø·Ø©</span></p>
+            <p class="font-bold text-[22px] text-heading"><span id="customPriceDisplay">—</span> <span class="text-[14px] font-normal text-muted">د.ج</span></p>
+            <p class="text-[12px] text-muted"><span id="customPerCoin">—</span> <span id="lblPerCoinUnit" class="text-muted">د.ج/نقطة</span></p>
           </div>
           <button id="btnCustomPurchase" class="btn-primary px-6 py-2.5 rounded-xl font-semibold text-[14px] disabled:opacity-50"></button>
         </div>
@@ -225,7 +225,7 @@
             + (isRec ? '<span class="badge text-white text-[11px]" style="background:linear-gradient(135deg,#0ea5e9,#14b8a6)">' + __('bill.most-popular') + '</span>' : '')
             + '</div>'
             + '<p class="text-[32px] font-bold text-heading">' + (p.coins ?? 0).toLocaleString('ar-DZ') + ' <span class="text-[14px] font-normal text-muted">' + __('bill.coin') + '</span></p>'
-            + '<p class="text-[18px] font-bold mt-2 gradient-text">' + (p.price_dzd ?? 0).toLocaleString('ar-DZ') + ' <span class="text-[13px] font-normal text-muted">Ø¯.Ø¬</span></p>'
+            + '<p class="text-[18px] font-bold mt-2 gradient-text">' + (p.price_dzd ?? 0).toLocaleString('ar-DZ') + ' <span class="text-[13px] font-normal text-muted">د.ج</span></p>'
             + '<button class="mt-4 w-full btn-primary py-2.5 rounded-xl font-semibold text-[14px]">' + __('bill.buy-now') + '</button>'
             + '</div>';
         }).join('');
@@ -264,8 +264,8 @@
       coinsDisplay.textContent = parseInt(val).toLocaleString('ar-DZ');
       var res = await api.getCustomPrice(parseInt(val));
       if (res.data) {
-        priceDisplay.innerHTML = (res.data.price_dzd ?? 0).toLocaleString('ar-DZ') + ' <span class="text-[14px] font-normal text-muted">Ø¯.Ø¬</span>';
-        perCoinDisplay.textContent = res.data.per_coin ?? 'â€”';
+        priceDisplay.innerHTML = (res.data.price_dzd ?? 0).toLocaleString('ar-DZ') + ' <span class="text-[14px] font-normal text-muted">د.ج</span>';
+        perCoinDisplay.textContent = res.data.per_coin ?? '—';
       }
     }
     range.addEventListener('input', function () { updateCustomPrice(range.value); });
@@ -293,9 +293,9 @@
           var typeLabel = __(typeKey) || tr.type;
           return '<tr class="tx-row"><td class="text-muted text-[13px]">' + new Date(tr.created_at).toLocaleDateString('ar-DZ') + '</td>'
             + '<td><span class="badge text-[11px] ' + (isDeduct ? 'bg-red-50 text-red-500' : 'bg-green-50 text-teal-600') + '">' + typeLabel + '</span></td>'
-            + '<td class="text-muted">' + (tr.reason || '<span class="text-muted-400">â€”</span>') + '</td>'
+            + '<td class="text-muted">' + (tr.reason || '<span class="text-muted-400">—</span>') + '</td>'
             + '<td style="text-align:left" class="font-bold ' + (isDeduct ? 'text-red-500' : 'text-teal-600') + '">' + (isDeduct ? '' : '+') + (tr.amount ?? 0).toLocaleString('ar-DZ') + '</td>'
-            + '<td style="text-align:left" class="font-bold text-heading">' + (tr.balance_after != null ? Number(tr.balance_after).toLocaleString('ar-DZ') : 'â€”') + '</td></tr>';
+            + '<td style="text-align:left" class="font-bold text-heading">' + (tr.balance_after != null ? Number(tr.balance_after).toLocaleString('ar-DZ') : '—') + '</td></tr>';
         }).join('') + '</tbody></table>';
     }
 
@@ -312,9 +312,9 @@
       txTable.innerHTML = '<table><thead><tr><th>' + __('th.date') + '</th><th>' + __('th.pack') + '</th><th style="text-align:left">' + __('th.coins') + '</th><th style="text-align:left">' + __('th.amount') + '</th><th>' + __('th.status') + '</th></tr></thead><tbody>'
         + pmts.map(function (p) {
           return '<tr class="tx-row"><td class="text-muted text-[13px]">' + new Date(p.created_at).toLocaleDateString('ar-DZ') + '</td>'
-            + '<td class="font-semibold text-heading">' + (p.pack_tier || 'â€”') + '</td>'
+            + '<td class="font-semibold text-heading">' + (p.pack_tier || '—') + '</td>'
             + '<td style="text-align:left">' + (p.coins_granted ?? 0).toLocaleString('ar-DZ') + '</td>'
-            + '<td style="text-align:left" class="font-bold text-heading">' + (p.amount_dzd ?? 0).toLocaleString('ar-DZ') + ' Ø¯.Ø¬</td>'
+            + '<td style="text-align:left" class="font-bold text-heading">' + (p.amount_dzd ?? 0).toLocaleString('ar-DZ') + ' د.ج</td>'
             + '<td><span class="badge text-[11px] ' + (statusColor[p.status] || '') + '">' + __(statusKeys[p.status] || '') + '</span></td></tr>';
         }).join('') + '</tbody></table>';
     }
