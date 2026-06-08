@@ -107,7 +107,7 @@
     (async function () {
       try {
       var L = window.RahSahl && window.RahSahl.lang;
-      function __(k) { return L ? L.t(k) : k; }
+      function __(k, vars) { var v = L ? L.t(k) : k; if (vars) for (var key in vars) v = v.replace('{' + key + '}', vars[key]); return v; }
 
       var ctx = await window.RahSahl.authGuard.guard();
       if (!ctx) return;
