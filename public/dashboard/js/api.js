@@ -249,6 +249,29 @@
         .eq('shop_id', id)
         .eq('platform', channel);
       return Promise.all([pc, lsa]).then(function (res) { return res[0]; });
+    },
+
+    // -------- WhatsApp Cloud API --------
+    saveWhatsAppConfig: function (config) {
+      var id = activeShopId();
+      if (!id) return Promise.resolve({ error: { message: 'no shop_id' }, data: null });
+      var channelUpsert = client().from('platform_credentials').upsert({
+        shop_id: id,
+        channel: 'whatsapp',
+        external_id: config.phone_number_id,
+        access_token: config.access_token,
+        is_active: true,
+        metadata: { waba_id: config.waba_id, phone_number: config.phone_number },
+      }, { onConflict: 'shop_id,channel,external_id', ignoreDuplicates: false });
+      var socialUpsert = client().from('linked_social_accounts').upsert({
+        shop_id: id,
+        platform: 'whatsapp',
+        external_id: config.phone_number_id,
+        external_handle: config.phone_number || config.phone_number_id,
+        is_active: true,
+        verified_at: new Date().toISOString(),
+      }, { onConflict: 'platform,external_id' });
+      return Promise.all([channelUpsert, socialUpsert]).then(function (res) { return res[0]; });
     }
   };
 

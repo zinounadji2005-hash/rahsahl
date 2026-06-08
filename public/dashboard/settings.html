@@ -244,6 +244,38 @@
 + '    </div>'
           + '  </section>'
 
+          + '  <section class="card p-6 aos aos-delay-3">'
+          + '    <div class="flex items-center gap-3 mb-5">'
+          + '      <div class="bg-green-50 p-2.5 rounded-xl">'
+          + '        <span class="material-symbols-outlined text-green-600">chat</span>'
+          + '      </div>'
+          + '      <h2 class="font-ar text-[18px] font-bold text-heading">' + __('wa.title') + '</h2>'
+          + '    </div>'
+          + '    <p class="text-[13px] text-muted mb-4">' + __('wa.desc') + '</p>'
+
+          + '    <div id="waStatus" class="mb-4 p-3 rounded-xl text-[13px] font-semibold flex items-center gap-2"></div>'
+
+          + '    <form id="waForm" class="space-y-3">'
+          + '      <div><label class="block text-[12px] font-semibold text-heading mb-1">' + __('wa.phone-id') + '</label>'
+          + '        <input id="waPhoneId" type="text" dir="ltr" placeholder="1234567890" class="text-[13px]"/></div>'
+          + '      <div><label class="block text-[12px] font-semibold text-heading mb-1">' + __('wa.business-id') + '</label>'
+          + '        <input id="waBusinessId" type="text" dir="ltr" placeholder="WABA-123456" class="text-[13px]"/></div>'
+          + '      <div><label class="block text-[12px] font-semibold text-heading mb-1">' + __('wa.token') + '</label>'
+          + '        <input id="waToken" type="password" dir="ltr" placeholder="EAAG..." class="text-[13px]"/></div>'
+          + '      <div><label class="block text-[12px] font-semibold text-heading mb-1">' + __('wa.phone') + '</label>'
+          + '        <input id="waPhone" type="tel" dir="ltr" placeholder="+213..." class="text-[13px]"/></div>'
+          + '      <button type="submit" class="btn-primary w-full text-[13px]">' + __('wa.save') + '</button>'
+          + '    </form>'
+
+          + '    <div class="mt-4 p-3 rounded-xl" style="background:var(--soft-slate)">'
+          + '      <p class="text-[12px] font-semibold text-heading mb-1">' + __('wa.webhook-hint') + '</p>'
+          + '      <p class="text-[11px] font-mono text-muted break-all">https://rvjsnkolroaakskvvwnv.supabase.co/functions/v1/whatsapp-webhook</p>'
+          + '      <p class="text-[12px] font-semibold text-heading mt-2 mb-1">' + __('wa.webhook-verify') + '</p>'
+          + '      <p class="text-[11px] font-mono text-muted">rahsahl_whatsapp_verify</p>'
+          + '    </div>'
+
+          + '  </section>'
+
           + '</div>';
 
         // AOS trigger
@@ -316,6 +348,50 @@
       // Expose to global scope for onclick="" in innerHTML
       window.connectMeta = connectMeta;
       window.disconnectPlatform = disconnectPlatform;
+
+      // ---- WhatsApp status + form ----
+      async function renderWhatsAppStatus() {
+        var { data: accounts } = await window.RahSahl.api.listLinkedAccounts();
+        var el = document.getElementById('waStatus');
+        if (!el) return;
+        var wa = accounts && accounts.find(function (a) { return a.platform === 'whatsapp'; });
+        if (wa && wa.is_active) {
+          el.className = 'mb-4 p-3 rounded-xl text-[13px] font-semibold flex items-center gap-2 bg-green-50 text-green-600';
+          el.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span> ' + __('wa.connected');
+          var form = document.getElementById('waForm');
+          if (form) form.style.display = 'none';
+        } else {
+          el.className = 'mb-4 p-3 rounded-xl text-[13px] font-semibold flex items-center gap-2 bg-red-50 text-red-600';
+          el.innerHTML = '<span class="material-symbols-outlined text-[18px]">error</span> ' + __('wa.not-connected');
+          var form = document.getElementById('waForm');
+          if (form) form.style.display = '';
+        }
+      }
+
+      async function saveWhatsAppSettings(e) {
+        e.preventDefault();
+        var btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> ' + __('wa.saving') + '</span>';
+        try {
+          var phoneId = document.getElementById('waPhoneId').value.trim();
+          var businessId = document.getElementById('waBusinessId').value.trim();
+          var token = document.getElementById('waToken').value.trim();
+          var phone = document.getElementById('waPhone').value.trim();
+          if (!phoneId || !token) { showToast(__('general.error'), 'error'); btn.disabled = false; btn.innerHTML = __('wa.save'); return; }
+          var res = await window.RahSahl.api.saveWhatsAppConfig({ phone_number_id: phoneId, waba_id: businessId, access_token: token, phone_number: phone });
+          btn.disabled = false; btn.innerHTML = __('wa.save');
+          if (res.error) { showToast(__('general.error') + ': ' + res.error.message, 'error'); return; }
+          showToast(__('wa.saved'), 'success');
+          renderWhatsAppStatus();
+        } catch (e2) {
+          showToast(__('general.error') + ': ' + e2.message, 'error');
+          btn.disabled = false; btn.innerHTML = __('wa.save');
+        }
+      }
+
+      var waForm = document.getElementById('waForm');
+      if (waForm) waForm.addEventListener('submit', saveWhatsAppSettings);
+      renderWhatsAppStatus();
 
       // Handle OAuth result from Facebook redirect
       (function checkOAuthResult() {

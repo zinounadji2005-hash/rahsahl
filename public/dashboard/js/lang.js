@@ -281,6 +281,24 @@
     'oauth.no-pages':     { ar: 'لا توجد صفحات فيسبوك. أنشئ صفحة أولاً.', fr: 'Aucune page Facebook.', en: 'No Facebook Pages found.' },
     'oauth.disconnected': { ar: 'تم إلغاء ربط الحساب', fr: 'Compte déconnecté', en: 'Account disconnected' },
     'oauth.connecting':   { ar: 'جاري الربط...', fr: 'Connexion...', en: 'Connecting...' },
+
+    // ---- WhatsApp ----
+    'wa.setup':           { ar: 'إعداد واتساب', fr: 'Configurer WhatsApp', en: 'Setup WhatsApp' },
+    'wa.connected':       { ar: 'متصل بـ WhatsApp', fr: 'WhatsApp connecté', en: 'WhatsApp Connected' },
+    'wa.not-connected':   { ar: 'غير متصل بـ WhatsApp', fr: 'WhatsApp non connecté', en: 'WhatsApp Not Connected' },
+    'wa.phone':           { ar: 'رقم الهاتف', fr: 'Numéro de téléphone', en: 'Phone Number' },
+    'wa.token':           { ar: 'رمز الوصول (Access Token)', fr: 'Token d\'accès', en: 'Access Token' },
+    'wa.phone-id':        { ar: 'معرف رقم الهاتف (Phone Number ID)', fr: 'Phone Number ID', en: 'Phone Number ID' },
+    'wa.business-id':     { ar: 'معرف حساب الأعمال (WABA ID)', fr: 'WABA ID', en: 'WhatsApp Business Account ID' },
+    'wa.save':            { ar: 'حفظ الإعدادات', fr: 'Enregistrer', en: 'Save Settings' },
+    'wa.saving':          { ar: 'جاري الحفظ...', fr: 'Enregistrement...', en: 'Saving...' },
+    'wa.saved':           { ar: 'تم حفظ إعدادات واتساب', fr: 'Paramètres WhatsApp enregistrés', en: 'WhatsApp settings saved' },
+    'wa.disconnect':      { ar: 'إلغاء اتصال واتساب', fr: 'Déconnecter WhatsApp', en: 'Disconnect WhatsApp' },
+    'wa.disconnected':    { ar: 'تم إلغاء اتصال واتساب', fr: 'WhatsApp déconnecté', en: 'WhatsApp disconnected' },
+    'wa.webhook-hint':   { ar: 'رابط الـ Webhook:', fr: 'URL du Webhook:', en: 'Webhook URL:' },
+    'wa.webhook-verify':  { ar: 'رمز التحقق:', fr: 'Token de vérification:', en: 'Verify Token:' },
+    'wa.title':           { ar: 'إعداد واتساب كلاود API', fr: 'Configuration WhatsApp Cloud API', en: 'WhatsApp Cloud API Setup' },
+    'wa.desc':            { ar: 'أدخل بيانات حساب الأعمال من Meta Business Suite', fr: 'Entrez les identifiants de Meta Business Suite', en: 'Enter your Meta Business Suite credentials' },
   };
 
   var currentLang = localStorage.getItem(STORAGE_KEY) || 'ar';
