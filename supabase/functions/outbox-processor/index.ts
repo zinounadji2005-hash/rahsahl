@@ -45,7 +45,7 @@ serve(async (_req) => {
         // 3. Look up platform credentials
         const { data: creds } = await supabase
           .from("platform_credentials")
-          .select("access_token, external_id")
+          .select("access_token, external_id, metadata")
           .eq("shop_id", item.shop_id)
           .eq("channel", item.channel)
           .eq("is_active", true)
@@ -63,7 +63,7 @@ serve(async (_req) => {
           case "instagram":
           case "messenger": {
             const fbResp = await fetch(
-              `https://graph.facebook.com/v18.0/me/messages?access_token=${creds.access_token}`,
+              `https://graph.facebook.com/v22.0/me/messages?access_token=${creds.access_token}`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -80,8 +80,10 @@ serve(async (_req) => {
             break;
           }
           case "whatsapp": {
+            const phoneId = creds.metadata?.phone_number_id;
+            if (!phoneId) throw new Error("Missing phone_number_id in credentials");
             const waResp = await fetch(
-              `https://graph.facebook.com/v18.0/${creds.external_id}/messages?access_token=${creds.access_token}`,
+              `https://graph.facebook.com/v22.0/${phoneId}/messages?access_token=${creds.access_token}`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

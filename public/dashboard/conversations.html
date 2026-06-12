@@ -47,6 +47,8 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   document.getElementById('sidebar').innerHTML = window.RahSahl.sidebar.renderSidebar(ctx);
   window.RahSahl.sidebar.bindChrome();
 
+  var activeFilter = 'all';
+
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -58,72 +60,90 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
     var d = new Date(iso);
     var diff = (Date.now() - d.getTime()) / 1000;
     if (diff < 60) return __('general.now');
-    if (diff < 3600) return __('general.ago') + ' ' + Math.floor(diff / 60) + ' ' + __('general.min');
-    if (diff < 86400) return __('general.ago') + ' ' + Math.floor(diff / 3600) + ' ' + __('general.hour');
-    if (diff < 604800) return __('general.ago') + ' ' + Math.floor(diff / 86400) + ' ' + __('general.day');
-    return d.toLocaleDateString('ar-DZ');
+    if (diff < 3600) return Math.floor(diff / 60) + ' ' + __('general.min');
+    if (diff < 86400) return Math.floor(diff / 3600) + ' ' + __('general.hour');
+    if (diff < 604800) return Math.floor(diff / 86400) + ' ' + __('general.day');
+    return d.toLocaleDateString();
   }
 
-  function channelIcon(ch) {
-    return { whatsapp: 'chat', instagram: 'photo_camera', facebook: 'thumb_up', messenger: 'forum' }[ch] || 'chat';
+  function channelImg(ch) {
+    var slug = { whatsapp: 'whatsapp', messenger: 'messenger', instagram: 'instagram' }[ch] || '';
+    return slug ? '<img src="https://cdn.simpleicons.org/' + slug + '" style="width:18px;height:18px;display:block" alt="">' : '<span class="material-symbols-outlined text-[18px]">forum</span>';
   }
 
-  function channelColor(ch) {
-    return {
-      whatsapp: { bg: 'bg-emerald-100', text: 'text-emerald-600' },
-      instagram: { bg: 'bg-pink-100', text: 'text-pink-600' },
-      facebook: { bg: 'bg-blue-100', text: 'text-blue-600' },
-      messenger: { bg: 'bg-purple-100', text: 'text-purple-600' }
-    }[ch] || { bg: 'bg-slate-100', text: 'text-slate-600' };
+  function channelBg(ch) {
+    return { whatsapp: 'bg-emerald-100', messenger: 'bg-blue-100', instagram: 'bg-purple-100' }[ch] || 'bg-slate-100';
   }
+
+  var FILTERS = ['all', 'messenger', 'instagram', 'whatsapp'];
 
   function render() {
+    var filtered = activeFilter === 'all' ? senders : senders.filter(function (s) {
+      return s.channels.indexOf(activeFilter) !== -1;
+    });
+
     document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(
-      __('conv.title'), senders.length + ' ' + __('conv.active'), ctx
+      __('conv.title'), filtered.length + ' ' + __('conv.active'), ctx
     ) + ''
-      + '<div class="card p-3">'
-      + '  <div class="flex flex-col gap-2">' + senders.map(function (s) {
-          var c = channelColor(s.last_message.channel || 'direct');
-          var ic = channelIcon(s.last_message.channel || 'direct');
+
+    // Filter pills
+    + '<div class="flex gap-2 mb-4 flex-wrap" id="filterPills">'
+    + FILTERS.map(function (f) {
+        var label = f === 'all' ? __('general.all') : ({ messenger: __('ms.title'), instagram: __('ig.title'), whatsapp: 'WhatsApp' }[f] || f);
+        var slug = f === 'all' ? '' : ({ messenger: 'messenger', instagram: 'instagram', whatsapp: 'whatsapp' }[f] || '');
+        var active = f === activeFilter ? 'bg-navy text-white' : '';
+        return '<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-semibold transition ' + active + '" style="border:1px solid var(--border-light)" onclick="window._filterConv(\'' + f + '\')">'
+          + (slug ? '<img src="https://cdn.simpleicons.org/' + slug + '" style="width:14px;height:14px;display:block" alt="">' : '')
+          + esc(label) + '</button>';
+      }).join('')
+    + '</div>'
+
+    // Conversations list
+    + (filtered.length === 0
+      ? '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[14px]">' + __('conv.empty') + '</p></div>'
+      : '<div class="flex flex-col gap-2">' + filtered.map(function (s) {
+          var bg = channelBg(s.last_message.channel || 'direct');
           return ''
-            + '<details class="rounded-xl border border-slate-200">'
-            + '  <summary class="flex items-center gap-3 p-3 cursor-pointer hover:bg-slate-50">'
-            + '    <div class="' + c.bg + ' ' + c.text + ' w-10 h-10 rounded-xl flex items-center justify-center shrink-0">'
-            + '      <span class="material-symbols-outlined text-[20px]">' + ic + '</span>'
-            + '    </div>'
+            + '<details class="rounded-xl" style="border:1px solid var(--border-light);background:var(--card)">'
+            + '  <summary class="flex items-center gap-3 p-3 cursor-pointer" style="border-radius:0.75rem">'
+            + '    <div class="' + bg + ' w-9 h-9 rounded-xl flex items-center justify-center shrink-0">' + channelImg(s.last_message.channel || '') + '</div>'
             + '    <div class="flex-1 min-w-0">'
             + '      <div class="flex justify-between items-center mb-0.5">'
-            + '        <h4 class="font-semibold text-navy text-[14px]" dir="ltr">' + esc(s.sender_id.substring(0, 20)) + '</h4>'
-            + '        <span class="text-[11px] text-slate-400">' + timeAgo(s.last_message.created_at) + '</span>'
+            + '        <h4 class="font-semibold text-heading text-[14px]" dir="ltr">' + esc(s.sender_id.substring(0, 24)) + '</h4>'
+            + '        <span class="text-[11px] text-muted">' + timeAgo(s.last_message.created_at) + '</span>'
             + '      </div>'
-            + '      <p class="text-[12px] text-slate-500 truncate">' + esc((s.last_message.message || '').substring(0, 80)) + '</p>'
+            + '      <p class="text-[12px] text-muted truncate">' + esc((s.last_message.message || '').substring(0, 100)) + '</p>'
             + '    </div>'
-            + '    <span class="pill pill-info shrink-0">' + s.count + ' ' + __('conv.msg') + '</span>'
+            + '    <span class="badge text-[11px] shrink-0 bg-teal-100 text-teal-700">' + s.count + '</span>'
             + '  </summary>'
-            + '  <div class="border-t border-slate-200 p-4 bg-slate-50 space-y-2">' + s.messages.map(function (m) {
+            + '  <div class="border-t p-4 space-y-3" style="border-color:var(--border-light);background:var(--soft-slate)">' + s.messages.map(function (m) {
                 var isUser = m.role === 'user';
-                var c2 = channelColor(m.channel || 'direct');
+                var bg2 = channelBg(m.channel || '');
                 return ''
                   + '<div class="flex items-start gap-2 ' + (isUser ? '' : 'flex-row-reverse') + '">'
-                  + '  <div class="' + c2.bg + ' ' + c2.text + ' w-7 h-7 rounded-lg flex items-center justify-center shrink-0">'
-                  + '    <span class="material-symbols-outlined text-[14px]">' + (isUser ? 'person' : 'smart_toy') + '</span>'
+                  + '  <div class="' + bg2 + ' w-7 h-7 rounded-lg flex items-center justify-center shrink-0">'
+                  + (isUser ? '<span class="material-symbols-outlined text-[14px]">person</span>' : '<span class="material-symbols-outlined text-[14px] text-sky-600">smart_toy</span>')
                   + '  </div>'
-                  + '  <div class="flex-1 ' + (isUser ? 'bg-white' : 'bg-sky-50') + ' rounded-xl p-2.5 max-w-[80%]">'
-                  + '    <p class="text-[13px] text-navy leading-relaxed">' + esc(m.message) + '</p>'
-                  + '    <p class="text-[10px] text-slate-400 mt-1">' + timeAgo(m.created_at) + (m.channel ? ' · ' + esc(m.channel) : '') + '</p>'
+                  + '  <div class="flex-1 max-w-[80%] rounded-xl p-2.5" style="background:' + (isUser ? 'var(--card)' : 'var(--soft-sky)') + '">'
+                  + '    <p class="text-[13px] text-heading leading-relaxed">' + esc(m.message) + '</p>'
+                  + '    <p class="text-[10px] text-muted mt-1 text-left">' + timeAgo(m.created_at) + (m.channel ? ' · ' + esc(m.channel) : '') + '</p>'
                   + '  </div>'
                   + '</div>';
               }).join('') + '</div>'
             + '</details>';
-        }).join('') + '</div>'
-      + '</div>';
+        }).join('') + '</div>');
   }
+
+  window._filterConv = function (f) {
+    activeFilter = f;
+    render();
+  };
 
   // Load all conversations grouped by sender
   document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(__('conv.title'), '...', ctx)
     + '<div class="card p-12"><div class="skeleton h-32"></div></div>';
 
-  var res = await window.RahSahl.api.listConversations({ limit: 200 });
+  var res = await window.RahSahl.api.listConversations({ limit: 300 });
   if (res.error) {
     document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(__('conv.title'), '', ctx)
       + '<div class="empty-state"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2">' + __('conv.load-fail') + ': ' + esc(res.error.message) + '</p></div>';
@@ -131,7 +151,6 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }
 
   var conversations = res.data || [];
-  // Group by sender
   var grouped = {};
   conversations.forEach(function (c) {
     var key = c.sender_id || 'unknown';
@@ -151,12 +170,6 @@ html.dark .bg-amber-100{background:var(--soft-amber)!important}
   }).sort(function (a, b) {
     return new Date(b.last_message.created_at) - new Date(a.last_message.created_at);
   });
-
-  if (senders.length === 0) {
-    document.getElementById('main').innerHTML = window.RahSahl.sidebar.renderTopbar(__('conv.title'), '', ctx)
-      + '<div class="empty-state"><span class="material-symbols-outlined">forum</span><p class="mt-2 text-[14px]">' + __('conv.empty') + '</p></div>';
-    return;
-  }
 
   render();
 
