@@ -299,6 +299,14 @@
     'wa.webhook-verify':  { ar: 'رمز التحقق:', fr: 'Token de vérification:', en: 'Verify Token:' },
     'wa.title':           { ar: 'إعداد واتساب كلاود API', fr: 'Configuration WhatsApp Cloud API', en: 'WhatsApp Cloud API Setup' },
     'wa.desc':            { ar: 'أدخل بيانات حساب الأعمال من Meta Business Suite', fr: 'Entrez les identifiants de Meta Business Suite', en: 'Enter your Meta Business Suite credentials' },
+
+    // ---- Instagram ----
+    'ig.title':           { ar: 'إنستغرام', fr: 'Instagram', en: 'Instagram' },
+    'ig.desc':            { ar: 'اربط حسابات إنستغرام الخاصة بك. يتم الربط عبر صفحة فيسبوك.', fr: 'Connectez vos comptes Instagram via une page Facebook.', en: 'Connect your Instagram accounts via a Facebook Page.' },
+    'ig.connect':         { ar: 'ربط إنستغرام', fr: 'Connecter Instagram', en: 'Connect Instagram' },
+    'ig.connected':       { ar: '{count} حساب إنستغرام متصل', fr: '{count} compte(s) Instagram connecté(s)', en: '{count} Instagram account(s) connected' },
+    'ig.no-accounts':     { ar: 'لا توجد حسابات إنستغرام مرتبطة', fr: 'Aucun compte Instagram lié', en: 'No Instagram accounts linked' },
+    'ig.via-facebook':    { ar: 'عبر ربط فيسبوك', fr: 'Via connexion Facebook', en: 'Via Facebook connection' },
   };
 
   var currentLang = localStorage.getItem(STORAGE_KEY) || 'ar';

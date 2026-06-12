@@ -246,6 +246,22 @@
 
           + '  <section class="card p-6 aos aos-delay-3">'
           + '    <div class="flex items-center gap-3 mb-5">'
+          + '      <div class="bg-purple-50 p-2.5 rounded-xl">'
+          + '        <span class="material-symbols-outlined text-purple-600">auto_awesome</span>'
+          + '      </div>'
+          + '      <h2 class="font-ar text-[18px] font-bold text-heading">' + __('ig.title') + '</h2>'
+          + '    </div>'
+          + '    <p class="text-[13px] text-muted mb-4">' + __('ig.desc') + '</p>'
+          + '    <div id="igStatus" class="mb-3 text-[13px] text-muted"></div>'
+          + '    <button id="btnConnectIg" class="btn-primary w-full justify-center mb-3 text-[14px]" onclick="connectInstagram()">'
+          + '      <span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('ig.connect') + '</button>'
+          + '    <div class="space-y-2" id="igAccounts">'
+          + '      <div class="text-center py-4 text-[13px] text-muted">' + __('set.loading') + '</div>'
+          + '    </div>'
+          + '  </section>'
+
+          + '  <section class="card p-6 aos aos-delay-3">'
+          + '    <div class="flex items-center gap-3 mb-5">'
           + '      <div class="bg-green-50 p-2.5 rounded-xl">'
           + '        <span class="material-symbols-outlined text-green-600">chat</span>'
           + '      </div>'
@@ -284,6 +300,8 @@
         }, 50);
 
         renderLinkedAccounts();
+        renderInstagramStatus();
+        renderWhatsAppStatus();
       }
 
       async function renderLinkedAccounts() {
@@ -343,6 +361,7 @@
         if (res.error) { showToast(__('general.error') + ': ' + res.error.message, 'error'); return; }
         showToast(__('oauth.disconnected'), 'success');
         renderLinkedAccounts();
+        renderInstagramStatus();
       }
 
       // Expose to global scope for onclick="" in innerHTML
@@ -355,6 +374,7 @@
         showToast(__('wa.disconnected'), 'success');
         renderWhatsAppStatus();
         renderLinkedAccounts();
+        renderInstagramStatus();
       };
 
       // Handle OAuth result from Facebook redirect
@@ -367,6 +387,7 @@
           var count = params.get('connected') || '0';
           showToast(__('oauth.success', { count: count }), 'success');
           renderLinkedAccounts();
+          renderInstagramStatus();
         } else if (oauthStatus === 'error') {
           var reason = params.get('reason') || '';
           showToast(__('oauth.error', { reason: decodeURIComponent(reason) }), 'error');
@@ -488,7 +509,54 @@
 
       var waForm = document.getElementById('waForm');
       if (waForm) waForm.addEventListener('submit', saveWhatsAppSettings);
-      renderWhatsAppStatus();
+
+      // ---- Instagram ----
+      async function renderInstagramStatus() {
+        var { data: accounts } = await window.RahSahl.api.listLinkedAccounts();
+        var statusEl = document.getElementById('igStatus');
+        var listEl = document.getElementById('igAccounts');
+        if (!statusEl || !listEl) return;
+        var igs = accounts ? accounts.filter(function (a) { return a.platform === 'instagram'; }) : [];
+        if (igs.length > 0) {
+          statusEl.innerHTML = '<span class="flex items-center gap-1.5 text-teal-600 font-semibold"><span class="material-symbols-outlined text-[16px]">check_circle</span> ' + __('ig.connected', { count: igs.length }) + '</span>';
+          listEl.innerHTML = igs.map(function (a) {
+            return '<div class="flex items-center justify-between py-2 px-3 rounded-xl" style="border:1px solid var(--border-light)">'
+              + '<div class="flex items-center gap-2.5 min-w-0">'
+              + '  <span class="material-symbols-outlined text-purple-600 text-[20px] shrink-0">auto_awesome</span>'
+              + '  <p class="text-[13px] font-semibold text-heading">@' + (a.external_handle || a.external_id || '—') + '</p>'
+              + '</div>'
+              + (a.is_active ? '<button class="btn-ghost text-red-400 text-[12px] px-2 py-1 rounded-lg" onclick="disconnectPlatform(\'' + a.platform + '\')">' + __('oauth.disconnect') + '</button>' : '')
+              + '</div>';
+          }).join('');
+        } else {
+          statusEl.innerHTML = '<span class="text-muted">' + __('ig.no-accounts') + '</span>';
+          listEl.innerHTML = '';
+        }
+      }
+
+      async function connectInstagram() {
+        var btn = document.getElementById('btnConnectIg');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> ' + __('oauth.connecting') + '</span>'; }
+        try {
+          var res = await window.RahSahl.api.getOAuthUrl();
+          if (res.data && res.data.url) {
+            window.location.href = res.data.url;
+          } else if (res.error) {
+            var httpStatus = res.error.context ? res.error.context.status || '?' : '?';
+            var errBody = '';
+            try { if (res.error.context) errBody = await res.error.context.text().catch(function() { return ''; }); } catch (_) {}
+            showToast(__('general.error') + ' (' + httpStatus + '): ' + (errBody || res.error.message || '?'), 'error');
+            if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('ig.connect'); }
+          } else {
+            showToast(__('general.error'), 'error');
+            if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('ig.connect'); }
+          }
+        } catch (e) {
+          showToast(__('general.error') + ': ' + e.message, 'error');
+          if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('ig.connect'); }
+        }
+      }
+      window.connectInstagram = connectInstagram;
 
       // Re-render on language change
       window.addEventListener('langchange', function () {
