@@ -237,6 +237,9 @@
     getOAuthUrl: function () {
       return callFunction('oauth-meta-initiate', {});
     },
+    getWhatsAppOAuthUrl: function () {
+      return callFunction('oauth-whatsapp-initiate', {});
+    },
     disconnectPlatform: function (channel) {
       var id = activeShopId();
       if (!id) return Promise.resolve({ error: { message: 'no shop_id' }, data: null });

@@ -269,6 +269,18 @@
           + '    </div>'
           + '    <p class="text-[13px] text-muted mb-4">' + __('wa.desc') + '</p>'
 
+          + '    <div id="waOAuthSection" class="mb-4">'
+          + '      <p class="text-[13px] text-muted mb-3">' + __('wa.oauth-desc') + '</p>'
+          + '      <button id="btnConnectWa" class="btn-primary w-full justify-center text-[14px]" onclick="connectWhatsApp()">'
+          + '        <span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('wa.oauth-btn') + '</button>'
+          + '    </div>'
+
+          + '    <div class="flex items-center gap-3 my-4" id="waDivider">'
+          + '      <hr class="flex-1" style="border-color:var(--border-light)">'
+          + '      <span class="text-[12px] text-muted shrink-0">' + __('wa.or-manual') + '</span>'
+          + '      <hr class="flex-1" style="border-color:var(--border-light)">'
+          + '    </div>'
+
           + '    <div id="waStatus" class="mb-4 p-3 rounded-xl text-[13px] font-semibold flex items-center gap-2"></div>'
 
           + '    <form id="waForm" class="space-y-3">'
@@ -471,17 +483,22 @@
         var { data: accounts } = await window.RahSahl.api.listLinkedAccounts();
         var el = document.getElementById('waStatus');
         if (!el) return;
+        var oauthSection = document.getElementById('waOAuthSection');
+        var divider = document.getElementById('waDivider');
+        var form = document.getElementById('waForm');
         var wa = accounts && accounts.find(function (a) { return a.platform === 'whatsapp'; });
         if (wa && wa.is_active) {
           el.className = 'mb-4 p-3 rounded-xl text-[13px] font-semibold flex items-center gap-2 bg-green-50 text-green-600';
           el.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span> ' + __('wa.connected')
             + '<button class="btn-ghost text-red-400 text-[12px] px-2 py-1 rounded-lg mr-auto" onclick="window.disconnectWhatsApp()">' + __('wa.disconnect') + '</button>';
-          var form = document.getElementById('waForm');
+          if (oauthSection) oauthSection.style.display = 'none';
+          if (divider) divider.style.display = 'none';
           if (form) form.style.display = 'none';
         } else {
           el.className = 'mb-4 p-3 rounded-xl text-[13px] font-semibold flex items-center gap-2 bg-red-50 text-red-600';
           el.innerHTML = '<span class="material-symbols-outlined text-[18px]">error</span> ' + __('wa.not-connected');
-          var form = document.getElementById('waForm');
+          if (oauthSection) oauthSection.style.display = '';
+          if (divider) divider.style.display = '';
           if (form) form.style.display = '';
         }
       }
@@ -557,6 +574,31 @@
         }
       }
       window.connectInstagram = connectInstagram;
+
+      // ---- WhatsApp OAuth ----
+      async function connectWhatsApp() {
+        var btn = document.getElementById('btnConnectWa');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> ' + __('wa.oauth-connecting') + '</span>'; }
+        try {
+          var res = await window.RahSahl.api.getWhatsAppOAuthUrl();
+          if (res.data && res.data.url) {
+            window.location.href = res.data.url;
+          } else if (res.error) {
+            var httpStatus = res.error.context ? res.error.context.status || '?' : '?';
+            var errBody = '';
+            try { if (res.error.context) errBody = await res.error.context.text().catch(function() { return ''; }); } catch (_) {}
+            showToast(__('general.error') + ' (' + httpStatus + '): ' + (errBody || res.error.message || '?'), 'error');
+            if (btn) { btn.disabled = false; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('wa.oauth-btn') + '</span>'; }
+          } else {
+            showToast(__('general.error'), 'error');
+            if (btn) { btn.disabled = false; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('wa.oauth-btn') + '</span>'; }
+          }
+        } catch (e) {
+          showToast(__('general.error') + ': ' + e.message, 'error');
+          if (btn) { btn.disabled = false; btn.innerHTML = '<span class="flex items-center gap-2 justify-center"><span class="material-symbols-outlined text-[18px]">add_link</span> ' + __('wa.oauth-btn') + '</span>'; }
+        }
+      }
+      window.connectWhatsApp = connectWhatsApp;
 
       // Re-render on language change
       window.addEventListener('langchange', function () {

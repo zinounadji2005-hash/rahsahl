@@ -299,6 +299,10 @@
     'wa.webhook-verify':  { ar: 'رمز التحقق:', fr: 'Token de vérification:', en: 'Verify Token:' },
     'wa.title':           { ar: 'إعداد واتساب كلاود API', fr: 'Configuration WhatsApp Cloud API', en: 'WhatsApp Cloud API Setup' },
     'wa.desc':            { ar: 'أدخل بيانات حساب الأعمال من Meta Business Suite', fr: 'Entrez les identifiants de Meta Business Suite', en: 'Enter your Meta Business Suite credentials' },
+    'wa.oauth-btn':       { ar: 'ربط واتساب عبر فيسبوك', fr: 'Connecter WhatsApp avec Facebook', en: 'Connect WhatsApp with Facebook' },
+    'wa.oauth-connecting':{ ar: 'جاري ربط واتساب...', fr: 'Connexion WhatsApp...', en: 'Connecting WhatsApp...' },
+    'wa.oauth-desc':      { ar: 'اربط حساب واتساب بزنس الخاص بك بنقرة واحدة عبر فيسبوك.', fr: 'Connectez votre WhatsApp Business en un clic via Facebook.', en: 'Connect your WhatsApp Business in one click via Facebook.' },
+    'wa.or-manual':       { ar: 'أو أدخل البيانات يدوياً', fr: 'Ou saisir manuellement', en: 'Or enter manually' },
 
     // ---- Messenger ----
     'ms.title':           { ar: 'ماسنجر', fr: 'Messenger', en: 'Messenger' },
