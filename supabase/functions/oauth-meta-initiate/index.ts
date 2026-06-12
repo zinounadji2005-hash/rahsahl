@@ -42,7 +42,7 @@ serve(async (req) => {
 
     if (stateErr) throw stateErr;
 
-    const scope = "pages_show_list,pages_read_engagement,pages_manage_metadata,pages_messaging,instagram_basic,instagram_manage_messages";
+    const scope = "pages_show_list,pages_manage_metadata,pages_messaging";
     const url = `https://www.facebook.com/v22.0/dialog/oauth?client_id=${META_APP_ID}&redirect_uri=${encodeURIComponent(OAUTH_CALLBACK_URL)}&state=${state}&scope=${encodeURIComponent(scope)}&response_type=code`;
 
     return json({ url });
