@@ -300,6 +300,11 @@
     'wa.title':           { ar: 'إعداد واتساب كلاود API', fr: 'Configuration WhatsApp Cloud API', en: 'WhatsApp Cloud API Setup' },
     'wa.desc':            { ar: 'أدخل بيانات حساب الأعمال من Meta Business Suite', fr: 'Entrez les identifiants de Meta Business Suite', en: 'Enter your Meta Business Suite credentials' },
 
+    // ---- Messenger ----
+    'ms.title':           { ar: 'ماسنجر', fr: 'Messenger', en: 'Messenger' },
+    'ms.desc':            { ar: 'اربط صفحات فيسبوك لتفعيل الرد التلقائي عبر ماسنجر.', fr: 'Connectez vos pages Facebook pour activer les réponses automatiques Messenger.', en: 'Link Facebook Pages to enable auto-reply on Messenger.' },
+    'ms.connect':         { ar: 'ربط ماسنجر', fr: 'Connecter Messenger', en: 'Connect Messenger' },
+
     // ---- Instagram ----
     'ig.title':           { ar: 'إنستغرام', fr: 'Instagram', en: 'Instagram' },
     'ig.desc':            { ar: 'اربط حسابات إنستغرام الخاصة بك. يتم الربط عبر صفحة فيسبوك.', fr: 'Connectez vos comptes Instagram via une page Facebook.', en: 'Connect your Instagram accounts via a Facebook Page.' },
