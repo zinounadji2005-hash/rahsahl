@@ -232,7 +232,7 @@
           + '  <section class="card p-6 aos aos-delay-3">'
           + '    <div class="flex items-center gap-3 mb-5">'
           + '      <div class="bg-blue-50 p-2.5 rounded-xl">'
-          + '        <img src="https://cdn.simpleicons.org/facebookmessenger" style="width:22px;height:22px;display:block" alt="">'
+          + '        <img src="https://cdn.simpleicons.org/messenger" style="width:22px;height:22px;display:block" alt="">'
           + '      </div>'
           + '      <h2 class="font-ar text-[18px] font-bold text-heading">' + __('ms.title') + '</h2>'
           + '    </div>'
@@ -308,7 +308,7 @@
         var { data: accounts } = await window.RahSahl.api.listLinkedAccounts();
         var container = document.getElementById('linkedAccounts');
         if (!container) return;
-        var platformIcons = { instagram: 'instagram', whatsapp: 'whatsapp', messenger: 'facebookmessenger', telegram: 'telegram' };
+        var platformIcons = { instagram: 'instagram', whatsapp: 'whatsapp', messenger: 'messenger', telegram: 'telegram' };
 
         if (accounts && accounts.length > 0) {
           container.innerHTML = accounts.map(function (a) {
