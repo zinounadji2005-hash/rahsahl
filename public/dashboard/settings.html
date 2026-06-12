@@ -232,7 +232,7 @@
           + '  <section class="card p-6 aos aos-delay-3">'
           + '    <div class="flex items-center gap-3 mb-5">'
           + '      <div class="bg-blue-50 p-2.5 rounded-xl">'
-          + '        <span class="material-symbols-outlined text-blue-600">messenger</span>'
+          + '        <img src="https://cdn.simpleicons.org/facebookmessenger" style="width:22px;height:22px;display:block" alt="">'
           + '      </div>'
           + '      <h2 class="font-ar text-[18px] font-bold text-heading">' + __('ms.title') + '</h2>'
           + '    </div>'
@@ -247,7 +247,7 @@
           + '  <section class="card p-6 aos aos-delay-3">'
           + '    <div class="flex items-center gap-3 mb-5">'
           + '      <div class="bg-purple-50 p-2.5 rounded-xl">'
-          + '        <span class="material-symbols-outlined text-purple-600">auto_awesome</span>'
+          + '        <img src="https://cdn.simpleicons.org/instagram" style="width:22px;height:22px;display:block" alt="">'
           + '      </div>'
           + '      <h2 class="font-ar text-[18px] font-bold text-heading">' + __('ig.title') + '</h2>'
           + '    </div>'
@@ -263,7 +263,7 @@
           + '  <section class="card p-6 aos aos-delay-3">'
           + '    <div class="flex items-center gap-3 mb-5">'
           + '      <div class="bg-green-50 p-2.5 rounded-xl">'
-          + '        <span class="material-symbols-outlined text-green-600">chat</span>'
+          + '        <img src="https://cdn.simpleicons.org/whatsapp" style="width:22px;height:22px;display:block" alt="">'
           + '      </div>'
           + '      <h2 class="font-ar text-[18px] font-bold text-heading">' + __('wa.title') + '</h2>'
           + '    </div>'
@@ -308,13 +308,13 @@
         var { data: accounts } = await window.RahSahl.api.listLinkedAccounts();
         var container = document.getElementById('linkedAccounts');
         if (!container) return;
-        var platformIcons = { instagram: 'auto_awesome', whatsapp: 'chat', messenger: 'messenger', telegram: 'send' };
+        var platformIcons = { instagram: 'instagram', whatsapp: 'whatsapp', messenger: 'facebookmessenger', telegram: 'telegram' };
 
         if (accounts && accounts.length > 0) {
           container.innerHTML = accounts.map(function (a) {
             return '<div class="flex items-center justify-between py-2.5 px-3 rounded-xl" style="border:1px solid var(--border-light)">'
               + '<div class="flex items-center gap-2.5 min-w-0">'
-              + '  <span class="material-symbols-outlined text-sky-600 text-[20px] shrink-0">' + (platformIcons[a.platform] || 'public') + '</span>'
+              + '  <img src="https://cdn.simpleicons.org/' + (platformIcons[a.platform] || 'globe') + '" style="width:18px;height:18px;display:block" class="shrink-0" alt="">'
               + '  <div class="min-w-0">'
               + '    <p class="text-[14px] font-semibold text-heading truncate">' + (a.platform.charAt(0).toUpperCase() + a.platform.slice(1)) + '</p>'
               + '    <p class="text-[12px] text-muted truncate">@' + (a.external_handle || a.external_id || '—') + '</p>'
@@ -522,7 +522,7 @@
           listEl.innerHTML = igs.map(function (a) {
             return '<div class="flex items-center justify-between py-2 px-3 rounded-xl" style="border:1px solid var(--border-light)">'
               + '<div class="flex items-center gap-2.5 min-w-0">'
-              + '  <span class="material-symbols-outlined text-purple-600 text-[20px] shrink-0">auto_awesome</span>'
+              + '  <img src="https://cdn.simpleicons.org/instagram" style="width:18px;height:18px;display:block" class="shrink-0" alt="">'
               + '  <p class="text-[13px] font-semibold text-heading">@' + (a.external_handle || a.external_id || '—') + '</p>'
               + '</div>'
               + (a.is_active ? '<button class="btn-ghost text-red-400 text-[12px] px-2 py-1 rounded-lg" onclick="disconnectPlatform(\'' + a.platform + '\')">' + __('oauth.disconnect') + '</button>' : '')
