@@ -92,7 +92,7 @@ document.getElementById('login-form').addEventListener('submit',function(e){
   })
 });
 
-RahSahlAuth.requireAuth().then(function(r){if(r)window.location.href = nextUrl || 'dashboard/'});
+RahSahlAuth.session().then(function(s){if(s)window.location.href = nextUrl || 'dashboard/'});
 (function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('rahsahl-dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('rahsahl-dark',d.classList.contains('dark')?'true':'false')})})();
 </script>
 </body></html>
