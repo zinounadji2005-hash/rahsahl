@@ -6,6 +6,8 @@ const { createClient } = require('@supabase/supabase-js');
 const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 (async () => {
+  const webhookUrl = (process.env.N8N_HOST || 'http://ec2-34-228-227-112.compute-1.amazonaws.com:80').replace(/\/$/, '') + (process.env.N8N_WEBHOOK_PATH || '/webhook/v1/social-inbound');
+
   // Get first shop with api_secret_encrypted
     const { data: shops } = await admin
       .from('clients_shops')
@@ -84,7 +86,7 @@ const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVIC
 
   // Test 1: VALID signature
   console.log('\n--- Test 1: VALID signature ---');
-  let r = await fetch('http://ec2-34-228-227-112.compute-1.amazonaws.com:80/webhook/v1/social-inbound', {
+  let r = await fetch(webhookUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -98,7 +100,7 @@ const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVIC
 
   // Test 2: INVALID signature
   console.log('\n--- Test 2: INVALID signature ---');
-  r = await fetch('http://ec2-34-228-227-112.compute-1.amazonaws.com:80/webhook/v1/social-inbound', {
+  r = await fetch(webhookUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -112,7 +114,7 @@ const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVIC
 
   // Test 3: MISSING signature
   console.log('\n--- Test 3: MISSING signature ---');
-  r = await fetch('http://ec2-34-228-227-112.compute-1.amazonaws.com:80/webhook/v1/social-inbound', {
+  r = await fetch(webhookUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: bodyStr

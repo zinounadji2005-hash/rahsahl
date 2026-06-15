@@ -4,6 +4,7 @@
   "description": "AI-Driven Sales Agent & Automation Engine - Production SaaS",
   "main": "index.js",
   "scripts": {
+    "start": "node scripts/start-server.js",
     "migrate:apply": "node scripts/migrate.js",
     "migrate:005": "node scripts/run-migration.js supabase/migrations/005_logs_dlq.sql",
     "migrate:006": "node scripts/run-migration.js supabase/migrations/006_conversations_products.sql",

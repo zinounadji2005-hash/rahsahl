@@ -50,7 +50,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/v_success_rate?order=hour.desc&limit=3',\n  headers: { 'apikey': 'SUPABASE_SERVICE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { type: 'success_rate', data: r } };"
+        "jsCode": "const r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/v_success_rate?order=hour.desc&limit=3',\n  headers: { 'apikey': 'SUPABASE_SERVICE_ROLE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { type: 'success_rate', data: r } };"
       }
     },
     {
@@ -65,7 +65,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/v_avg_latency_per_stage',\n  headers: { 'apikey': 'SUPABASE_SERVICE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { type: 'latency', data: r } };"
+        "jsCode": "const r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/v_avg_latency_per_stage',\n  headers: { 'apikey': 'SUPABASE_SERVICE_ROLE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { type: 'latency', data: r } };"
       }
     },
     {
@@ -80,7 +80,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/v_dlq_summary',\n  headers: { 'apikey': 'SUPABASE_SERVICE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { type: 'dlq', data: r } };"
+        "jsCode": "const r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/v_dlq_summary',\n  headers: { 'apikey': 'SUPABASE_SERVICE_ROLE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { type: 'dlq', data: r } };"
       }
     },
     {
@@ -142,7 +142,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "// Placeholder: log to workflow_logs instead of real Telegram\nconst v = $json;\nconst SUPA_KEY = 'SUPABASE_SERVICE_KEY';\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': SUPA_KEY,\n    'Authorization': 'Bearer ' + SUPA_KEY,\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: 'alert-' + Date.now(),\n    stage:        'alert_sent',\n    status:       'info',\n    payload:      { message: v.message, alerts: v.alerts, stats: v.stats }\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
+        "jsCode": "// Placeholder: log to workflow_logs instead of real Telegram\nconst v = $json;\nconst SUPA_KEY = 'SUPABASE_SERVICE_ROLE_KEY';\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': SUPA_KEY,\n    'Authorization': 'Bearer ' + SUPA_KEY,\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: 'alert-' + Date.now(),\n    stage:        'alert_sent',\n    status:       'info',\n    payload:      { message: v.message, alerts: v.alerts, stats: v.stats }\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
       }
     }
   ],

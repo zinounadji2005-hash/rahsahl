@@ -461,7 +461,10 @@ BEGIN
     END IF;
 
     v_balance := v_balance + p_amount;
-    v_total_purchased := v_total_purchased + p_amount;
+    -- Only count actual purchases, not bonuses or refunds
+    IF p_type = 'purchase' THEN
+        v_total_purchased := v_total_purchased + p_amount;
+    END IF;
 
     UPDATE public.coin_balances
     SET balance = v_balance,

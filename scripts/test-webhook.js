@@ -8,7 +8,7 @@
 
 require('./load-env');
 
-const WEBHOOK_URL = process.env.N8N_HOST.replace(/\/$/, '') + '/webhook/v1/social-inbound';
+const WEBHOOK_URL = process.env.N8N_HOST.replace(/\/$/, '') + (process.env.N8N_WEBHOOK_PATH || '/webhook/v1/social-inbound');
 const TEST_SHOP   = process.env.SHOP_ID || '11111111-1111-1111-1111-111111111111';
 
 async function sendRequest(name, payload, expectStatus = 200) {

@@ -10,7 +10,7 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "v2/social-inbound",
-        "responseMode": "onReceived",
+        "responseMode": "responseNode",
         "responseData": "={{ $json }}",
         "options": {}
       }
@@ -24,7 +24,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const data = $input.item.json;\nconst body = data.body || data;\nconst headers = data.headers || {};\n\nconst sig = headers['x-hub-signature-256'] || headers['X-Hub-Signature-256'] || headers['x-signature'] || null;\n\nif (!body.shop_id) throw new Error('shop_id required for HMAC verification');\nif (!sig) throw new Error('Missing signature header (x-hub-signature-256 or x-signature)');\n\nconst bodyStr = JSON.stringify(body);\n\nconst result = await this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/functions/v1/verify-hmac',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY'\n  },\n  body: JSON.stringify({ shop_id: body.shop_id, signature: sig, body: bodyStr }),\n  timeout: 8000,\n  json: true\n});\n\nif (!result.valid) throw new Error('HMAC verification failed: ' + (result.reason || 'unknown'));\n\nreturn { json: { ...body, _signature_check: 'verified' } };"
+        "jsCode": "const data = $input.item.json;\nconst body = data.body || data;\nconst headers = data.headers || {};\n\nconst sig = headers['x-hub-signature-256'] || headers['X-Hub-Signature-256'] || headers['x-signature'] || null;\n\nif (!body.shop_id) throw new Error('shop_id required for HMAC verification');\nif (!sig) throw new Error('Missing signature header (x-hub-signature-256 or x-signature)');\n\nconst bodyStr = JSON.stringify(body);\n\nconst result = await this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/functions/v1/verify-hmac',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY'\n  },\n  body: JSON.stringify({ shop_id: body.shop_id, signature: sig, body: bodyStr }),\n  timeout: 8000,\n  json: true\n});\n\nif (!result.valid) throw new Error('HMAC verification failed: ' + (result.reason || 'unknown'));\n\nreturn { json: { ...body, _signature_check: 'verified' } };"
       }
     },
     {
@@ -48,7 +48,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\n\nconst result = await this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/functions/v1/coin-deduct',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY'\n  },\n  body: {\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    channel: v.channel\n  },\n  json: true,\n  timeout: 5000\n});\n\nreturn {\n  json: {\n    ...v,\n    _deduct_result: result,\n    _coins_remaining: result.ok ? result.balance : 0\n  }\n};"
+        "jsCode": "const v = $json;\n\nconst result = await this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/functions/v1/coin-deduct',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY'\n  },\n  body: {\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    channel: v.channel\n  },\n  json: true,\n  timeout: 5000\n});\n\nreturn {\n  json: {\n    ...v,\n    _deduct_result: result,\n    _coins_remaining: result.ok ? result.balance : 0\n  }\n};"
       }
     },
     {
@@ -81,7 +81,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\nconst fallback = v._deduct_result.fallback_message || 'عذراً، الرصيد غير كافٍ. يرجى شحن الرصيد من لوحة التحكم.';\n\n// Write fallback to outbox\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/outbox',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    shop_id: v.shop_id,\n    channel: v.channel,\n    recipient_id: v.sender_id,\n    payload: { text: fallback },\n    status: 'pending'\n  },\n  json: true,\n  timeout: 5000\n});\n\n// Log insufficient coins\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: v.execution_id,\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    stage: 'insufficient_coins',\n    status: 'skipped',\n    payload: { balance: v._deduct_result.balance, reason: v._deduct_result.reason }\n  },\n  json: true,\n  timeout: 5000\n});\n\nreturn { json: { ...v, _skipped: true, _reason: 'insufficient_coins' } };"
+        "jsCode": "const v = $json;\nconst fallback = v._deduct_result.fallback_message || 'عذراً، الرصيد غير كافٍ. يرجى شحن الرصيد من لوحة التحكم.';\n\n// Write fallback to outbox\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/outbox',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_ROLE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    shop_id: v.shop_id,\n    channel: v.channel,\n    recipient_id: v.sender_id,\n    payload: { text: fallback },\n    status: 'pending'\n  },\n  json: true,\n  timeout: 5000\n});\n\n// Log insufficient coins\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_ROLE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: v.execution_id,\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    stage: 'insufficient_coins',\n    status: 'skipped',\n    payload: { balance: v._deduct_result.balance, reason: v._deduct_result.reason }\n  },\n  json: true,\n  timeout: 5000\n});\n\nreturn { json: { ...v, _skipped: true, _reason: 'insufficient_coins' } };"
       }
     },
     {
@@ -109,7 +109,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: v.execution_id,\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    stage: 'validation',\n    status: 'success',\n    payload: { coins_remaining: v._coins_remaining }\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
+        "jsCode": "const v = $json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_ROLE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: v.execution_id,\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    stage: 'validation',\n    status: 'success',\n    payload: { coins_remaining: v._coins_remaining }\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
       }
     },
     {
@@ -121,7 +121,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\nconst r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/bot_settings?shop_id=eq.' + v.shop_id + '&select=prompt_context,target_dialect,is_active,currency,shipping_fee,delivery_cities,response_style,business_hours,fallback_message&limit=1',\n  headers: { 'apikey': 'SUPABASE_SERVICE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { ...v, bot_settings: r[0] || null } };"
+        "jsCode": "const v = $json;\nconst r = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/bot_settings?shop_id=eq.' + v.shop_id + '&select=prompt_context,target_dialect,is_active,currency,shipping_fee,delivery_cities,response_style,business_hours,fallback_message&limit=1',\n  headers: { 'apikey': 'SUPABASE_SERVICE_ROLE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY' },\n  json: true,\n  timeout: 5000\n});\nreturn { json: { ...v, bot_settings: r[0] || null } };"
       }
     },
     {
@@ -133,7 +133,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\nlet history = [];\ntry {\n  const r = await this.helpers.httpRequest({\n    method: 'GET',\n    url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/conversations?select=role,message,created_at&shop_id=eq.' + v.shop_id + '&sender_id=eq.' + encodeURIComponent(v.sender_id) + '&order=created_at.desc&limit=10',\n    headers: { 'apikey': 'SUPABASE_SERVICE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_KEY' },\n    json: true,\n    timeout: 5000\n  });\n  history = (r || []).reverse();\n} catch (e) { history = []; }\nreturn { json: { ...v, conversation_history: history } };"
+        "jsCode": "const v = $json;\nlet history = [];\ntry {\n  const r = await this.helpers.httpRequest({\n    method: 'GET',\n    url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/conversations?select=role,message,created_at&shop_id=eq.' + v.shop_id + '&sender_id=eq.' + encodeURIComponent(v.sender_id) + '&order=created_at.desc&limit=10',\n    headers: { 'apikey': 'SUPABASE_SERVICE_ROLE_KEY', 'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY' },\n    json: true,\n    timeout: 5000\n  });\n  history = (r || []).reverse();\n} catch (e) { history = []; }\nreturn { json: { ...v, conversation_history: history } };"
       }
     },
     {
@@ -224,7 +224,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/conversations',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    role: 'user',\n    message: v.user_message || ''\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
+        "jsCode": "const v = $json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/conversations',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_ROLE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    role: 'user',\n    message: v.user_message || ''\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
       }
     },
     {
@@ -236,7 +236,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\nconst chunks = v._formatted_chunks || [v.reply_text || ''];\n\n// Save each chunk as a separate conversation entry\nfor (let i = 0; i < chunks.length; i++) {\n  await this.helpers.httpRequest({\n    method: 'POST',\n    url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/conversations',\n    headers: {\n      'Content-Type': 'application/json',\n      'apikey': 'SUPABASE_SERVICE_KEY',\n      'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n      'Prefer': 'return=minimal'\n    },\n    body: {\n      shop_id: v.shop_id,\n      sender_id: v.sender_id,\n      role: 'assistant',\n      message: chunks[i],\n      chunk_index: i + 1,\n      total_chunks: chunks.length,\n      processing_status: 'completed'\n    },\n    json: true,\n    timeout: 5000\n  });\n}\n\nreturn { json: v };"
+        "jsCode": "const v = $json;\nconst chunks = v._formatted_chunks || [v.reply_text || ''];\n\n// Save each chunk as a separate conversation entry\nfor (let i = 0; i < chunks.length; i++) {\n  await this.helpers.httpRequest({\n    method: 'POST',\n    url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/conversations',\n    headers: {\n      'Content-Type': 'application/json',\n      'apikey': 'SUPABASE_SERVICE_ROLE_KEY',\n      'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY',\n      'Prefer': 'return=minimal'\n    },\n    body: {\n      shop_id: v.shop_id,\n      sender_id: v.sender_id,\n      role: 'assistant',\n      message: chunks[i],\n      chunk_index: i + 1,\n      total_chunks: chunks.length,\n      processing_status: 'completed'\n    },\n    json: true,\n    timeout: 5000\n  });\n}\n\nreturn { json: v };"
       }
     },
     {
@@ -248,7 +248,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\n\n// Write seen indicator to outbox (will be processed by outbox-processor)\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/outbox',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    shop_id: v.shop_id,\n    channel: v.channel,\n    recipient_id: v.sender_id,\n    payload: { action: 'mark_seen' },\n    status: 'pending'\n  },\n  json: true,\n  timeout: 5000\n});\n\nreturn { json: v };"
+        "jsCode": "const v = $json;\n\n// Write seen indicator to outbox (will be processed by outbox-processor)\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/outbox',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_ROLE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    shop_id: v.shop_id,\n    channel: v.channel,\n    recipient_id: v.sender_id,\n    payload: { action: 'mark_seen' },\n    status: 'pending'\n  },\n  json: true,\n  timeout: 5000\n});\n\nreturn { json: v };"
       }
     },
     {
@@ -260,7 +260,18 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\n\n// Write typing indicator to outbox\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/outbox',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    shop_id: v.shop_id,\n    channel: v.channel,\n    recipient_id: v.sender_id,\n    payload: { action: 'typing_on' },\n    status: 'pending'\n  },\n  json: true,\n  timeout: 5000\n});\n\nreturn { json: v };"
+        "jsCode": "const v = $json;\n\n// Write typing indicator to outbox\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/outbox',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_ROLE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    shop_id: v.shop_id,\n    channel: v.channel,\n    recipient_id: v.sender_id,\n    payload: { action: 'typing_on' },\n    status: 'pending'\n  },\n  json: true,\n  timeout: 5000\n});\n\nreturn { json: v };"
+      }
+    },
+    {
+      "id": "pre-merge",
+      "name": "Pre-Outbox Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [3210, 350],
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex"
       }
     },
     {
@@ -272,7 +283,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\nconst chunks = v._formatted_chunks || [v.reply_text || ''];\n\n// Write each chunk as a separate outbox entry\nfor (let i = 0; i < chunks.length; i++) {\n  await this.helpers.httpRequest({\n    method: 'POST',\n    url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/outbox',\n    headers: {\n      'Content-Type': 'application/json',\n      'apikey': 'SUPABASE_SERVICE_KEY',\n      'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n      'Prefer': 'return=minimal'\n    },\n    body: {\n      shop_id: v.shop_id,\n      channel: v.channel,\n      recipient_id: v.sender_id,\n      payload: { text: chunks[i] },\n      status: 'pending'\n    },\n    json: true,\n    timeout: 5000\n  });\n}\n\nreturn { json: { ...v, _outbox_written: true, _total_chunks: chunks.length } };"
+        "jsCode": "const v = $json;\nconst chunks = v._formatted_chunks || [v.reply_text || ''];\n\n// Write each chunk as a separate outbox entry\nfor (let i = 0; i < chunks.length; i++) {\n  await this.helpers.httpRequest({\n    method: 'POST',\n    url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/outbox',\n    headers: {\n      'Content-Type': 'application/json',\n      'apikey': 'SUPABASE_SERVICE_ROLE_KEY',\n      'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY',\n      'Prefer': 'return=minimal'\n    },\n    body: {\n      shop_id: v.shop_id,\n      channel: v.channel,\n      recipient_id: v.sender_id,\n      payload: { text: chunks[i] },\n      status: 'pending'\n    },\n    json: true,\n    timeout: 5000\n  });\n}\n\nreturn { json: { ...v, _outbox_written: true, _total_chunks: chunks.length } };"
       }
     },
     {
@@ -323,7 +334,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\nconst qty = parseInt(v.quantity, 10) || 1;\nconst resp = await this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/orders',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=representation'\n  },\n  body: {\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    customer_name: v.customer_name || 'Unknown',\n    phone: v.phone || '',\n    location_city: v.location_city || '',\n    product_requested: v.product_requested || '',\n    quantity: qty,\n    order_status: 'pending'\n  },\n  json: true,\n  timeout: 10000\n});\nreturn { json: { ...v, order_id: (resp[0] && resp[0].id) || null, quantity: qty, order_status: 'pending' } };"
+        "jsCode": "const v = $json;\nconst qty = parseInt(v.quantity, 10) || 1;\nconst resp = await this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/orders',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_ROLE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY',\n    'Prefer': 'return=representation'\n  },\n  body: {\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    customer_name: v.customer_name || 'Unknown',\n    phone: v.phone || '',\n    location_city: v.location_city || '',\n    product_requested: v.product_requested || '',\n    quantity: qty,\n    order_status: 'pending'\n  },\n  json: true,\n  timeout: 10000\n});\nreturn { json: { ...v, order_id: (resp[0] && resp[0].id) || null, quantity: qty, order_status: 'pending' } };"
       }
     },
     {
@@ -335,7 +346,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: v.execution_id,\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    stage: 'order_captured',\n    status: 'success',\n    payload: { order_id: v.order_id || null, customer: v.customer_name, product: v.product_requested, qty: v.quantity }\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
+        "jsCode": "const v = $json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_ROLE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: v.execution_id,\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    stage: 'order_captured',\n    status: 'success',\n    payload: { order_id: v.order_id || null, customer: v.customer_name, product: v.product_requested, qty: v.quantity }\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
       }
     },
     {
@@ -347,7 +358,7 @@
       "parameters": {
         "mode": "runOnceForEachItem",
         "language": "javaScript",
-        "jsCode": "const v = $json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: v.execution_id,\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    stage: 'needs_more_info',\n    status: 'info',\n    payload: { reply: v.reply_text || '' }\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
+        "jsCode": "const v = $json;\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://rvjsnkolroaakskvvwnv.supabase.co/rest/v1/workflow_logs',\n  headers: {\n    'Content-Type': 'application/json',\n    'apikey': 'SUPABASE_SERVICE_ROLE_KEY',\n    'Authorization': 'Bearer SUPABASE_SERVICE_ROLE_KEY',\n    'Prefer': 'return=minimal'\n  },\n  body: {\n    execution_id: v.execution_id,\n    shop_id: v.shop_id,\n    sender_id: v.sender_id,\n    stage: 'needs_more_info',\n    status: 'info',\n    payload: { reply: v.reply_text || '' }\n  },\n  json: true,\n  timeout: 5000\n});\nreturn { json: v };"
       }
     }
   ],
@@ -374,11 +385,12 @@
     "Format Output": {
       "main": [[ { "node": "Save User Message", "type": "main", "index": 0 }, { "node": "Save Assistant Turn", "type": "main", "index": 0 }, { "node": "Send Seen", "type": "main", "index": 0 }, { "node": "Send Typing", "type": "main", "index": 0 } ]]
     },
-    "Save User Message": { "main": [[ { "node": "Write to Outbox", "type": "main", "index": 0 } ]] },
-    "Save Assistant Turn": { "main": [[ { "node": "Write to Outbox", "type": "main", "index": 0 } ]] },
-    "Send Seen": { "main": [[ { "node": "Write to Outbox", "type": "main", "index": 0 } ]] },
-    "Send Typing": { "main": [[ { "node": "Write to Outbox", "type": "main", "index": 0 } ]] },
-    "Write to Outbox": { "main": [[ { "node": "Response OK", "type": "main", "index": 0 } ]] },
+    "Save User Message":   { "main": [[ { "node": "Pre-Outbox Merge", "type": "main", "index": 0 } ]] },
+    "Save Assistant Turn": { "main": [[ { "node": "Pre-Outbox Merge", "type": "main", "index": 1 } ]] },
+    "Send Seen":           { "main": [[ { "node": "Pre-Outbox Merge", "type": "main", "index": 2 } ]] },
+    "Send Typing":         { "main": [[ { "node": "Pre-Outbox Merge", "type": "main", "index": 3 } ]] },
+    "Pre-Outbox Merge":    { "main": [[ { "node": "Write to Outbox",  "type": "main", "index": 0 } ]] },
+    "Write to Outbox":     { "main": [[ { "node": "Response OK",       "type": "main", "index": 0 } ]] },
     "Response OK": { "main": [[ { "node": "Order Complete?", "type": "main", "index": 0 } ]] },
     "Order Complete?": {
       "main": [

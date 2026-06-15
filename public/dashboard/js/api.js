@@ -1,4 +1,4 @@
-﻿// public/dashboard/js/api.js
+// public/dashboard/js/api.js
 // Thin CRUD wrappers over Supabase tables.
 // All calls go through RLS, so the active session implicitly
 // scopes queries to the caller's shop_id.
@@ -188,7 +188,7 @@
     // -------- platform accounts (shared logins) --------
     listAccounts: function () {
       return client().from('platform_credentials')
-        .select('id, channel, external_id, access_token, expires_at, is_active, metadata, created_at')
+        .select('id, channel, external_id, expires_at, is_active, metadata, created_at')
         .order('created_at', { ascending: false });
     },
     createAccount: function (payload) {

@@ -21,3 +21,8 @@ Thumbs.db
 
 # Supabase local
 .supabase/
+
+# DB utility scripts with hardcoded credentials (NEVER commit)
+scripts/apply-fixes.js
+scripts/check-db.js
+scripts/setup-secrets.js
