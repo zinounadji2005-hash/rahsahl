@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   'use strict';
 
   var NAV_ITEMS = [
@@ -7,6 +7,7 @@
     { key: 'conversations', href: 'conversations.html', icon: 'forum',                tKey: 'nav.conversations' },
     { key: 'products',      href: 'products.html',      icon: 'inventory_2',          tKey: 'nav.products' },
     { key: 'billing',       href: 'billing.html',       icon: 'credit_card',          tKey: 'nav.billing' },
+    { key: 'voice',         href: 'voice.html',         icon: 'call',                 tKey: 'nav.voice' },
     { key: 'accounts',      href: 'accounts.html',      icon: 'link',                 tKey: 'nav.accounts' },
     { key: 'api-keys',      href: 'api-keys.html',      icon: 'key',                  tKey: 'nav.api-keys' },
     { key: 'settings',      href: 'settings.html',      icon: 'settings',             tKey: 'nav.settings' }
@@ -186,3 +187,4 @@
     }
   };
 })();
+

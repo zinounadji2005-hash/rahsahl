@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta name="theme-color" content="#f5f0eb">
+  <title>الوكيل الصوتي — RahSahl</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="css/styles.css" rel="stylesheet"/>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{navy:'#0b1420',sky:'#0ea5e9',amber:'#f59e0b',teal:'#14b8a6'},fontFamily:{ar:['IBM Plex Sans Arabic','sans-serif'],en:['Inter','sans-serif']},animation:{blob:'blob 7s infinite','fade-up':'fadeUp 0.6s ease-out forwards'},keyframes:{blob:{'0%,100%':{transform:'translate(0,0) scale(1)'},'33%':{transform:'translate(30px,-50px) scale(1.1)'},'66%':{transform:'translate(-20px,20px) scale(0.9)'}},fadeUp:{'0%':{opacity:'0',transform:'translateY(30px)'},'100%':{opacity:'1',transform:'translateY(0)'}}}}}}}</script>
+  <style>
+    *{scroll-behavior:smooth}
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:3px}
+    ::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+    :root{--bg:#f5f0eb;--text:#334155;--heading:#0b1420;--muted:#64748b;--card:#fff;--card-border:#e2e8f0;--section-alt:#fff;--nav-bg:rgba(255,255,255,0.85);--soft-sky:#e0f2fe;--soft-teal:#ccfbf1;--soft-amber:#fef3c7;}
+    html.dark{--bg:#0b1420;--text:#dbe2f5;--heading:#f1f5f9;--muted:#88929b;--card:#18202d;--card-border:#2d3543;--section-alt:#0b1420;--nav-bg:rgba(11,20,32,0.85);--soft-sky:rgba(14,165,233,0.12);--soft-teal:rgba(20,184,166,0.12);--soft-amber:rgba(245,158,11,0.12)}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);transition:background 0.3s,color 0.3s}
+    h1,h2,h3,h4{font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--heading)}
+    .card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;transition:all 0.3s ease}
+    .card:hover{box-shadow:0 12px 40px rgba(0,0,0,0.06);border-color:var(--card-border);transform:translateY(-2px)}
+    .btn-primary{background:linear-gradient(135deg,#0ea5e9,#14b8a6);color:#fff;transition:all 0.3s;position:relative;overflow:hidden}
+    .btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#14b8a6,#0ea5e9);opacity:0;transition:opacity 0.3s}
+    .btn-primary:hover::after{opacity:1}
+    .btn-primary:hover{box-shadow:0 8px 25px rgba(14,165,233,0.35);transform:translateY(-2px)}
+    .btn-primary:active{transform:translateY(0)}
+    .btn-primary > *{position:relative;z-index:1}
+    .text-muted{color:var(--muted)}
+    .gradient-text{background:linear-gradient(135deg,#0ea5e9,#14b8a6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .pulse-ring{animation:pulseRing 2s infinite}
+    @keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(14,165,233,0.4)}70%{box-shadow:0 0 0 20px rgba(14,165,233,0)}100%{box-shadow:0 0 0 0 rgba(14,165,233,0)}}
+  </style>
+</head>
+<body>
+  <div class="flex min-h-screen">
+    <aside id="sidebar" class="w-64 shrink-0 min-h-screen sticky top-0 flex flex-col border-l" style="background:var(--card);border-color:var(--card-border)"></aside>
+    <main id="main" class="flex-1 p-6 md:p-10 overflow-x-hidden flex items-center justify-center" style="background:var(--bg);min-height:100vh"></main>
+  </div>
+  <script src="js/supabase.js"></script>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/lang.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script>
+    (async function () {
+      try {
+        var ctx = await window.RahSahl.authGuard.requireAuth();
+        var sid = window.RahSahl.sidebar;
+        var L = window.RahSahl.lang;
+        var __ = L.t.bind(L);
+        window.RahSahl.sidebarCtx = ctx;
+        document.getElementById('sidebar').innerHTML = sid.renderSidebar(ctx);
+        sid.bindChrome();
+
+        var main = document.getElementById('main');
+        main.innerHTML = ''
+          + '<div class="card max-w-lg w-full p-10 text-center aos show">'
+          + '  <div class="flex justify-center mb-6">'
+          + '    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-sky-400 to-teal-400 flex items-center justify-center pulse-ring">'
+          + '      <span class="material-symbols-outlined text-white text-[40px]">call</span>'
+          + '    </div>'
+          + '  </div>'
+          + '  <h2 class="font-ar text-[24px] font-bold mb-3 gradient-text">' + __('voice.title') + '</h2>'
+          + '  <p class="text-[15px] mb-2" style="color:var(--muted)">' + __('voice.subtitle') + '</p>'
+          + '  <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 text-[13px] font-semibold mt-4 mb-6">'
+          + '    <span class="material-symbols-outlined text-[18px]">construction</span>'
+          + '    <span>' + __('general.coming-soon') + '</span>'
+          + '  </div>'
+          + '  <div class="space-y-3 text-right">'
+          + '    <div class="flex items-center gap-3 p-3 rounded-xl" style="background:var(--soft-sky)">'
+          + '      <span class="material-symbols-outlined text-sky-500 text-[22px]">record_voice_over</span>'
+          + '      <span class="text-[13px] font-medium">' + __('voice.coming-feature-1') + '</span>'
+          + '    </div>'
+          + '    <div class="flex items-center gap-3 p-3 rounded-xl" style="background:var(--soft-teal)">'
+          + '      <span class="material-symbols-outlined text-teal-500 text-[22px]">phone_callback</span>'
+          + '      <span class="text-[13px] font-medium">' + __('voice.coming-feature-2') + '</span>'
+          + '    </div>'
+          + '    <div class="flex items-center gap-3 p-3 rounded-xl" style="background:var(--soft-amber)">'
+          + '      <span class="material-symbols-outlined text-amber-500 text-[22px]">translate</span>'
+          + '      <span class="text-[13px] font-medium">' + __('voice.coming-feature-3') + '</span>'
+          + '    </div>'
+          + '  </div>'
+          + '  <p class="text-[13px] mt-6" style="color:var(--muted)">' + __('voice.coming-notify') + '</p>'
+          + '</div>';
+      } catch (e) { if (window.RahSahl?.sidebar?.toast) window.RahSahl.sidebar.toast(e.message || 'Error', 'error'); else console.error(e); }
+    })();
+  </script>
+</body>
+</html>

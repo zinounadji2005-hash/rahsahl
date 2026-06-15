@@ -57,18 +57,23 @@ serve(async (req) => {
 
           const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
-          // Find the shop_id from platform_credentials (whatsapp channel)
-          const { data: creds } = await supabase
+          const phoneNumberId = value.metadata?.phone_number_id;
+
+          const { data: credsList } = await supabase
             .from("platform_credentials")
-            .select("shop_id, external_id")
+            .select("shop_id, metadata")
             .eq("channel", "whatsapp")
-            .eq("is_active", true)
-            .limit(1)
-            .single();
+            .eq("is_active", true);
 
-          if (!creds) continue;
+          if (!credsList || credsList.length === 0) continue;
 
-          const shopId = creds.shop_id;
+          const cred = phoneNumberId
+            ? credsList.find((c: { metadata?: { phone_number_id?: string } }) => c.metadata?.phone_number_id === phoneNumberId)
+            : credsList[0];
+
+          if (!cred) continue;
+
+          const shopId = cred.shop_id;
 
           // Store incoming message in conversations
           await supabase.from("conversations").insert({

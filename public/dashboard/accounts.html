@@ -320,8 +320,8 @@
 
     function deriveStatus(a) {
       if (!a.is_active) return 'suspended';
-      if (a.expiry_date || a.token_expires_at) {
-        var d = a.expiry_date || a.token_expires_at;
+      if (a.expiry_date || a.expires_at) {
+        var d = a.expiry_date || a.expires_at;
         var now = new Date();
         var exp = new Date(d);
         if (exp < now) return 'expired';
@@ -342,7 +342,7 @@
         var username = a.username || a.external_id || '—';
         var status = a.status || deriveStatus(a);
         var notes = a.notes || (a.metadata && a.metadata.notes) || '';
-        var expiry = a.expiry_date || a.token_expires_at || null;
+        var expiry = a.expiry_date || a.expires_at || null;
         var pc = platformColors[platform] || ['bg-sky-50','text-sky-600'];
         var sc = statusColors[status] || 'bg-soft-slate text-muted';
         return '<div class="card p-5 account-card">'

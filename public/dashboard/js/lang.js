@@ -21,6 +21,7 @@
     'nav.conversations':  { ar: 'المحادثات', fr: 'Conversations', en: 'Conversations' },
     'nav.products':       { ar: 'المنتجات', fr: 'Produits', en: 'Products' },
     'nav.billing':        { ar: 'الفوترة', fr: 'Facturation', en: 'Billing' },
+    'nav.voice':          { ar: 'الاتصال الصوتي', fr: 'Appel vocal', en: 'Voice Call' },
     'nav.accounts':       { ar: 'حساباتي', fr: 'Mes comptes', en: 'My Accounts' },
     'nav.api-keys':       { ar: 'مفاتيح API', fr: 'Clés API', en: 'API Keys' },
     'nav.settings':       { ar: 'الإعدادات', fr: 'Paramètres', en: 'Settings' },
@@ -272,6 +273,10 @@
     'general.hour':       { ar: 'س', fr: 'h', en: 'h' },
     'general.day':        { ar: 'يوم', fr: 'j', en: 'd' },
     'general.orders':     { ar: 'الطلبات', fr: 'Commandes', en: 'Orders' },
+    'general.coming-soon':{ ar: 'قريباً جداً', fr: 'Prochainement', en: 'Coming Soon' },
+    'general.from':       { ar: 'من', fr: 'De', en: 'From' },
+    'general.to':         { ar: 'إلى', fr: 'À', en: 'To' },
+    'general.date':       { ar: 'التاريخ', fr: 'Date', en: 'Date' },
 
     // ---- OAuth ----
     'oauth.connect':      { ar: 'ربط مع Facebook', fr: 'Connecter avec Facebook', en: 'Connect with Facebook' },
@@ -316,6 +321,34 @@
     'ig.connected':       { ar: '{count} حساب إنستغرام متصل', fr: '{count} compte(s) Instagram connecté(s)', en: '{count} Instagram account(s) connected' },
     'ig.no-accounts':     { ar: 'لا توجد حسابات إنستغرام مرتبطة', fr: 'Aucun compte Instagram lié', en: 'No Instagram accounts linked' },
     'ig.via-facebook':    { ar: 'عبر ربط فيسبوك', fr: 'Via connexion Facebook', en: 'Via Facebook connection' },
+
+    // ---- Voice Agent ----
+    'voice.title':           { ar: 'الوكيل الصوتي الذكي', fr: 'Agent vocal AI', en: 'AI Voice Agent' },
+    'voice.subtitle':        { ar: 'الرد على المكالمات تلقائياً عبر الذكاء الاصطناعي', fr: 'Répondez aux appels avec IA', en: 'Answer calls with AI' },
+    'voice.activate':        { ar: 'تفعيل الوكيل الصوتي', fr: 'Activer agent vocal', en: 'Activate Voice Agent' },
+    'voice.deactivate':      { ar: 'إلغاء التفعيل', fr: 'Désactiver', en: 'Deactivate' },
+    'voice.language':        { ar: 'لغة المحادثة', fr: 'Langue conversation', en: 'Language' },
+    'voice.welcome':         { ar: 'رسالة الترحيب', fr: 'Message accueil', en: 'Welcome Message' },
+    'voice.transfer-number': { ar: 'رقم التحويل للبشري', fr: 'Numéro transfert', en: 'Transfer Number' },
+    'voice.phone-number':    { ar: 'رقم الهاتف المخصص', fr: 'Numéro attribué', en: 'Phone Number' },
+    'voice.connected':       { ar: 'الوكيل الصوتي نشط', fr: 'Agent vocal actif', en: 'Voice Agent Active' },
+    'voice.not-connected':   { ar: 'الوكيل الصوتي غير نشط', fr: 'Agent vocal inactif', en: 'Voice Agent Inactive' },
+    'voice.calls':           { ar: 'سجل المكالمات', fr: 'Historique appels', en: 'Call History' },
+    'voice.duration':        { ar: 'المدة', fr: 'Durée', en: 'Duration' },
+    'voice.status':          { ar: 'الحالة', fr: 'Statut', en: 'Status' },
+    'voice.recording':       { ar: 'تسجيل', fr: 'Enregistrement', en: 'Recording' },
+    'voice.inbound':         { ar: 'وارد', fr: 'Entrant', en: 'Inbound' },
+    'voice.outbound':        { ar: 'صادر', fr: 'Sortant', en: 'Outbound' },
+    'voice.ongoing':         { ar: 'قيد التقدم', fr: 'En cours', en: 'Ongoing' },
+    'voice.ended':           { ar: 'منتهية', fr: 'Terminé', en: 'Ended' },
+    'voice.failed':          { ar: 'فشلت', fr: 'Échoué', en: 'Failed' },
+    'voice.registered':      { ar: 'مسجلة', fr: 'Enregistré', en: 'Registered' },
+    'voice.saved':           { ar: 'تم حفظ الإعدادات', fr: 'Paramètres enregistrés', en: 'Settings saved' },
+    'voice.saving':          { ar: 'جاري الحفظ...', fr: 'Enregistrement...', en: 'Saving...' },
+    'voice.coming-feature-1':{ ar: 'الرد على المكالمات تلقائياً بالذكاء الاصطناعي', fr: 'Répondre aux appels avec IA', en: 'AI-powered call answering' },
+    'voice.coming-feature-2':{ ar: 'إجراء مكالمات صادرة للعملاء', fr: 'Appels sortants clients', en: 'Outbound customer calls' },
+    'voice.coming-feature-3':{ ar: 'دعم كامل للعربية والفرنسية والدارجة', fr: 'Arabe, Français, Darija', en: 'Arabic, French, Darija support' },
+    'voice.coming-notify':   { ar: 'سيتم إشعارك فور إطلاق الميزة', fr: 'Notification au lancement', en: 'Notification on launch' },
   };
 
   var currentLang = localStorage.getItem(STORAGE_KEY) || 'ar';

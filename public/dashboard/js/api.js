@@ -1,4 +1,4 @@
-// public/dashboard/js/api.js
+﻿// public/dashboard/js/api.js
 // Thin CRUD wrappers over Supabase tables.
 // All calls go through RLS, so the active session implicitly
 // scopes queries to the caller's shop_id.
@@ -188,7 +188,7 @@
     // -------- platform accounts (shared logins) --------
     listAccounts: function () {
       return client().from('platform_credentials')
-        .select('id, channel, external_id, access_token, token_expires_at, is_active, metadata, created_at')
+        .select('id, channel, external_id, access_token, expires_at, is_active, metadata, created_at')
         .order('created_at', { ascending: false });
     },
     createAccount: function (payload) {
@@ -277,7 +277,43 @@
       return Promise.all([channelUpsert, socialUpsert]).then(function (res) { return res[0]; });
     }
   };
+    // -------- Voice Agent --------
+    getVoiceConfig: function () {
+      var id = activeShopId();
+      if (!id) return Promise.resolve({ error: { message: 'no shop_id' }, data: null });
+      return client().from('voice_agent_config')
+        .select('*')
+        .eq('shop_id', id)
+        .maybeSingle();
+    },
+
+    saveVoiceConfig: function (config) {
+      var id = activeShopId();
+      if (!id) return Promise.resolve({ error: { message: 'no shop_id' }, data: null });
+      return client().from('voice_agent_config').upsert({
+        shop_id: id,
+        is_active: config.is_active,
+        language: config.language || 'ar',
+        welcome_message: config.welcome_message || null,
+        business_hours: config.business_hours || null,
+        transfer_phone_number: config.transfer_phone_number || null,
+        metadata: config.metadata || null,
+      }, { onConflict: 'shop_id' }).select().maybeSingle();
+    },
+
+    listVoiceCalls: function (opts) {
+      var id = activeShopId();
+      if (!id) return Promise.resolve({ error: { message: 'no shop_id' }, data: null });
+      var q = client().from('voice_calls')
+        .select('*')
+        .eq('shop_id', id)
+        .order('created_at', { ascending: false });
+      if (opts && opts.limit) q = q.limit(opts.limit);
+      return q;
+    },
 
   window.RahSahl = window.RahSahl || {};
   window.RahSahl.api = api;
 })();
+
+
