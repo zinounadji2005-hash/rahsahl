@@ -275,8 +275,7 @@
         verified_at: new Date().toISOString(),
       }, { onConflict: 'platform,external_id' });
       return Promise.all([channelUpsert, socialUpsert]).then(function (res) { return res[0]; });
-    }
-  };
+    },
     // -------- Voice Agent --------
     getVoiceConfig: function () {
       var id = activeShopId();
@@ -311,6 +310,7 @@
       if (opts && opts.limit) q = q.limit(opts.limit);
       return q;
     },
+  };
 
   window.RahSahl = window.RahSahl || {};
   window.RahSahl.api = api;

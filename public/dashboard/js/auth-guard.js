@@ -68,5 +68,5 @@
   }
 
   window.RahSahl = window.RahSahl || {};
-  window.RahSahl.authGuard = { guard: guard };
+  window.RahSahl.authGuard = { guard: guard, requireAuth: guard };
 })();
