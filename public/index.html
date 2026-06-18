@@ -88,10 +88,22 @@ html.dark .hero-blob{opacity:0.12!important}
       <a class="text-slate-600 hover:text-sky-600 transition-colors text-[15px] font-medium" href="#faq">الأسئلة</a>
     </div>
     <div class="flex items-center gap-2">
+      <button id="mobileNavToggle" class="md:hidden flex items-center justify-center w-10 h-10 rounded-xl border" style="background:var(--card);border-color:var(--card-border);color:var(--muted)" aria-label="فتح القائمة">
+        <span class="material-symbols-outlined text-[22px]">menu</span>
+      </button>
       <button id="darkToggle" title="الوضع الليلي"><span class="material-symbols-outlined dark:hidden text-[20px]">dark_mode</span><span class="material-symbols-outlined hidden dark:inline text-[20px]">light_mode</span></button>
-      <a class="text-slate-600 hover:text-navy transition-colors text-[15px] font-medium" href="login.html">تسجيل الدخول</a>
-      <a class="btn-primary text-[15px] font-semibold px-5 py-2.5 rounded-full" href="signup.html">ابدأ مجاناً</a>
+      <a class="hidden sm:inline-block text-slate-600 hover:text-navy transition-colors text-[15px] font-medium" href="login.html">تسجيل الدخول</a>
+      <a class="btn-primary text-[14px] md:text-[15px] font-semibold px-4 md:px-5 py-2 md:py-2.5 rounded-full" href="signup.html">ابدأ مجاناً</a>
     </div>
+  </div>
+  <!-- Mobile nav menu -->
+  <div id="mobileNavMenu" class="md:hidden hidden px-4 pb-4 pt-2 border-t" style="border-color:var(--nav-border);background:var(--nav-bg)">
+    <a class="block py-3 text-[15px] text-slate-600 hover:text-sky-600 font-medium" href="#features">المميزات</a>
+    <a class="block py-3 text-[15px] text-slate-600 hover:text-sky-600 font-medium" href="#voice">الوكيل الصوتي <span class="text-[10px] bg-amber-500 text-white px-1.5 py-0.5 rounded-full mr-1">جديد</span></a>
+    <a class="block py-3 text-[15px] text-slate-600 hover:text-sky-600 font-medium" href="#how">كيف يعمل</a>
+    <a class="block py-3 text-[15px] text-slate-600 hover:text-sky-600 font-medium" href="#pricing">شحن الرصيد</a>
+    <a class="block py-3 text-[15px] text-slate-600 hover:text-sky-600 font-medium" href="#faq">الأسئلة</a>
+    <a class="block py-3 text-[15px] text-slate-600 hover:text-sky-600 font-medium md:hidden" href="login.html">تسجيل الدخول</a>
   </div>
 </nav>
 
@@ -362,5 +374,7 @@ document.querySelectorAll('.faq-item').forEach(function(e){e.addEventListener('c
 var observer=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting){e.target.classList.add('show')}})},{threshold:0.1});
 document.querySelectorAll('.aos').forEach(function(e){observer.observe(e)});
 (function(){var t=document.getElementById('darkToggle'),d=document.documentElement;if(localStorage.getItem('rahsahl-dark')==='true')d.classList.add('dark');t&&t.addEventListener('click',function(){d.classList.toggle('dark');localStorage.setItem('rahsahl-dark',d.classList.contains('dark')?'true':'false')})})();
+// Mobile nav toggle
+(function(){var b=document.getElementById('mobileNavToggle'),m=document.getElementById('mobileNavMenu');if(b&&m){b.addEventListener('click',function(){var o=m.classList.toggle('hidden');b.querySelector('.material-symbols-outlined').textContent=o?'menu':'close'})}})();
 </script>
 </body></html>

@@ -237,9 +237,53 @@ select:focus {
   .sidenav { display: none; }
   .sidenav-mobile { display: flex; }
   .main-content { margin-right: 0; padding: 1rem; }
+
+  /* Mobile sidebar overlay (both nav.sidenav and aside#sidebar) */
+  nav#sidebar:not(.mobile-open),
+  aside#sidebar:not(.mobile-open) { display: none; }
+  nav#sidebar.mobile-open,
+  aside#sidebar.mobile-open {
+    display: flex !important;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    width: 85vw;
+    max-width: 320px;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: 0 0 40px rgba(0,0,0,0.2);
+    border-left: 1px solid var(--card-border) !important;
+    padding: 1.25rem 0.75rem;
+    background: var(--card) !important;
+  }
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 99;
+  }
+
+  /* Mobile hamburger button */
+  .mobile-menu-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--heading);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mobile-menu-btn:hover { background: var(--hover-bg); }
 }
 @media (min-width: 768px) {
   .sidenav-mobile { display: none; }
+  .mobile-menu-btn { display: none !important; }
 }
 
 /* -------- KPI cards -------- */

@@ -60,6 +60,12 @@
 
         var main = document.getElementById('main');
         main.innerHTML = ''
+          + '<div class="flex items-center gap-3 mb-6 md:hidden">'
+          + '  <button id="mobileMenuToggle" class="mobile-menu-btn" aria-label="فتح القائمة">'
+          + '    <span class="material-symbols-outlined text-[22px]">menu</span>'
+          + '  </button>'
+          + '  <h1 class="font-ar text-[22px] font-bold text-navy">' + (__('nav.voice') || 'الوكيل الصوتي') + '</h1>'
+          + '</div>'
           + '<div class="card max-w-lg w-full p-10 text-center aos show">'
           + '  <div class="flex justify-center mb-6">'
           + '    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-sky-400 to-teal-400 flex items-center justify-center pulse-ring">'

@@ -60,6 +60,13 @@
              '</a>';
     }).join('\n');
 
+    var mobileBtn = '<div class="md:hidden px-4 pt-2 pb-0 flex justify-between items-center">'
+      + '<span class="font-ar text-[18px] font-bold text-sky-600">RahSahl</span>'
+      + '<button id="closeMobileSidebar" class="mobile-menu-btn">'
+      + '<span class="material-symbols-outlined text-[22px]">close</span>'
+      + '</button>'
+      + '</div>';
+
     var shopName = ctx && ctx.shop ? ctx.shop.shop_name : t('nav.free');
     var tier = ctx && ctx.shop ? ctx.shop.subscription_tier : 'free';
     var tierBadge = tier === 'free'
@@ -67,6 +74,7 @@
       : '<span class="text-[10px] font-semibold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded">' + escapeHtml(tier.toUpperCase()) + '</span>';
 
     return ''
+      + mobileBtn
       + '<div class="px-5 mb-7 flex items-center gap-3">'
       + '  <div class="flex items-center gap-3">'
       + '    <img src="../assets/logo.svg" alt="RahSahl" class="w-14 h-14">'
@@ -101,9 +109,14 @@
     var ownerName = ctx && ctx.shop ? ctx.shop.owner_name : '';
     return ''
       + '<header class="flex flex-col md:flex-row md:justify-between md:items-end gap-3 mb-8">'
-      + '  <div>'
-      + '    <h1 class="font-ar text-[26px] md:text-[30px] font-bold text-navy mb-1">' + escapeHtml(title) + '</h1>'
-      + (subtitle ? '    <p class="text-[15px] md:text-[16px]" style="color:var(--muted)">' + escapeHtml(subtitle) + '</p>' : '')
+      + '  <div class="flex items-center gap-3">'
+      + '    <button id="mobileMenuToggle" class="mobile-menu-btn" aria-label="فتح القائمة">'
+      + '      <span class="material-symbols-outlined text-[22px]">menu</span>'
+      + '    </button>'
+      + '    <div>'
+      + '      <h1 class="font-ar text-[22px] md:text-[30px] font-bold text-navy mb-1">' + escapeHtml(title) + '</h1>'
+      + (subtitle ? '      <p class="text-[13px] md:text-[16px]" style="color:var(--muted)">' + escapeHtml(subtitle) + '</p>' : '')
+      + '    </div>'
       + '  </div>'
       + '  <div class="flex items-center gap-3">'
       + '    <div class="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl" style="background:var(--soft-slate)">'
@@ -112,6 +125,24 @@
       + '    </div>'
       + '  </div>'
       + '</header>';
+  }
+
+  function closeMobileSidebar() {
+    var side = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    if (side) side.classList.remove('mobile-open');
+    if (overlay) overlay.remove();
+  }
+
+  function openMobileSidebar() {
+    var side = document.getElementById('sidebar');
+    if (!side) return;
+    side.classList.add('mobile-open');
+    var overlay = document.createElement('div');
+    overlay.id = 'sidebarOverlay';
+    overlay.className = 'sidebar-overlay';
+    overlay.addEventListener('click', closeMobileSidebar);
+    document.body.appendChild(overlay);
   }
 
   function bindGlobalChrome() {
@@ -126,6 +157,7 @@
     var btnLogout = document.getElementById('btn-logout');
     if (btnLogout) {
       btnLogout.addEventListener('click', async function () {
+        closeMobileSidebar();
         var supabase = window.RahSahl.supabase.getClient();
         if (supabase) await supabase.auth.signOut();
         window.location.href = '../login.html';
@@ -137,6 +169,30 @@
       langSel.addEventListener('change', function () {
         var L = window.RahSahl && window.RahSahl.lang;
         if (L) L.setLang(this.value);
+      });
+    }
+
+    // Mobile menu toggle
+    var menuToggle = document.getElementById('mobileMenuToggle');
+    if (menuToggle) {
+      menuToggle.addEventListener('click', openMobileSidebar);
+    }
+
+    // Close button inside mobile sidebar
+    var closeBtn = document.getElementById('closeMobileSidebar');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeMobileSidebar);
+    }
+
+    // Close sidebar on nav link click (mobile)
+    var side = document.getElementById('sidebar');
+    if (side) {
+      side.querySelectorAll('.nav-item').forEach(function (el) {
+        el.addEventListener('click', function () {
+          if (side.classList.contains('mobile-open')) {
+            closeMobileSidebar();
+          }
+        });
       });
     }
   }
